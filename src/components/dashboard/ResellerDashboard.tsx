@@ -1,14 +1,18 @@
-import { LayoutDashboard, Key, ClipboardList, History, Users, Wallet, Settings, LifeBuoy, Zap, Plus, Infinity, CalendarDays } from "lucide-react";
+import { LayoutDashboard, Key, ClipboardList, History, Users, Wallet, Settings, LifeBuoy, Zap, Plus, Infinity, CalendarDays, LogOut } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AnnouncementBar } from "@/components/landing/AnnouncementBar";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "@tanstack/react-router";
+
 
 
 export const ResellerDashboard = () => {
   const { user, loading } = useAuth(true);
+  const navigate = useNavigate();
+
 
   if (loading) {
     return <div className="min-h-screen bg-background flex items-center justify-center text-white italic font-black">ENTRANDO AO PAINEL...</div>;
