@@ -41,7 +41,7 @@ export const Navbar = () => {
 
         <div className="flex items-center gap-3">
           <Button variant="ghost" className="hidden sm:flex font-black italic tracking-tighter uppercase" asChild>
-            <a href="/dashboard">Acceder</a>
+            <a href="/auth">Acceder</a>
           </Button>
           <Button className="gap-2">
             <MessageCircle className="w-4 h-4" />

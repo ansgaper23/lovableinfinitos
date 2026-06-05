@@ -2,6 +2,8 @@ import { LayoutDashboard, Zap, Clock, Settings, LogOut, MessageSquare, CreditCar
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { supabase } from "@/integrations/supabase/client";
+
 
 export const Dashboard = () => {
   return (
@@ -26,7 +28,7 @@ export const Dashboard = () => {
         </div>
 
         <div className="mt-auto p-8 border-t border-white/5">
-          <Button variant="ghost" className="w-full justify-start gap-3 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors" asChild>
+          <Button variant="ghost" onClick={() => supabase.auth.signOut()} className="w-full justify-start gap-3 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors" asChild>
             <a href="/">
               <LogOut className="w-5 h-5" />
               Cerrar Sesión
