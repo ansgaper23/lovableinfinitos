@@ -2,6 +2,7 @@ import { Navbar } from "@/components/landing/Navbar";
 import { Hero } from "@/components/landing/Hero";
 import { Pricing } from "@/components/landing/Pricing";
 import { FAQ } from "@/components/landing/FAQ";
+import { Stats } from "@/components/landing/Stats";
 import { MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
