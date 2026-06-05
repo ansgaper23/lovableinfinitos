@@ -26,7 +26,7 @@ export const LandingPage = () => {
                 <span className="text-primary-foreground font-black text-2xl italic">L</span>
               </div>
               <div>
-                <span className="font-black text-2xl tracking-tighter italic block">LOVABLE ILIMITADO</span>
+                <span className="font-black text-2xl tracking-tighter italic block">LOVABLE INFINITO</span>
                 <span className="text-[10px] font-black tracking-[0.3em] text-primary uppercase">Elite Builder Access</span>
               </div>
             </div>
@@ -40,7 +40,7 @@ export const LandingPage = () => {
             
             <div className="text-right flex flex-col items-center md:items-end gap-2">
               <p className="text-sm font-light text-muted-foreground uppercase tracking-widest">
-                © 2026 LOVABLE ILIMITADO PERÚ
+                © 2026 LOVABLE INFINITO PERÚ
               </p>
               <div className="flex gap-4">
                 <div className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center hover:border-primary transition-colors cursor-pointer">

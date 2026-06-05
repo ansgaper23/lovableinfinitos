@@ -119,7 +119,7 @@ export const Pricing = () => {
 
         <div className="max-w-4xl mx-auto">
           <div className="bg-background rounded-3xl border p-8 md:p-12 shadow-sm">
-            <h3 className="text-2xl md:text-3xl font-bold mb-10 text-center">Comparativa: ¿Por qué Lovable Ilimitado?</h3>
+            <h3 className="text-2xl md:text-3xl font-bold mb-10 text-center">Comparativa: ¿Por qué Lovable Infinito?</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
               <div className="space-y-6">
                 <h4 className="flex items-center gap-2 text-xl font-bold text-destructive">
@@ -142,7 +142,7 @@ export const Pricing = () => {
               </div>
               <div className="space-y-6">
                 <h4 className="flex items-center gap-2 text-xl font-bold text-primary">
-                  <Rocket className="w-6 h-6" /> Lovable Ilimitado
+                  <Rocket className="w-6 h-6" /> Lovable Infinito
                 </h4>
                 <ul className="space-y-4">
                   <li className="flex items-center gap-3">
