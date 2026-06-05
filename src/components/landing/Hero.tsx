@@ -32,7 +32,7 @@ export const Hero = () => {
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto pt-8 border-t border-border/50">
+        <div className="hidden grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto pt-8 border-t border-border/50">
           <div className="flex flex-col items-center gap-2">
             <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-2">
               <Zap className="w-6 h-6" />
