@@ -1,6 +1,6 @@
 export const AnnouncementBar = () => {
   return (
-    <div className="h-10 bg-primary/10 border-b border-primary/20 flex items-center overflow-hidden relative z-[60] backdrop-blur-md">
+    <div className="fixed top-0 left-0 right-0 h-10 bg-primary/10 border-b border-primary/20 flex items-center overflow-hidden z-[60] backdrop-blur-md">
       <div className="flex whitespace-nowrap animate-marquee">
         {[...Array(10)].map((_, i) => (
           <div key={i} className="flex items-center gap-8 px-4">
