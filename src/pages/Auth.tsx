@@ -3,10 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { toast } from "sonner";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, Link } from "@tanstack/react-router";
+
 
 
 export const Auth = () => {
@@ -71,6 +73,13 @@ export const Auth = () => {
       </div>
 
       <Card className="w-full max-w-md rounded-none border-white/5 bg-white/[0.02] backdrop-blur-xl relative z-10 overflow-hidden">
+        <Link 
+          to="/" 
+          className="absolute top-6 left-6 p-2 text-muted-foreground hover:text-primary transition-colors group z-20"
+          title="Volver al inicio"
+        >
+          <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+        </Link>
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent" />
         <CardHeader className="text-center pt-10">
           <div className="flex justify-center mb-6">
