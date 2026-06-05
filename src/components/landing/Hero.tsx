@@ -31,7 +31,7 @@ export const Hero = () => {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-32 animate-fade-in" style={{ animationDelay: "0.2s" }}>
           <Button size="lg" className="h-16 px-10 text-xl font-black italic tracking-tighter uppercase gap-3 shadow-[0_0_30px_rgba(var(--color-primary),0.4)] hover:shadow-[0_0_50px_rgba(var(--color-primary),0.6)] w-full sm:w-auto rounded-none transition-all duration-300 transform hover:-translate-y-1" asChild>
             <a href="#precios">
-              ACTUALIZAR A ILIMITADO <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+              ACTUALIZAR A INFINITO <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
             </a>
           </Button>
           <Button size="lg" variant="outline" className="h-16 px-10 text-xl font-black italic tracking-tighter uppercase w-full sm:w-auto rounded-none border-white/20 bg-white/5 hover:bg-white/10 transition-all">

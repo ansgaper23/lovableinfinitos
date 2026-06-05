@@ -11,7 +11,7 @@ export const Navbar = () => {
           <div className="w-10 h-10 bg-primary rounded-none flex items-center justify-center transform group-hover:rotate-90 transition-transform duration-500 shadow-[0_0_20px_rgba(var(--color-primary),0.3)]">
             <span className="text-primary-foreground font-black text-2xl italic">L</span>
           </div>
-          <span className="font-black text-2xl tracking-tighter italic hidden sm:inline-block group-hover:text-primary transition-colors">LOVABLE <span className="text-primary text-glow">ILIMITADO</span></span>
+          <span className="font-black text-2xl tracking-tighter italic hidden sm:inline-block group-hover:text-primary transition-colors">LOVABLE <span className="text-primary text-glow">INFINITO</span></span>
         </div>
 
         <NavigationMenu className="hidden md:flex">
