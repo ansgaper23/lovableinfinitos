@@ -179,7 +179,7 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: oklch(0.7 0.25 250 / 0.2);
+    background: oklch(0.7 0.25 250 / 0.6);
     border-radius: 0;
     border: 1px solid oklch(0.7 0.25 250 / 0.1);
   }
