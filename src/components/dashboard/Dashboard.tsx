@@ -3,11 +3,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
+import { AnnouncementBar } from "@/components/landing/AnnouncementBar";
+
 
 
 export const Dashboard = () => {
   return (
-    <div className="min-h-screen bg-background text-foreground dark font-sans flex overflow-hidden">
+    <div className="flex flex-col h-screen overflow-hidden">
+      <AnnouncementBar />
+      <div className="flex-1 bg-background text-foreground dark font-sans flex overflow-hidden">
       {/* Sidebar */}
       <aside className="w-64 border-r border-white/5 bg-card/30 backdrop-blur-xl hidden lg:flex flex-col">
         <div className="p-8">
@@ -130,7 +134,8 @@ export const Dashboard = () => {
         </div>
       </main>
     </div>
-  );
+  </div>
+);
 };
 
 const NavItem = ({ icon, label, active = false }: { icon: React.ReactNode, label: string, active?: boolean }) => (
