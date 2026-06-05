@@ -3,10 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Zap } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable/index";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
+
 
 export const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -46,21 +47,21 @@ export const Auth = () => {
 
   const handleGoogleLogin = async () => {
     try {
-      // For Lovable Cloud managed auth, we might need a different approach if available
-      // but standard supabase-js client is usually the baseline. 
-      // If 'lovable' module is available, we'd use it. Since it was just enabled,
-      // I'll check if src/integrations/lovable/index.ts exists later if this fails.
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: window.location.origin + "/dashboard",
-        },
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: window.location.origin + "/dashboard",
       });
-      if (error) throw error;
+
+      if (result.error) throw result.error;
+      
+      if (!result.redirected) {
+        toast.success("¡Bienvenido!");
+        navigate({ to: "/dashboard" });
+      }
     } catch (error: any) {
       toast.error(error.message || "Error con Google Login");
     }
   };
+
 
   return (
     <div className="min-h-screen bg-background text-foreground dark font-sans flex items-center justify-center p-4 bg-[radial-gradient(circle_at_center,var(--color-primary),transparent_80%)] bg-opacity-[0.05]">
