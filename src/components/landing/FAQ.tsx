@@ -25,27 +25,32 @@ export const FAQ = () => {
   ];
 
   return (
-    <section id="faq" className="py-24 px-4 bg-background">
-      <div className="container mx-auto max-w-3xl">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold mb-6">Preguntas Frecuentes</h2>
-          <p className="text-muted-foreground text-lg">
-            Todo lo que necesitas saber sobre Lovable Ilimitado.
+    <section id="faq" className="py-32 px-4 bg-background relative">
+      <div className="absolute top-0 right-0 w-1/2 h-full bg-[radial-gradient(circle_at_top_right,var(--color-primary),transparent_70%)] opacity-[0.02] pointer-events-none" />
+      <div className="container mx-auto max-w-4xl relative z-10">
+        <div className="text-center mb-20">
+          <h2 className="text-4xl md:text-6xl font-black mb-8 italic tracking-tighter uppercase">
+            SOPORTE <span className="text-primary">TÉCNICO</span>
+          </h2>
+          <p className="text-muted-foreground text-xl font-light">
+            Despeja tus dudas y empieza a construir hoy mismo.
           </p>
         </div>
 
-        <Accordion type="single" collapsible className="w-full">
-          {faqs.map((faq, index) => (
-            <AccordionItem key={index} value={`item-${index}`} className="border-b border-border/50 py-2">
-              <AccordionTrigger className="text-left font-semibold text-lg hover:no-underline hover:text-primary transition-colors">
-                {faq.question}
-              </AccordionTrigger>
-              <AccordionContent className="text-muted-foreground text-base leading-relaxed pt-2">
-                {faq.answer}
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
+        <div className="glass-card p-8 md:p-12 border-white/5">
+          <Accordion type="single" collapsible className="w-full">
+            {faqs.map((faq, index) => (
+              <AccordionItem key={index} value={`item-${index}`} className="border-b border-white/5 py-4 last:border-0 group">
+                <AccordionTrigger className="text-left font-black text-xl italic tracking-tight hover:no-underline group-hover:text-primary transition-colors uppercase">
+                  {faq.question}
+                </AccordionTrigger>
+                <AccordionContent className="text-muted-foreground text-lg font-light leading-relaxed pt-4">
+                  {faq.answer}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
       </div>
     </section>
   );

@@ -47,56 +47,70 @@ export const Pricing = () => {
   ];
 
   return (
-    <section id="precios" className="py-24 px-4 bg-muted/30">
-      <div className="container mx-auto">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold mb-6">Planes Flexibles para tu Éxito</h2>
-          <p className="text-muted-foreground text-lg">
-            Selecciona el plan que mejor se adapte a tu flujo de trabajo. Sin suscripciones forzosas, paga solo por lo que necesitas.
+    <section id="precios" className="py-32 px-4 relative overflow-hidden bg-background">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,var(--color-primary),transparent_80%)] opacity-[0.03] pointer-events-none" />
+      
+      <div className="container mx-auto relative z-10">
+        <div className="text-center max-w-3xl mx-auto mb-20">
+          <h2 className="text-4xl md:text-6xl font-black mb-8 italic tracking-tighter">
+            PLANES DE <span className="text-primary text-glow">ALTO RENDIMIENTO</span>
+          </h2>
+          <p className="text-muted-foreground text-xl font-light">
+            Energía ilimitada para tus proyectos. Paga solo por el tiempo que necesitas, sin letras pequeñas.
           </p>
-          <p className="text-sm font-medium text-primary mt-4 italic">
-            * Precios expresados en Soles (S/). Equivalencias aproximadas según tipo de cambio.
-          </p>
+          <div className="inline-block mt-8 py-2 px-6 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-md">
+            <p className="text-sm font-bold text-primary tracking-widest uppercase">
+              Precios en Soles (S/) • Pago Seguro
+            </p>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-32">
           {plans.map((plan) => (
             <Card 
               key={plan.name} 
-              className={`relative overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 border-2 ${
-                plan.popular ? "border-primary shadow-xl shadow-primary/10" : "border-border"
+              className={`relative overflow-hidden transition-all duration-500 hover:scale-[1.02] border ${
+                plan.popular 
+                  ? "border-primary/50 glass-card shadow-[0_0_40px_rgba(var(--color-primary),0.1)]" 
+                  : "border-white/10 bg-white/[0.02] backdrop-blur-xl"
               }`}
             >
               {plan.popular && (
-                <div className="absolute top-0 right-0">
-                  <div className="bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-widest py-1 px-10 rotate-45 translate-x-[30px] translate-y-[15px]">
-                    Más Popular
-                  </div>
+                <div className="absolute top-0 right-0 bg-primary px-4 py-1 text-[10px] font-black uppercase tracking-tighter text-primary-foreground">
+                  Más Recomendado
                 </div>
               )}
-              <CardContent className="p-8">
-                <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
-                <p className="text-sm text-muted-foreground mb-6 h-10">{plan.description}</p>
-                <div className="mb-8">
-                  <span className="text-4xl font-extrabold">{plan.price}</span>
-                  <span className="text-muted-foreground font-medium ml-1">/ {plan.duration}</span>
+              <CardContent className="p-10">
+                <div className="flex justify-between items-start mb-6">
+                  <div>
+                    <h3 className="text-2xl font-black italic tracking-tighter text-white">{plan.name}</h3>
+                    <p className="text-xs text-primary font-bold uppercase tracking-widest mt-1">{plan.duration}</p>
+                  </div>
                 </div>
-                <ul className="space-y-4 mb-8">
+                
+                <div className="mb-10">
+                  <span className="text-5xl font-black tracking-tighter text-white">{plan.price}</span>
+                </div>
+                
+                <p className="text-sm text-muted-foreground mb-8 h-12 leading-relaxed">{plan.description}</p>
+                
+                <ul className="space-y-4 mb-10">
                   {plan.features.map((feature) => (
-                    <li key={feature} className="flex items-start gap-3 text-sm">
-                      <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+                    <li key={feature} className="flex items-start gap-3 text-sm group">
+                      <div className="w-5 h-5 rounded-sm border border-primary/30 flex items-center justify-center shrink-0 mt-0.5 group-hover:border-primary transition-colors">
                         <Check className="w-3 h-3 text-primary" />
                       </div>
-                      <span>{feature}</span>
+                      <span className="text-white/80 group-hover:text-white transition-colors">{feature}</span>
                     </li>
                   ))}
                 </ul>
-                <button className={`w-full py-4 rounded-xl font-bold transition-colors ${
+                
+                <button className={`w-full py-5 rounded-none font-black uppercase tracking-widest transition-all duration-300 transform ${
                   plan.popular 
-                    ? "bg-primary text-primary-foreground hover:bg-primary/90" 
-                    : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                    ? "bg-primary text-primary-foreground hover:shadow-[0_0_30px_rgba(var(--color-primary),0.4)]" 
+                    : "bg-white/5 text-white hover:bg-white/10 border border-white/10"
                 }`}>
-                  Empezar Ahora
+                  Activar Acceso
                 </button>
               </CardContent>
             </Card>

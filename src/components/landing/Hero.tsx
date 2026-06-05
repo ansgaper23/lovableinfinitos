@@ -5,30 +5,37 @@ import { ArrowRight, Zap, Shield, Globe } from "lucide-react";
 export const Hero = () => {
   return (
     <section id="inicio" className="pt-32 pb-16 md:pt-48 md:pb-32 px-4 overflow-hidden relative">
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-6xl h-full -z-10 opacity-30 blur-[100px] bg-gradient-to-b from-primary/20 to-transparent pointer-events-none" />
+      {/* Animated background elements */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-6xl h-full -z-10 opacity-50 blur-[120px] bg-[radial-gradient(circle_at_center,var(--color-primary),transparent_70%)] pointer-events-none" />
+      <div className="absolute top-20 right-[10%] w-64 h-64 bg-accent/20 rounded-full blur-[80px] animate-pulse pointer-events-none" />
+      <div className="absolute bottom-10 left-[5%] w-96 h-96 bg-primary/10 rounded-full blur-[100px] animate-float pointer-events-none" />
       
       <div className="container mx-auto text-center relative z-10">
-        <Badge variant="outline" className="mb-6 py-1.5 px-4 border-primary/20 bg-primary/5 text-primary animate-fade-in">
+        <Badge variant="outline" className="mb-6 py-1.5 px-4 border-primary/30 bg-primary/10 text-primary animate-fade-in backdrop-blur-sm neon-border">
+          <span className="relative flex h-2 w-2 mr-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+          </span>
           🚀 +200 Builders activos en LATAM
         </Badge>
         
-        <h1 className="text-4xl md:text-7xl font-extrabold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/70 leading-tight">
-          ¿SE TE ACABAN LOS <br className="hidden md:block" />
-          <span className="text-primary">CRÉDITOS DE LOVABLE?</span>
+        <h1 className="text-5xl md:text-8xl font-black tracking-tighter mb-8 leading-tight italic">
+          <span className="block bg-clip-text text-transparent bg-gradient-to-b from-white to-white/40">LIBERA TU</span>
+          <span className="text-primary text-glow">POTENCIAL IA</span>
         </h1>
         
-        <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-          Con <span className="text-foreground font-semibold text-primary">Lovable Ilimitado</span> tenés créditos infinitos por una fracción del precio oficial. Sin pausas. Sin límites. Optimizado para el mercado peruano.
+        <p className="text-lg md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-12 leading-relaxed font-light">
+          Rompe las barreras de <span className="text-foreground font-bold border-b-2 border-primary/50">Lovable</span>. Créditos infinitos, sin fricción, optimizado para la comunidad de builders en Perú.
         </p>
         
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-24">
-          <Button size="lg" className="h-14 px-8 text-lg font-semibold gap-2 shadow-lg shadow-primary/20 w-full sm:w-auto" asChild>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-32 animate-fade-in" style={{ animationDelay: "0.2s" }}>
+          <Button size="lg" className="h-16 px-10 text-xl font-black italic tracking-tighter uppercase gap-3 shadow-[0_0_30px_rgba(var(--color-primary),0.4)] hover:shadow-[0_0_50px_rgba(var(--color-primary),0.6)] w-full sm:w-auto rounded-none transition-all duration-300 transform hover:-translate-y-1" asChild>
             <a href="#precios">
-              Ver Planes en Soles <ArrowRight className="w-5 h-5" />
+              ACTUALIZAR A ILIMITADO <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
             </a>
           </Button>
-          <Button size="lg" variant="outline" className="h-14 px-8 text-lg font-semibold w-full sm:w-auto">
-            Mirar cómo funciona
+          <Button size="lg" variant="outline" className="h-16 px-10 text-xl font-black italic tracking-tighter uppercase w-full sm:w-auto rounded-none border-white/20 bg-white/5 hover:bg-white/10 transition-all">
+            VER DEMO <Zap className="w-5 h-5 ml-2 text-primary" />
           </Button>
         </div>
 

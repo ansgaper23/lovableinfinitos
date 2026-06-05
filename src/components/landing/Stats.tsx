@@ -10,15 +10,14 @@ export const Stats = () => {
   ];
 
   return (
-    <div className="container mx-auto px-4 -mt-12 relative z-20">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+    <div className="container mx-auto px-4 -mt-20 relative z-30">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
         {stats.map((stat) => (
-          <Card key={stat.label} className="border-none shadow-xl bg-background/80 backdrop-blur-sm">
-            <CardContent className="p-6 flex flex-col items-center justify-center text-center">
-              <div className="text-3xl md:text-4xl font-black text-primary mb-2">{stat.value}</div>
-              <div className="text-[10px] md:text-xs font-bold tracking-widest text-muted-foreground uppercase">{stat.label}</div>
-            </CardContent>
-          </Card>
+          <div key={stat.label} className="glass-card p-6 md:p-8 flex flex-col items-center justify-center text-center border-white/5 hover:border-primary/30 transition-all group overflow-hidden relative">
+            <div className="absolute inset-0 bg-primary/5 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
+            <div className="relative z-10 text-3xl md:text-5xl font-black text-white group-hover:text-primary transition-colors mb-2 italic tracking-tighter">{stat.value}</div>
+            <div className="relative z-10 text-[10px] md:text-xs font-black tracking-[0.2em] text-muted-foreground uppercase group-hover:text-white transition-colors">{stat.label}</div>
+          </div>
         ))}
       </div>
     </div>
