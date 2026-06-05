@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 
 export const LandingPage = () => {
   return (
-    <div className="min-h-screen bg-background text-foreground selection:bg-primary/20">
+    <div className="min-h-screen bg-background text-foreground selection:bg-primary/30 dark font-sans">
       <Navbar />
       <main>
         <Hero />
