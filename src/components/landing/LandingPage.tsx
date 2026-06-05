@@ -17,26 +17,42 @@ export const LandingPage = () => {
         <FAQ />
       </main>
       
-      <footer className="py-12 px-4 border-t border-border/50 bg-muted/20">
+      <footer className="py-24 px-4 border-t border-white/5 bg-background relative overflow-hidden">
+        <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
         <div className="container mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-8">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-xl">L</span>
+          <div className="flex flex-col md:flex-row justify-between items-center gap-12">
+            <div className="flex items-center gap-4 group">
+              <div className="w-12 h-12 bg-primary rounded-none flex items-center justify-center transform group-hover:rotate-180 transition-transform duration-700">
+                <span className="text-primary-foreground font-black text-2xl italic">L</span>
               </div>
-              <span className="font-bold text-xl tracking-tight">Lovable Ilimitado</span>
+              <div>
+                <span className="font-black text-2xl tracking-tighter italic block">LOVABLE ILIMITADO</span>
+                <span className="text-[10px] font-black tracking-[0.3em] text-primary uppercase">Elite Builder Access</span>
+              </div>
             </div>
             
-            <nav className="flex flex-wrap justify-center gap-8 text-sm font-medium text-muted-foreground">
-              <a href="#inicio" className="hover:text-primary transition-colors">Inicio</a>
-              <a href="#precios" className="hover:text-primary transition-colors">Precios</a>
-              <a href="#faq" className="hover:text-primary transition-colors">FAQ</a>
-              <a href="#" className="hover:text-primary transition-colors">Términos</a>
+            <nav className="flex flex-wrap justify-center gap-12 text-sm font-black uppercase tracking-widest text-muted-foreground">
+              <a href="#inicio" className="hover:text-primary transition-colors hover:text-glow">Inicio</a>
+              <a href="#precios" className="hover:text-primary transition-colors hover:text-glow">Planes</a>
+              <a href="#faq" className="hover:text-primary transition-colors hover:text-glow">FAQ</a>
+              <a href="#" className="hover:text-primary transition-colors hover:text-glow opacity-50 cursor-not-allowed">Legal</a>
             </nav>
             
-            <p className="text-sm text-muted-foreground">
-              © 2026 Lovable Ilimitado. Todos los derechos reservados.
-            </p>
+            <div className="text-right flex flex-col items-center md:items-end gap-2">
+              <p className="text-sm font-light text-muted-foreground uppercase tracking-widest">
+                © 2026 LOVABLE ILIMITADO PERÚ
+              </p>
+              <div className="flex gap-4">
+                <div className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center hover:border-primary transition-colors cursor-pointer">
+                  <span className="sr-only">Social</span>
+                  <div className="w-2 h-2 bg-white/40 rounded-full group-hover:bg-primary" />
+                </div>
+                <div className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center hover:border-primary transition-colors cursor-pointer">
+                  <span className="sr-only">Social</span>
+                  <div className="w-2 h-2 bg-white/40 rounded-full group-hover:bg-primary" />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </footer>
