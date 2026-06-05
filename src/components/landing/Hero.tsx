@@ -28,14 +28,14 @@ export const Hero = () => {
           Rompe las barreras de <span className="text-foreground font-bold border-b-2 border-primary/50">Lovable</span>. Créditos infinitos, sin fricción, optimizado para la comunidad de builders en Perú.
         </p>
         
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-24">
-          <Button size="lg" className="h-14 px-8 text-lg font-semibold gap-2 shadow-lg shadow-primary/20 w-full sm:w-auto" asChild>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-32 animate-fade-in" style={{ animationDelay: "0.2s" }}>
+          <Button size="lg" className="h-16 px-10 text-xl font-black italic tracking-tighter uppercase gap-3 shadow-[0_0_30px_rgba(var(--color-primary),0.4)] hover:shadow-[0_0_50px_rgba(var(--color-primary),0.6)] w-full sm:w-auto rounded-none transition-all duration-300 transform hover:-translate-y-1" asChild>
             <a href="#precios">
-              Ver Planes en Soles <ArrowRight className="w-5 h-5" />
+              ACTUALIZAR A ILIMITADO <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
             </a>
           </Button>
-          <Button size="lg" variant="outline" className="h-14 px-8 text-lg font-semibold w-full sm:w-auto">
-            Mirar cómo funciona
+          <Button size="lg" variant="outline" className="h-16 px-10 text-xl font-black italic tracking-tighter uppercase w-full sm:w-auto rounded-none border-white/20 bg-white/5 hover:bg-white/10 transition-all">
+            VER DEMO <Zap className="w-5 h-5 ml-2 text-primary" />
           </Button>
         </div>
 
