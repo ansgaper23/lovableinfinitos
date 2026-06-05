@@ -21,7 +21,7 @@ export const Hero = () => {
           Con <span className="text-foreground font-semibold text-primary">Lovable Ilimitado</span> tenés créditos infinitos por una fracción del precio oficial. Sin pausas. Sin límites. Optimizado para el mercado peruano.
         </p>
         
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-24">
           <Button size="lg" className="h-14 px-8 text-lg font-semibold gap-2 shadow-lg shadow-primary/20 w-full sm:w-auto" asChild>
             <a href="#precios">
               Ver Planes en Soles <ArrowRight className="w-5 h-5" />
