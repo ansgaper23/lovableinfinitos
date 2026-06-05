@@ -58,6 +58,7 @@ export const LandingPage = () => {
             </div>
           </div>
         </div>
+      </footer>
     </div>
   );
 };
