@@ -8,7 +8,7 @@ export const ResellerDashboard = () => {
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-background">
       <AnnouncementBar />
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 mt-10 flex overflow-hidden">
         {/* Sidebar */}
         <aside className="w-64 border-r border-white/5 bg-[#050A15] hidden lg:flex flex-col">
           <div className="p-6">
