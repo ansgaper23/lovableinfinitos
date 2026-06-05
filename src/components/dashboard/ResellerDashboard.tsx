@@ -3,8 +3,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AnnouncementBar } from "@/components/landing/AnnouncementBar";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+
 
 export const ResellerDashboard = () => {
+  const { user, loading } = useAuth(true);
+
+  if (loading) {
+    return <div className="min-h-screen bg-background flex items-center justify-center text-white italic font-black">ENTRANDO AO PAINEL...</div>;
+  }
+
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-background">
       <AnnouncementBar />

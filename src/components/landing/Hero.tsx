@@ -4,7 +4,7 @@ import { ArrowRight, Zap, Shield, Globe } from "lucide-react";
 
 export const Hero = () => {
   return (
-    <section id="inicio" className="pt-32 pb-16 md:pt-48 md:pb-32 px-4 overflow-hidden relative">
+    <section id="inicio" className="pt-40 pb-16 md:pt-56 md:pb-32 px-4 overflow-hidden relative">
       {/* Animated background elements */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-6xl h-full -z-10 opacity-50 blur-[120px] bg-[radial-gradient(circle_at_center,var(--color-primary),transparent_70%)] pointer-events-none" />
       <div className="absolute top-20 right-[10%] w-64 h-64 bg-accent/20 rounded-full blur-[80px] animate-pulse pointer-events-none" />

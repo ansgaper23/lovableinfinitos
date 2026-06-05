@@ -1,7 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, navigationMenuTriggerStyle } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, LayoutDashboard } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { Link } from "@tanstack/react-router";
+
 
 export const Navbar = () => {
   return (
@@ -40,9 +43,7 @@ export const Navbar = () => {
         </NavigationMenu>
 
         <div className="flex items-center gap-3">
-          <Button variant="ghost" className="hidden sm:flex font-black italic tracking-tighter uppercase" asChild>
-            <a href="/auth">Acceder</a>
-          </Button>
+          <AuthButtons />
           <Button className="gap-2">
             <MessageCircle className="w-4 h-4" />
             Soporte
@@ -50,5 +51,28 @@ export const Navbar = () => {
         </div>
       </div>
     </header>
+  );
+};
+
+const AuthButtons = () => {
+  const { user, loading } = useAuth();
+
+  if (loading) return <div className="w-20 h-8 bg-white/5 animate-pulse" />;
+
+  if (user) {
+    return (
+      <Button variant="outline" className="hidden sm:flex font-black italic tracking-tighter uppercase gap-2 border-primary/50 text-primary" asChild>
+        <Link to="/dashboard">
+          <LayoutDashboard className="w-4 h-4" />
+          Mi Panel
+        </Link>
+      </Button>
+    );
+  }
+
+  return (
+    <Button variant="ghost" className="hidden sm:flex font-black italic tracking-tighter uppercase" asChild>
+      <Link to="/auth">Acceder</Link>
+    </Button>
   );
 };

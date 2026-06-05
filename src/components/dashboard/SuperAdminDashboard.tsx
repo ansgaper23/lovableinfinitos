@@ -4,8 +4,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { AnnouncementBar } from "@/components/landing/AnnouncementBar";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+
 
 export const SuperAdminDashboard = () => {
+  const { user, loading } = useAuth(true);
+
+  if (loading) {
+    return <div className="min-h-screen bg-background flex items-center justify-center text-white">Cargando...</div>;
+  }
+
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-background">
       <AnnouncementBar />
