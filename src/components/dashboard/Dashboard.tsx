@@ -9,12 +9,12 @@ export const Dashboard = () => {
       {/* Sidebar */}
       <aside className="w-64 border-r border-white/5 bg-card/30 backdrop-blur-xl hidden lg:flex flex-col">
         <div className="p-8">
-          <div className="flex items-center gap-3 mb-12 group cursor-pointer">
+          <a href="/" className="flex items-center gap-3 mb-12 group cursor-pointer">
             <div className="w-10 h-10 bg-primary rounded-none flex items-center justify-center transform group-hover:rotate-90 transition-transform duration-500 shadow-[0_0_20px_rgba(var(--color-primary),0.3)]">
               <span className="text-primary-foreground font-black text-2xl italic">L</span>
             </div>
             <span className="font-black text-xl tracking-tighter italic">INFINITO</span>
-          </div>
+          </a>
 
           <nav className="space-y-2">
             <NavItem icon={<LayoutDashboard className="w-5 h-5" />} label="Dashboard" active />
