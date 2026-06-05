@@ -28,8 +28,9 @@ export const Dashboard = () => {
             <NavItem icon={<Clock className="w-5 h-5" />} label="Historial" />
             <NavItem icon={<CreditCard className="w-5 h-5" />} label="Suscripción" />
             <NavItem icon={<Settings className="w-5 h-5" />} label="Ajustes" />
-            <div className="pt-4 mt-4 border-t border-white/5">
+            <div className="pt-4 mt-4 border-t border-white/5 space-y-2">
               <NavItem icon={<ShieldCheck className="w-5 h-5 text-destructive" />} label="SuperAdmin" href="/superadmin" />
+              <NavItem icon={<Key className="w-5 h-5 text-primary" />} label="Revendedor" href="/reseller" />
             </div>
           </nav>
         </div>
