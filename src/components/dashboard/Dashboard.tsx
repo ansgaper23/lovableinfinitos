@@ -11,7 +11,7 @@ export const Dashboard = () => {
   return (
     <div className="flex flex-col h-screen overflow-hidden">
       <AnnouncementBar />
-      <div className="flex-1 bg-background text-foreground dark font-sans flex overflow-hidden">
+      <div className="flex-1 mt-10 bg-background text-foreground dark font-sans flex overflow-hidden">
       {/* Sidebar */}
       <aside className="w-64 border-r border-white/5 bg-card/30 backdrop-blur-xl hidden lg:flex flex-col">
         <div className="p-8">
