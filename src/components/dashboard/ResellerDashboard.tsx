@@ -43,7 +43,13 @@ export const ResellerDashboard = () => {
               <ResellerNavItem icon={<LifeBuoy className="w-5 h-5" />} label="Suporte" />
             </nav>
           </div>
-        </aside>
+            <div className="mt-auto p-6 border-t border-white/5">
+              <Button variant="ghost" onClick={async () => { await supabase.auth.signOut(); navigate({ to: "/" }); }} className="w-full justify-start gap-3 text-muted-foreground hover:text-white transition-colors">
+                <LogOut className="w-5 h-5" />
+                Sair ao Início
+              </Button>
+            </div>
+          </aside>
 
         {/* Main Content */}
         <main className="flex-1 overflow-y-auto p-8 bg-[#02060E]">
