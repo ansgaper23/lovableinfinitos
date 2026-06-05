@@ -141,8 +141,8 @@ export const Dashboard = () => {
 );
 };
 
-const NavItem = ({ icon, label, active = false }: { icon: React.ReactNode, label: string, active?: boolean }) => (
-  <a href="#" className={`flex items-center gap-3 px-4 py-3 font-black italic tracking-tighter uppercase text-sm transition-all group ${
+const NavItem = ({ icon, label, active = false, href = "#" }: { icon: React.ReactNode, label: string, active?: boolean, href?: string }) => (
+  <a href={href} className={`flex items-center gap-3 px-4 py-3 font-black italic tracking-tighter uppercase text-sm transition-all group ${
     active ? 'text-primary bg-primary/10 border-r-2 border-primary' : 'text-muted-foreground hover:text-white hover:bg-white/5'
   }`}>
     <span className={active ? 'text-primary' : 'text-muted-foreground group-hover:text-primary transition-colors'}>
