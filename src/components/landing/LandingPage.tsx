@@ -1,14 +1,17 @@
 import { Navbar } from "@/components/landing/Navbar";
+import { AnnouncementBar } from "@/components/landing/AnnouncementBar";
 import { Hero } from "@/components/landing/Hero";
 import { Pricing } from "@/components/landing/Pricing";
 import { FAQ } from "@/components/landing/FAQ";
 import { Stats } from "@/components/landing/Stats";
+
 import { MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export const LandingPage = () => {
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-primary/30 dark font-sans">
+      <AnnouncementBar />
       <Navbar />
       <main>
         <Hero />
