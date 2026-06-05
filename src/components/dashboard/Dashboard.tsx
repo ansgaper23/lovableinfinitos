@@ -4,10 +4,22 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { AnnouncementBar } from "@/components/landing/AnnouncementBar";
+import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "@tanstack/react-router";
+
 
 
 
 export const Dashboard = () => {
+  const { user, loading } = useAuth(true);
+  const navigate = useNavigate();
+
+  if (loading) {
+    return <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-primary"></div>
+    </div>;
+  }
+
   return (
     <div className="flex flex-col h-screen overflow-hidden">
       <AnnouncementBar />
@@ -36,11 +48,9 @@ export const Dashboard = () => {
         </div>
 
         <div className="mt-auto p-8 border-t border-white/5">
-          <Button variant="ghost" onClick={() => supabase.auth.signOut()} className="w-full justify-start gap-3 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors" asChild>
-            <a href="/">
-              <LogOut className="w-5 h-5" />
-              Cerrar Sesión
-            </a>
+          <Button variant="ghost" onClick={async () => { await supabase.auth.signOut(); navigate({ to: "/" }); }} className="w-full justify-start gap-3 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors">
+            <LogOut className="w-5 h-5" />
+            Cerrar Sesión
           </Button>
         </div>
       </aside>
@@ -51,11 +61,11 @@ export const Dashboard = () => {
           <h1 className="text-xl font-black italic tracking-tighter uppercase">Panel de Control</h1>
           <div className="flex items-center gap-4">
             <div className="text-right hidden sm:block">
-              <p className="text-sm font-bold text-white leading-none">Juan Pérez</p>
+              <p className="text-sm font-bold text-white leading-none">{user?.email?.split('@')[0] || 'Usuario'}</p>
               <p className="text-[10px] font-black tracking-widest text-primary uppercase">Plan Premium</p>
             </div>
-            <div className="w-10 h-10 rounded-none bg-primary/20 border border-primary/30 flex items-center justify-center font-black italic text-primary">
-              JP
+            <div className="w-10 h-10 rounded-none bg-primary/20 border border-primary/30 flex items-center justify-center font-black italic text-primary uppercase">
+              {user?.email?.[0] || 'U'}
             </div>
           </div>
         </header>

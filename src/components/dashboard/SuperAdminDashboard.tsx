@@ -4,8 +4,21 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { AnnouncementBar } from "@/components/landing/AnnouncementBar";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "@tanstack/react-router";
+
+
 
 export const SuperAdminDashboard = () => {
+  const { user, loading } = useAuth(true);
+  const navigate = useNavigate();
+
+
+  if (loading) {
+    return <div className="min-h-screen bg-background flex items-center justify-center text-white">Cargando...</div>;
+  }
+
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-background">
       <AnnouncementBar />
@@ -30,7 +43,7 @@ export const SuperAdminDashboard = () => {
           </div>
 
           <div className="mt-auto p-8 border-t border-white/5">
-            <Button variant="ghost" className="w-full justify-start gap-3 text-muted-foreground hover:text-white transition-colors">
+            <Button variant="ghost" onClick={async () => { await supabase.auth.signOut(); navigate({ to: "/" }); }} className="w-full justify-start gap-3 text-muted-foreground hover:text-white transition-colors">
               <LogOut className="w-5 h-5" />
               Salir al Inicio
             </Button>
