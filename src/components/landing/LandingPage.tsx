@@ -5,7 +5,7 @@ import { Pricing } from "@/components/landing/Pricing";
 import { FAQ } from "@/components/landing/FAQ";
 import { Stats } from "@/components/landing/Stats";
 
-import { MessageCircle } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 
 export const LandingPage = () => {
@@ -59,14 +59,6 @@ export const LandingPage = () => {
           </div>
         </div>
       </footer>
-
-      {/* Floating WhatsApp Button */}
-      <Button 
-        className="fixed bottom-6 right-6 w-14 h-14 rounded-full shadow-2xl bg-green-500 hover:bg-green-600 z-50 p-0"
-        title="Contactar Soporte"
-      >
-        <MessageCircle className="w-8 h-8 text-white" />
-      </Button>
     </div>
   );
 };
