@@ -26,9 +26,11 @@ export const Dashboard = () => {
         </div>
 
         <div className="mt-auto p-8 border-t border-white/5">
-          <Button variant="ghost" className="w-full justify-start gap-3 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors">
-            <LogOut className="w-5 h-5" />
-            Cerrar Sesión
+          <Button variant="ghost" className="w-full justify-start gap-3 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors" asChild>
+            <a href="/">
+              <LogOut className="w-5 h-5" />
+              Cerrar Sesión
+            </a>
           </Button>
         </div>
       </aside>
