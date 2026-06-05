@@ -12,6 +12,7 @@ export const LandingPage = () => {
       <Navbar />
       <main>
         <Hero />
+        <Stats />
         <Pricing />
         <FAQ />
       </main>
