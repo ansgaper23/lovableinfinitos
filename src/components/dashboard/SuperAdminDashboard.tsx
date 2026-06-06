@@ -518,6 +518,8 @@ export const SuperAdminDashboard = () => {
                             credits={u.credits ?? 0}
                             created={new Date(u.created_at).toLocaleDateString()}
                             onRecharge={() => { setRechargeTarget(u); setRechargeAmount("10"); }}
+                            onToggleActivation={() => handleToggleActivation(u)}
+                            toggling={togglingUserId === u.id}
                           />
                         ))
                       ) : (
