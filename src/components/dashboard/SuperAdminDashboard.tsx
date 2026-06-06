@@ -24,6 +24,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { resellerApi, ResellerStatus } from "@/services/resellerApi";
+import { useServerFn } from "@tanstack/react-start";
+import { setUserActivation } from "@/lib/user-actions.functions";
 
 interface ExtendedProfile extends Omit<Profile, 'reseller_api_token'> {
   reseller_api_token?: string | null;
