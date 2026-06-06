@@ -248,7 +248,7 @@ const LicenseTypeCard = ({ icon, title, description, onClick }: { icon: React.Re
   </div>
 );
 
-const LicenseRow = ({ type, code, status, date }: { type: string, code: string, status: string, date: string }) => (
+const LicenseRow = ({ type, code, status, date }: { type: string, code: string, status: string | null, date: string }) => (
   <tr className="border-b border-white/5 hover:bg-white/[0.01] transition-colors group">
     <td className="px-6 py-4 text-white font-medium">{type}</td>
     <td className="px-6 py-4 font-mono text-muted-foreground text-xs">{code}</td>
