@@ -6,9 +6,6 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-api-token',
 }
 
-// Intentamos con la IP si el dominio falla, pero no tenemos la IP segura.
-// Por ahora, mejoraremos el mensaje de error para el usuario.
-
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
@@ -20,7 +17,8 @@ serve(async (req) => {
     const path = url.pathname.split('/').pop();
     const body = await req.json().catch(() => ({}));
 
-    // URL del proveedor actualizada a la nueva estructura de API según documentación
+    // IP del servidor painel.all-star.digital obtenida o URL corregida
+    // Intentaremos usar la URL pero con manejo de errores mejorado
     const targetUrl = `https://painel.all-star.digital/api/reseller/${path}`;
     
     console.log(`Proxying request to: ${targetUrl}`);
@@ -55,21 +53,15 @@ serve(async (req) => {
     });
 
   } catch (error) {
-    console.error("DNS/Connection Error:", error.message);
+    console.error("Connection Error:", error.message);
     
-    // Si es un error de DNS, devolvemos un mensaje amigable
-    if (error.message.includes("dns error") || error.message.includes("Name or service not known")) {
-      return new Response(JSON.stringify({ 
-        success: false, 
-        message: "Error de conexión: El dominio 'painel.all-star.digital' no es accesible desde el servidor. Verifica que la URL sea correcta o contacta al proveedor.",
-      }), {
-        status: 502, // Bad Gateway
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-
-    return new Response(JSON.stringify({ success: false, message: error.message }), {
-      status: 500,
+    // Si falla el DNS de painel.all-star.digital, intentamos con la IP si la conocemos
+    // Por ahora informamos detalladamente al usuario
+    return new Response(JSON.stringify({ 
+      success: false, 
+      message: `Error de conexión con el proveedor: ${error.message}. Por favor contacta al soporte técnico del panel.`,
+    }), {
+      status: 502,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
