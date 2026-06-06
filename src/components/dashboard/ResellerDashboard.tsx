@@ -13,7 +13,7 @@ interface License {
   id: string;
   code: string;
   type: string;
-  status: string;
+  status: string | null;
   created_at: string;
 }
 
