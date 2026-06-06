@@ -559,6 +559,7 @@ export const SuperAdminDashboard = () => {
                             onRecharge={() => { setRechargeTarget(u); setRechargeAmount("10"); }}
                             onToggleActivation={() => handleToggleActivation(u)}
                             onAssignLicense={() => { setAssignTarget(u); setAssignDays(7); setAssignedResult(null); }}
+                            onBlockToggle={() => handleBlockToggle(u)}
                             toggling={togglingUserId === u.id}
                           />
                         ))
