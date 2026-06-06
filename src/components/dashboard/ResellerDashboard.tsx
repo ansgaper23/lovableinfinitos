@@ -238,6 +238,19 @@ export const ResellerDashboard = () => {
           <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:48px_48px] [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_80%)] pointer-events-none" />
 
           <div className="relative max-w-7xl mx-auto p-8 space-y-8">
+            {/* Preview banner for non-activated users */}
+            {!isActivated && (
+              <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center shrink-0">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-bold text-amber-400 uppercase tracking-wide">Modo preview — Cuenta pendiente</p>
+                  <p className="text-xs text-amber-200/70">Tu cuenta aún no ha sido activada. Puedes explorar el panel, pero no podrás generar licencias hasta que el administrador te active.</p>
+                </div>
+              </div>
+            )}
+
             {/* Header */}
             <div className="flex flex-wrap gap-4 justify-between items-start">
               <div>
