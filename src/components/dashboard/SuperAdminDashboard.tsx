@@ -3,7 +3,8 @@ import {
   LayoutDashboard, Users, BarChart3, ShieldAlert, Settings, 
   LogOut, Search, MoreVertical, CheckCircle2, XCircle, 
   TrendingUp, DollarSign, Key, RefreshCw, Trash2, ShieldCheck, 
-  Clock, Plus, CreditCard
+  Clock, Plus, CreditCard, Activity, Zap, Globe, AlertCircle,
+  Menu, X
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -33,7 +34,8 @@ export const SuperAdminDashboard = () => {
   const [users, setUsers] = useState<ExtendedProfile[]>([]);
   const [fetchingUsers, setFetchingUsers] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [activeTab, setActiveTab] = useState<"summary" | "users" | "keys">("summary");
+  const [activeTab, setActiveTab] = useState<"summary" | "users" | "keys" | "stats" | "system">("summary");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   
   // Reseller states
   const [resellerToken, setResellerToken] = useState("");
@@ -191,69 +193,122 @@ export const SuperAdminDashboard = () => {
   );
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-background">
+    <div className="flex h-screen bg-[#0A0A0B] text-white overflow-hidden font-sans">
       <AnnouncementBar />
-      <div className="flex-1 mt-10 flex overflow-hidden">
-        {/* Sidebar */}
-        <aside className="w-64 border-r border-white/5 bg-card/30 backdrop-blur-xl hidden lg:flex flex-col">
-          <div className="p-8">
-            <div className="flex items-center gap-3 mb-12 group">
-              <div className="w-10 h-10 bg-destructive rounded-none flex items-center justify-center shadow-[0_0_20px_rgba(var(--color-destructive),0.3)]">
-                <span className="text-white font-black text-2xl italic">A</span>
-              </div>
-              <span className="font-black text-xl tracking-tighter italic">SUPER<span className="text-destructive">ADMIN</span></span>
-            </div>
+      
+      {/* Mobile Sidebar Toggle */}
+      <div className="lg:hidden fixed top-14 left-4 z-50">
+        <Button 
+          variant="outline" 
+          size="icon" 
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="bg-[#121214] border-white/5"
+        >
+          {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </Button>
+      </div>
 
-            <nav className="space-y-2">
-              <AdminNavItem 
-                icon={<LayoutDashboard className="w-5 h-5" />} 
-                label="Resumen" 
-                active={activeTab === "summary"} 
-                onClick={() => setActiveTab("summary")}
-              />
-              <AdminNavItem 
-                icon={<Users className="w-5 h-5" />} 
-                label="Usuarios" 
-                active={activeTab === "users"} 
-                onClick={() => setActiveTab("users")}
-              />
-              <AdminNavItem 
-                icon={<Key className="w-5 h-5" />} 
-                label="Licencias API" 
-                active={activeTab === "keys"} 
-                onClick={() => setActiveTab("keys")}
-              />
-              <AdminNavItem icon={<BarChart3 className="w-5 h-5" />} label="Estadísticas" onClick={() => {}} />
-              <AdminNavItem icon={<Settings className="w-5 h-5" />} label="Sistema" onClick={() => {}} />
-            </nav>
+      {/* Sidebar */}
+      <aside className={`
+        fixed inset-y-0 left-0 z-40 w-72 bg-[#121214] border-r border-white/5 
+        transition-transform duration-300 lg:static lg:translate-x-0
+        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+        flex flex-col pt-10
+      `}>
+        <div className="p-8 flex-1">
+          <div className="flex items-center gap-3 mb-12">
+            <div className="w-12 h-12 bg-gradient-to-br from-destructive to-red-900 rounded-xl flex items-center justify-center shadow-lg shadow-destructive/20 ring-1 ring-white/10">
+              <ShieldCheck className="text-white w-7 h-7" />
+            </div>
+            <div>
+              <span className="font-black text-xl tracking-tighter italic block leading-none">SUPER<span className="text-destructive">ADMIN</span></span>
+              <span className="text-[10px] uppercase font-black tracking-[0.2em] text-muted-foreground opacity-50">Master Control</span>
+            </div>
           </div>
 
-          <div className="mt-auto p-8 border-t border-white/5">
-            <Button variant="ghost" onClick={async () => { await supabase.auth.signOut(); navigate({ to: "/" }); }} className="w-full justify-start gap-3 text-muted-foreground hover:text-white transition-colors">
-              <LogOut className="w-5 h-5" />
-              Salir al Inicio
-            </Button>
+          <nav className="space-y-1">
+            <AdminNavItem 
+              icon={<LayoutDashboard className="w-4 h-4" />} 
+              label="Resumen General" 
+              active={activeTab === "summary"} 
+              onClick={() => { setActiveTab("summary"); setSidebarOpen(false); }}
+            />
+            <AdminNavItem 
+              icon={<Users className="w-4 h-4" />} 
+              label="Gestión Usuarios" 
+              active={activeTab === "users"} 
+              onClick={() => { setActiveTab("users"); setSidebarOpen(false); }}
+            />
+            <AdminNavItem 
+              icon={<Key className="w-4 h-4" />} 
+              label="Sistema Licencias" 
+              active={activeTab === "keys"} 
+              onClick={() => { setActiveTab("keys"); setSidebarOpen(false); }}
+            />
+            <AdminNavItem 
+              icon={<BarChart3 className="w-4 h-4" />} 
+              label="Estadísticas" 
+              active={activeTab === "stats"}
+              onClick={() => { setActiveTab("stats"); setSidebarOpen(false); }} 
+            />
+            <AdminNavItem 
+              icon={<Settings className="w-4 h-4" />} 
+              label="Configuración" 
+              active={activeTab === "system"}
+              onClick={() => { setActiveTab("system"); setSidebarOpen(false); }} 
+            />
+          </nav>
+        </div>
+
+        <div className="p-6 border-t border-white/5 bg-[#0A0A0B]/50">
+          <div className="mb-4 px-4 py-3 rounded-lg bg-destructive/5 border border-destructive/10">
+            <p className="text-[10px] font-black uppercase text-destructive tracking-widest mb-1 text-center">Modo Administrador</p>
+            <p className="text-[11px] text-white/60 text-center leading-tight">Acceso total al núcleo del sistema</p>
           </div>
-        </aside>
+          <Button 
+            variant="ghost" 
+            onClick={async () => { await supabase.auth.signOut(); navigate({ to: "/" }); }} 
+            className="w-full justify-start gap-3 text-muted-foreground hover:text-white hover:bg-white/5 transition-all h-11 px-4 rounded-xl"
+          >
+            <LogOut className="w-4 h-4" />
+            <span className="text-xs font-bold uppercase tracking-widest">Cerrar Sesión</span>
+          </Button>
+        </div>
+      </aside>
 
-        {/* Main Content */}
-        <main className="flex-1 overflow-y-auto p-8 bg-[radial-gradient(circle_at_top_left,var(--color-destructive),transparent_90%)] bg-opacity-[0.02]">
-          <div className="max-w-7xl mx-auto space-y-8">
-            <div className="flex justify-between items-end">
-              <div>
-                <h1 className="text-4xl font-black italic tracking-tighter uppercase mb-2">Control Maestro</h1>
-                <p className="text-muted-foreground uppercase tracking-widest text-[10px] font-black">Sistema de Gestión Centralizada</p>
+      {/* Main Content */}
+      <main className="flex-1 overflow-y-auto bg-[#0A0A0B] relative pt-10">
+        {/* Background Gradients */}
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-destructive/5 rounded-full blur-[120px] -z-10 opacity-30 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] -z-10 opacity-30 pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto p-6 lg:p-10 space-y-10">
+          <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <Badge variant="outline" className="rounded-full border-destructive/20 bg-destructive/5 text-destructive text-[10px] font-black px-3 py-1 uppercase tracking-widest">
+                  Panel Principal
+                </Badge>
+                <div className="h-[1px] w-12 bg-white/10" />
+                <span className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.3em]">v4.0.2 Stable</span>
               </div>
-              <div className="flex gap-4">
-                <Button variant="outline" className="rounded-none border-white/10 bg-white/5 uppercase font-black text-xs tracking-widest">
-                  Exportar Reporte
-                </Button>
-                <Button className="rounded-none bg-destructive hover:bg-destructive/90 text-white uppercase font-black text-xs tracking-widest shadow-[0_0_20px_rgba(var(--color-destructive),0.3)]">
-                  Nuevo Usuario
-                </Button>
-              </div>
+              <h1 className="text-4xl lg:text-5xl font-black italic tracking-tighter uppercase leading-none">
+                Panel de <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-white/40">Control</span>
+              </h1>
             </div>
+            <div className="flex items-center gap-3">
+              <Button variant="outline" className="rounded-xl border-white/5 bg-white/5 hover:bg-white/10 uppercase font-black text-[10px] tracking-widest h-11 px-6 backdrop-blur-md">
+                <Globe className="w-3 h-3 mr-2 opacity-50" />
+                Ver Sitio
+              </Button>
+              <Button className="rounded-xl bg-destructive hover:bg-destructive/90 text-white uppercase font-black text-[10px] tracking-widest h-11 px-6 shadow-xl shadow-destructive/20 border-t border-white/20">
+                <Plus className="w-3 h-3 mr-2" />
+                Acción Rápida
+              </Button>
+            </div>
+          </header>
 
+          <div className="space-y-10">
             {/* Tabs Content */}
             {activeTab === "summary" && (
               <>
@@ -269,62 +324,96 @@ export const SuperAdminDashboard = () => {
                   <AdminStatCard title="Alertas Sistema" value="0" subtitle="Todo estable" icon={<CheckCircle2 className="text-green-500" />} />
                 </div>
 
-                <Card className="rounded-none border-white/5 bg-white/[0.02] backdrop-blur-xl">
-                  <CardHeader>
-                    <CardTitle className="text-lg font-black italic tracking-tighter uppercase">API Reseller Token</CardTitle>
-                    <CardDescription className="text-[10px] uppercase font-black tracking-widest text-muted-foreground mt-1">Configura tu token para generar llaves</CardDescription>
+                <Card className="rounded-2xl border-white/5 bg-[#121214] overflow-hidden group shadow-2xl">
+                  <div className="h-1 w-full bg-gradient-to-r from-destructive/0 via-destructive to-destructive/0 opacity-30 group-hover:opacity-100 transition-opacity duration-500" />
+                  <CardHeader className="pb-4">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Zap className="w-4 h-4 text-destructive" />
+                      <CardTitle className="text-lg font-black italic tracking-tighter uppercase">API Reseller Token</CardTitle>
+                    </div>
+                    <CardDescription className="text-[10px] uppercase font-black tracking-widest text-muted-foreground">Configura tu token para sincronizar con el proveedor</CardDescription>
                   </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="flex gap-4">
-                      <Input 
-                        type="password"
-                        placeholder="rsl_..." 
-                        value={resellerToken}
-                        onChange={(e) => setResellerToken(e.target.value)}
-                        className="rounded-none border-white/10 bg-white/5 font-mono text-xs h-12" 
-                      />
+                  <CardContent className="space-y-4 pb-8">
+                    <div className="flex flex-col sm:flex-row gap-4">
+                      <div className="relative flex-1 group/input">
+                        <Key className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within/input:text-destructive transition-colors" />
+                        <Input 
+                          type="password"
+                          placeholder="rsl_your_token_here..." 
+                          value={resellerToken}
+                          onChange={(e) => setResellerToken(e.target.value)}
+                          className="rounded-xl border-white/5 bg-white/5 font-mono text-xs h-13 pl-12 focus:bg-white/[0.08] transition-all" 
+                        />
+                      </div>
                       <Button 
                         disabled={isUpdatingToken}
                         onClick={updateToken}
-                        className="rounded-none bg-primary text-primary-foreground font-black italic uppercase tracking-widest text-xs h-12 px-8"
+                        className="rounded-xl bg-destructive hover:bg-destructive/90 text-white font-black italic uppercase tracking-widest text-[10px] h-13 px-8 shadow-lg shadow-destructive/20 active:scale-95 transition-all"
                       >
-                        {isUpdatingToken ? <RefreshCw className="w-4 h-4 animate-spin" /> : "Guardar Token"}
+                        {isUpdatingToken ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : <ShieldCheck className="w-4 h-4 mr-2" />}
+                        Sincronizar Acceso
                       </Button>
                     </div>
                   </CardContent>
                 </Card>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <Card className="rounded-none border-white/5 bg-white/[0.02] backdrop-blur-xl">
-                    <CardHeader>
-                      <CardTitle className="text-lg font-black italic tracking-tighter uppercase">Configuración Global</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div className="flex items-center justify-between p-4 border border-white/5 bg-white/[0.01]">
-                        <div>
-                          <p className="text-sm font-bold">Mantenimiento</p>
-                          <p className="text-[10px] text-muted-foreground uppercase">Desactiva el acceso a todos</p>
-                        </div>
-                        <Badge variant="outline" className="border-white/20 uppercase text-[10px]">OFF</Badge>
+                  <Card className="rounded-2xl border-white/5 bg-[#121214] overflow-hidden group">
+                    <CardHeader className="flex flex-row items-center justify-between pb-6 border-b border-white/5 bg-white/[0.01]">
+                      <div>
+                        <CardTitle className="text-lg font-black italic tracking-tighter uppercase">Configuración Global</CardTitle>
+                        <CardDescription className="text-[10px] uppercase font-black tracking-widest text-muted-foreground">Reglas de negocio y visibilidad</CardDescription>
                       </div>
-                      <div className="flex items-center justify-between p-4 border border-white/5 bg-white/[0.01]">
-                        <div>
-                          <p className="text-sm font-bold">Registro Público</p>
-                          <p className="text-[10px] text-muted-foreground uppercase">Permitir nuevos registros</p>
+                      <Settings className="w-5 h-5 text-muted-foreground/30 group-hover:rotate-90 transition-transform duration-700" />
+                    </CardHeader>
+                    <CardContent className="p-0">
+                      <div className="divide-y divide-white/5">
+                        <div className="flex items-center justify-between p-6 hover:bg-white/[0.02] transition-colors group/item">
+                          <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center group-hover/item:bg-destructive/10 transition-colors">
+                              <AlertCircle className="w-5 h-5 text-muted-foreground group-hover/item:text-destructive transition-colors" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-bold">Modo Mantenimiento</p>
+                              <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest opacity-60">Bloqueo temporal de acceso</p>
+                            </div>
+                          </div>
+                          <Badge variant="outline" className="border-white/10 bg-white/5 uppercase text-[9px] font-black px-3 py-1 tracking-widest">Inactivo</Badge>
                         </div>
-                        <Badge variant="outline" className="border-green-500/50 text-green-500 uppercase text-[10px]">ON</Badge>
+                        <div className="flex items-center justify-between p-6 hover:bg-white/[0.02] transition-colors group/item">
+                          <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center group-hover/item:bg-green-500/10 transition-colors">
+                              <Globe className="w-5 h-5 text-muted-foreground group-hover/item:text-green-500 transition-colors" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-bold">Registro Público</p>
+                              <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest opacity-60">Permitir nuevos usuarios</p>
+                            </div>
+                          </div>
+                          <Badge variant="outline" className="border-green-500/20 bg-green-500/10 text-green-500 uppercase text-[9px] font-black px-3 py-1 tracking-widest shadow-[0_0_10px_rgba(34,197,94,0.2)]">Activo</Badge>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
 
-                  <Card className="rounded-none border-white/5 bg-white/[0.02] backdrop-blur-xl">
-                    <CardHeader>
-                      <CardTitle className="text-lg font-black italic tracking-tighter uppercase">Mensaje de Barra (Scroll)</CardTitle>
+                  <Card className="rounded-2xl border-white/5 bg-[#121214] overflow-hidden group flex flex-col">
+                    <CardHeader className="pb-6 border-b border-white/5 bg-white/[0.01]">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Activity className="w-4 h-4 text-destructive" />
+                        <CardTitle className="text-lg font-black italic tracking-tighter uppercase">Barra Informativa</CardTitle>
+                      </div>
+                      <CardDescription className="text-[10px] uppercase font-black tracking-widest text-muted-foreground">Anuncio global con scroll infinito</CardDescription>
                     </CardHeader>
-                    <CardContent className="space-y-4">
-                      <Input defaultValue="OFERTA DE LANZAMIENTO: 50% DCTO EN EL PLAN PRO" className="rounded-none border-white/10 bg-white/5 font-bold uppercase italic text-xs h-12" />
-                      <Button className="w-full rounded-none bg-primary text-primary-foreground font-black italic uppercase tracking-widest text-xs h-12">
-                        Actualizar Mensaje Global
+                    <CardContent className="flex-1 p-6 space-y-4 flex flex-col justify-center">
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-50">Contenido del Anuncio</label>
+                        <Input 
+                          defaultValue="OFERTA DE LANZAMIENTO: 50% DCTO EN EL PLAN PRO — UNETE AHORA" 
+                          className="rounded-xl border-white/5 bg-white/5 font-black uppercase italic text-[11px] h-13 tracking-tight focus:bg-white/[0.08]" 
+                        />
+                      </div>
+                      <Button className="w-full rounded-xl bg-white/10 hover:bg-white/15 text-white font-black italic uppercase tracking-widest text-[10px] h-13 border border-white/10">
+                        Propagar Cambios
                       </Button>
                     </CardContent>
                   </Card>
@@ -333,31 +422,34 @@ export const SuperAdminDashboard = () => {
             )}
 
             {activeTab === "users" && (
-              <Card className="rounded-none border-white/5 bg-white/[0.02] backdrop-blur-xl overflow-hidden">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-7 border-b border-white/5">
+              <Card className="rounded-2xl border-white/5 bg-[#121214] overflow-hidden shadow-2xl">
+                <CardHeader className="flex flex-row items-center justify-between pb-8 border-b border-white/5 bg-white/[0.01]">
                   <div>
-                    <CardTitle className="text-xl font-black italic tracking-tighter uppercase">Usuarios Recientes</CardTitle>
-                    <CardDescription className="text-[10px] uppercase font-black tracking-widest text-muted-foreground mt-1">Control de acceso y planes</CardDescription>
+                    <div className="flex items-center gap-3 mb-1">
+                      <div className="w-2 h-2 rounded-full bg-destructive animate-pulse" />
+                      <CardTitle className="text-xl font-black italic tracking-tighter uppercase">Usuarios Registrados</CardTitle>
+                    </div>
+                    <CardDescription className="text-[10px] uppercase font-black tracking-widest text-muted-foreground">Gestión total de cuentas y permisos</CardDescription>
                   </div>
-                  <div className="relative w-64">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <div className="relative w-72 group">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-destructive transition-colors" />
                     <Input 
-                      placeholder="Buscar usuario..." 
+                      placeholder="Buscar por email o rol..." 
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10 rounded-none border-white/10 bg-white/5 text-xs h-10" 
+                      className="pl-12 rounded-xl border-white/5 bg-white/5 text-[11px] h-11 tracking-wide focus:bg-white/[0.08] transition-all" 
                     />
                   </div>
                 </CardHeader>
                 <CardContent className="p-0">
                   <table className="w-full text-left border-collapse">
                     <thead>
-                      <tr className="border-b border-white/5 bg-white/[0.01]">
-                        <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Usuario</th>
-                        <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Rol</th>
-                        <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Estado</th>
-                        <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Creado</th>
-                        <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Acción</th>
+                      <tr className="border-b border-white/5 bg-white/[0.02]">
+                        <th className="p-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60">Identidad</th>
+                        <th className="p-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60">Privilegios</th>
+                        <th className="p-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60">Estado</th>
+                        <th className="p-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60">Registro</th>
+                        <th className="p-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60 text-right">Acciones</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -386,69 +478,77 @@ export const SuperAdminDashboard = () => {
             {activeTab === "keys" && (
               <div className="space-y-8">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <Card className="rounded-none border-white/5 bg-white/[0.02] backdrop-blur-xl p-6">
-                    <h3 className="text-sm font-black italic uppercase mb-4 flex items-center gap-2">
-                      <Plus className="w-4 h-4 text-destructive" />
-                      Generar Nueva Llave
-                    </h3>
-                    <div className="space-y-4">
+                  <Card className="rounded-2xl border-white/5 bg-[#121214] overflow-hidden shadow-2xl p-0">
+                    <div className="bg-white/[0.01] p-6 border-b border-white/5">
+                      <div className="flex items-center gap-3 mb-1">
+                        <div className="p-2 bg-destructive/10 rounded-lg">
+                          <Plus className="w-4 h-4 text-destructive" />
+                        </div>
+                        <h3 className="text-sm font-black italic uppercase tracking-tight">Forjar Nueva Llave</h3>
+                      </div>
+                      <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest opacity-60">Emisión de licencias al instante</p>
+                    </div>
+                    <div className="p-6 space-y-6">
                       <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Nombre del Cliente</label>
+                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Identificador Cliente</label>
                         <Input 
-                          placeholder="Juan Pérez" 
+                          placeholder="p.ej. Juan Pérez" 
                           value={keyDisplayName}
                           onChange={(e) => setKeyDisplayName(e.target.value)}
-                          className="rounded-none border-white/10 bg-white/5 text-xs h-10" 
+                          className="rounded-xl border-white/5 bg-white/5 text-xs h-11 focus:bg-white/[0.08]" 
                         />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Tipo de Licencia</label>
+                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Plan de Acceso</label>
                         <Select value={keyType} onValueChange={(v: any) => setKeyType(v)}>
-                          <SelectTrigger className="rounded-none border-white/10 bg-white/5 text-xs h-10">
-                            <SelectValue placeholder="Selecciona tipo" />
+                          <SelectTrigger className="rounded-xl border-white/5 bg-white/5 text-xs h-11 focus:bg-white/[0.08]">
+                            <SelectValue placeholder="Selecciona el plan" />
                           </SelectTrigger>
-                          <SelectContent className="bg-background border-white/10 rounded-none">
-                            <SelectItem value="trial">PRUEBA (30 MIN)</SelectItem>
-                            <SelectItem value="days">DÍAS ACTIVOS</SelectItem>
-                            <SelectItem value="lifetime">VITALICIA</SelectItem>
+                          <SelectContent className="bg-[#121214] border-white/10 rounded-xl overflow-hidden shadow-2xl">
+                            <SelectItem value="trial" className="focus:bg-destructive focus:text-white uppercase font-black text-[10px] py-3">⚡ PRUEBA (30 MIN)</SelectItem>
+                            <SelectItem value="days" className="focus:bg-destructive focus:text-white uppercase font-black text-[10px] py-3">📅 DÍAS ACTIVOS</SelectItem>
+                            <SelectItem value="lifetime" className="focus:bg-destructive focus:text-white uppercase font-black text-[10px] py-3">💎 VITALICIA (LIFETIME)</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
                       {keyType === "days" && (
-                        <div className="space-y-2">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Días</label>
+                        <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
+                          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Duración (Días)</label>
                           <Input 
                             type="number"
                             value={keyDays}
                             onChange={(e) => setKeyDays(e.target.value)}
-                            className="rounded-none border-white/10 bg-white/5 text-xs h-10" 
+                            className="rounded-xl border-white/5 bg-white/5 text-xs h-11 focus:bg-white/[0.08]" 
                           />
                         </div>
                       )}
                       <Button 
                         onClick={handleGenerateKey}
                         disabled={isGeneratingKey || !resellerToken}
-                        className="w-full rounded-none bg-destructive hover:bg-destructive/90 text-white font-black italic uppercase tracking-widest text-xs h-12 shadow-[0_0_20px_rgba(var(--color-destructive),0.3)]"
+                        className="w-full rounded-xl bg-destructive hover:bg-destructive/90 text-white font-black italic uppercase tracking-[0.15em] text-[10px] h-14 shadow-xl shadow-destructive/20 border-t border-white/20 active:scale-[0.98] transition-all"
                       >
-                        {isGeneratingKey ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : <Key className="w-4 h-4 mr-2" />}
-                        GENERAR LICENCIA
+                        {isGeneratingKey ? <RefreshCw className="w-4 h-4 animate-spin mr-3" /> : <Key className="w-4 h-4 mr-3" />}
+                        GENERAR ACCESO MAESTRO
                       </Button>
                     </div>
                   </Card>
 
                   <div className="md:col-span-2">
-                    <Card className="rounded-none border-white/5 bg-white/[0.02] backdrop-blur-xl h-full">
-                      <CardHeader className="flex flex-row items-center justify-between border-b border-white/5">
+                    <Card className="rounded-2xl border-white/5 bg-[#121214] overflow-hidden shadow-2xl h-full flex flex-col">
+                      <CardHeader className="flex flex-row items-center justify-between border-b border-white/5 bg-white/[0.01] py-6">
                         <div>
-                          <CardTitle className="text-xl font-black italic tracking-tighter uppercase">Historial de Licencias</CardTitle>
-                          <CardDescription className="text-[10px] uppercase font-black tracking-widest text-muted-foreground">Licencias generadas por la API</CardDescription>
+                          <div className="flex items-center gap-2 mb-1">
+                            <Activity className="w-4 h-4 text-destructive" />
+                            <CardTitle className="text-xl font-black italic tracking-tighter uppercase">Historial Maestro</CardTitle>
+                          </div>
+                          <CardDescription className="text-[10px] uppercase font-black tracking-widest text-muted-foreground">Registro de llaves emitidas por el sistema</CardDescription>
                         </div>
                         <Button 
                           variant="ghost" 
-                          size="sm" 
+                          size="icon" 
                           onClick={fetchLicenses}
                           disabled={isLoadingLicenses || !resellerToken}
-                          className="text-muted-foreground hover:text-white"
+                          className="text-muted-foreground hover:text-white hover:bg-white/5 rounded-xl transition-all"
                         >
                           <RefreshCw className={`w-4 h-4 ${isLoadingLicenses ? 'animate-spin' : ''}`} />
                         </Button>
@@ -463,49 +563,63 @@ export const SuperAdminDashboard = () => {
                         ) : (
                           <table className="w-full text-left border-collapse">
                             <thead>
-                              <tr className="border-b border-white/5 bg-white/[0.01]">
-                                <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Llave</th>
-                                <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Cliente</th>
-                                <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Estado</th>
-                                <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Expira</th>
-                                <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Acción</th>
+                              <tr className="border-b border-white/5 bg-white/[0.02]">
+                                <th className="p-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60">Llave</th>
+                                <th className="p-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60">Cliente</th>
+                                <th className="p-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60 text-center">Estado</th>
+                                <th className="p-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60">Vencimiento</th>
+                                <th className="p-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60 text-right">Control</th>
                               </tr>
                             </thead>
                             <tbody>
                               {licenses.map((lic) => (
-                                <tr key={lic.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
-                                  <td className="p-4 font-mono text-[10px] text-primary">{lic.license_key}</td>
-                                  <td className="p-4 text-xs font-bold">{lic.display_name || "N/A"}</td>
-                                  <td className="p-4">
-                                    <Badge variant="outline" className={`rounded-none uppercase text-[8px] border-white/10 ${
-                                      lic.status === 'active' ? 'text-green-500' : 
-                                      lic.status === 'trial' ? 'text-blue-500' : 'text-destructive'
+                                <tr key={lic.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-all duration-300 group/row">
+                                  <td className="p-5">
+                                    <div className="flex items-center gap-3">
+                                      <div className="w-8 h-8 rounded-lg bg-destructive/5 flex items-center justify-center border border-destructive/10">
+                                        <Key className="w-3 h-3 text-destructive" />
+                                      </div>
+                                      <span className="font-mono text-[10px] text-destructive font-black tracking-wider bg-destructive/5 px-2 py-1 rounded border border-destructive/10">{lic.license_key}</span>
+                                    </div>
+                                  </td>
+                                  <td className="p-5">
+                                    <span className="text-xs font-bold uppercase tracking-tight text-white/80">{lic.display_name || "S/N"}</span>
+                                  </td>
+                                  <td className="p-5 text-center">
+                                    <Badge variant="outline" className={`rounded-lg uppercase text-[8px] font-black tracking-[0.1em] px-2 py-0.5 border-white/5 ${
+                                      lic.status === 'active' ? 'bg-green-500/10 text-green-500 border-green-500/20' : 
+                                      lic.status === 'trial' ? 'bg-blue-500/10 text-blue-500 border-blue-500/20' : 'bg-destructive/10 text-destructive border-destructive/20'
                                     }`}>
                                       {lic.status}
                                     </Badge>
                                   </td>
-                                  <td className="p-4 text-[10px] uppercase font-black text-muted-foreground">
-                                    {lic.lifetime ? "VITALICIA" : lic.expires_at ? new Date(lic.expires_at).toLocaleDateString() : "N/A"}
+                                  <td className="p-5">
+                                    <div className="flex items-center gap-2">
+                                      <Clock className="w-3 h-3 text-muted-foreground opacity-30" />
+                                      <span className="text-[10px] uppercase font-black text-muted-foreground opacity-60">
+                                        {lic.lifetime ? "VITALICIA" : lic.expires_at ? new Date(lic.expires_at).toLocaleDateString() : "N/A"}
+                                      </span>
+                                    </div>
                                   </td>
-                                  <td className="p-4">
-                                    <div className="flex gap-2">
+                                  <td className="p-5">
+                                    <div className="flex justify-end gap-2 opacity-0 group-hover/row:opacity-100 transition-opacity duration-300">
                                       <Button 
                                         variant="ghost" 
-                                        size="sm" 
+                                        size="icon" 
                                         onClick={() => handleResetHwid(lic.license_key)}
-                                        className="h-8 w-8 p-0 text-muted-foreground hover:text-white"
+                                        className="h-9 w-9 rounded-xl text-muted-foreground hover:text-white hover:bg-white/5"
                                         title="Reset HWID"
                                       >
-                                        <RefreshCw className="w-3 h-3" />
+                                        <RefreshCw className="w-3.5 h-3.5" />
                                       </Button>
                                       <Button 
                                         variant="ghost" 
-                                        size="sm" 
+                                        size="icon" 
                                         onClick={() => handleRevoke(lic.license_key)}
-                                        className="h-8 w-8 p-0 text-destructive hover:text-destructive/80"
+                                        className="h-9 w-9 rounded-xl text-destructive hover:text-white hover:bg-destructive shadow-lg hover:shadow-destructive/20"
                                         title="Revocar"
                                       >
-                                        <XCircle className="w-3 h-3" />
+                                        <XCircle className="w-3.5 h-3.5" />
                                       </Button>
                                     </div>
                                   </td>
@@ -521,8 +635,8 @@ export const SuperAdminDashboard = () => {
               </div>
             )}
           </div>
-        </main>
-      </div>
+        </div>
+      </main>
     </div>
   );
 };
@@ -540,54 +654,77 @@ const AdminNavItem = ({
 }) => (
   <button 
     onClick={onClick}
-    className={`w-full flex items-center gap-3 px-4 py-3 font-black italic tracking-tighter uppercase text-sm transition-all group ${
-      active ? 'text-destructive bg-destructive/10 border-r-2 border-destructive' : 'text-muted-foreground hover:text-white hover:bg-white/5'
+    className={`w-full flex items-center gap-4 px-6 py-4 transition-all duration-300 relative group overflow-hidden ${
+      active 
+        ? 'text-white' 
+        : 'text-muted-foreground hover:text-white'
     }`}
   >
-    {icon}
-    {label}
+    {active && (
+      <div className="absolute inset-0 bg-destructive/10 border-r-4 border-destructive" />
+    )}
+    <div className={`relative z-10 p-2 rounded-lg transition-colors ${active ? 'bg-destructive text-white shadow-lg shadow-destructive/20' : 'bg-white/5 group-hover:bg-white/10'}`}>
+      {icon}
+    </div>
+    <span className="relative z-10 font-bold uppercase tracking-[0.15em] text-[11px] italic">
+      {label}
+    </span>
   </button>
 );
 
 const AdminStatCard = ({ title, value, change, icon, subtitle }: { title: string, value: string, change?: string, icon: React.ReactNode, subtitle?: string }) => (
-  <Card className="rounded-none border-white/5 bg-white/[0.02] backdrop-blur-xl hover:border-destructive/30 transition-colors group">
+  <Card className="relative overflow-hidden group bg-[#121214] border-white/5 hover:border-destructive/20 transition-all duration-500 rounded-2xl">
+    <div className="absolute top-0 left-0 w-1 h-full bg-destructive/20 group-hover:bg-destructive transition-all" />
     <CardContent className="p-6">
-      <div className="flex justify-between items-start mb-4">
-        <div className="w-12 h-12 rounded-none bg-white/5 flex items-center justify-center group-hover:bg-destructive/10 transition-colors">
+      <div className="flex justify-between items-start">
+        <div className="p-3 bg-destructive/10 rounded-xl text-destructive group-hover:scale-110 transition-transform duration-500">
           {icon}
         </div>
+        {change && (
+          <Badge variant="outline" className="border-green-500/20 bg-green-500/5 text-green-500 text-[9px] font-black uppercase tracking-widest px-2 py-0">
+            {change}
+          </Badge>
+        )}
       </div>
-      <p className="text-[10px] font-black tracking-widest text-muted-foreground uppercase mb-1">{title}</p>
-      <h3 className="text-3xl font-black italic tracking-tighter text-white mb-1">{value}</h3>
-      {change && <p className="text-[10px] text-primary font-black uppercase tracking-widest">{change}</p>}
-      {subtitle && <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">{subtitle}</p>}
+      <div className="mt-6">
+        <p className="text-[10px] font-black tracking-[0.2em] text-muted-foreground uppercase mb-2">{title}</p>
+        <div className="flex items-baseline gap-2">
+          <h3 className="text-3xl font-black italic tracking-tighter text-white">{value}</h3>
+          {subtitle && <span className="text-[10px] text-muted-foreground uppercase font-medium">{subtitle}</span>}
+        </div>
+      </div>
     </CardContent>
   </Card>
 );
 
 const UserRow = ({ name, email, role, status, created }: { name: string, email: string, role: string, status: string, created: string }) => (
-  <tr className="border-b border-white/5 hover:bg-white/[0.02] transition-colors group">
-    <td className="p-4">
-      <div>
-        <p className="font-bold text-sm text-white">{name}</p>
-        <p className="text-[10px] text-muted-foreground uppercase font-black">{email}</p>
+  <tr className="border-b border-white/5 hover:bg-white/[0.02] transition-all duration-300 group">
+    <td className="p-5">
+      <div className="flex items-center gap-3">
+        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-white/10 to-white/5 flex items-center justify-center font-black text-xs border border-white/10 group-hover:border-destructive/30 transition-colors">
+          {name.charAt(0).toUpperCase()}
+        </div>
+        <div>
+          <p className="font-bold text-sm text-white group-hover:text-destructive transition-colors">{name}</p>
+          <p className="text-[10px] text-muted-foreground uppercase font-black tracking-wider opacity-60">{email}</p>
+        </div>
       </div>
     </td>
-    <td className="p-4">
-      <Badge variant="outline" className={`rounded-none border-white/10 uppercase text-[9px] font-black ${
-        role === 'superadmin' ? 'text-destructive border-destructive/30' : 
-        role === 'reseller' ? 'text-primary border-primary/30' : 'text-muted-foreground'
+    <td className="p-5">
+      <Badge variant="outline" className={`rounded-lg border-white/10 uppercase text-[9px] font-black px-2.5 py-0.5 tracking-widest ${
+        role === 'superadmin' ? 'bg-destructive/10 text-destructive border-destructive/20' : 
+        role === 'reseller' ? 'bg-primary/10 text-primary border-primary/20' : 'bg-white/5 text-muted-foreground'
       }`}>{role}</Badge>
     </td>
-    <td className="p-4">
-      <div className="flex items-center gap-2">
-        {status === "Activo" ? <CheckCircle2 className="w-3 h-3 text-green-500" /> : <XCircle className="w-3 h-3 text-destructive" />}
-        <span className={`text-[10px] font-black uppercase tracking-widest ${status === "Activo" ? "text-green-500" : "text-destructive"}`}>{status}</span>
+    <td className="p-5">
+      <div className="flex items-center gap-2.5">
+        <div className={`w-1.5 h-1.5 rounded-full ${status === "Activo" ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]" : "bg-destructive shadow-[0_0_8px_rgba(239,68,68,0.5)]"}`} />
+        <span className={`text-[10px] font-black uppercase tracking-[0.15em] ${status === "Activo" ? "text-green-500" : "text-destructive"}`}>{status}</span>
       </div>
     </td>
-    <td className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">{created}</td>
-    <td className="p-4">
-      <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-white">
+    <td className="p-5 text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-50">{created}</td>
+    <td className="p-5">
+      <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-muted-foreground hover:text-white hover:bg-white/5 transition-all">
         <MoreVertical className="w-4 h-4" />
       </Button>
     </td>
