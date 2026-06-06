@@ -179,6 +179,18 @@ export const ResellerDashboard = () => {
     return <div className="min-h-screen bg-background flex items-center justify-center text-white italic font-black">ENTRANDO AL PANEL...</div>;
   }
 
+  if (profile?.role === "blocked") {
+    return (
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 text-center text-white">
+        <h1 className="text-3xl font-black italic uppercase tracking-tighter mb-2">Cuenta Bloqueada</h1>
+        <p className="text-muted-foreground max-w-md mb-6">El acceso al panel ha sido suspendido por el administrador.</p>
+        <Button onClick={() => navigate({ to: "/" })} variant="outline" className="rounded-none font-black italic uppercase tracking-tighter h-12 px-6 border-white/10">
+          Volver al inicio
+        </Button>
+      </div>
+    );
+  }
+
   const isActivated = profile && (profile.role === 'reseller' || profile.role === 'superadmin');
 
   return (

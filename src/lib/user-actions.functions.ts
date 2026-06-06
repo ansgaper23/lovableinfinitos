@@ -64,6 +64,19 @@ export const setUserActivation = createServerFn({ method: "POST" })
     return { role: result as string };
   });
 
+export const setUserRole = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { targetUserId: string; role: "user" | "reseller" | "blocked" }) => input)
+  .handler(async ({ data, context }) => {
+    const { supabase } = context;
+    const { data: result, error } = await supabase.rpc("set_user_role", {
+      _target: data.targetUserId,
+      _role: data.role,
+    });
+    if (error) throw new Error(error.message);
+    return { role: result as string };
+  });
+
 export const assignLicenseToUser = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { targetUserId: string; days: number; displayName?: string }) => input)

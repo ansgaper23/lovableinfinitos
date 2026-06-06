@@ -25,7 +25,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { resellerApi, ResellerStatus } from "@/services/resellerApi";
 import { useServerFn } from "@tanstack/react-start";
-import { setUserActivation, assignLicenseToUser } from "@/lib/user-actions.functions";
+import { setUserActivation, assignLicenseToUser, setUserRole } from "@/lib/user-actions.functions";
 
 interface ExtendedProfile extends Omit<Profile, 'reseller_api_token'> {
   reseller_api_token?: string | null;
@@ -58,6 +58,25 @@ export const SuperAdminDashboard = () => {
   const [togglingUserId, setTogglingUserId] = useState<string | null>(null);
   const activateFn = useServerFn(setUserActivation);
   const assignFn = useServerFn(assignLicenseToUser);
+  const roleFn = useServerFn(setUserRole);
+
+  const handleBlockToggle = async (u: ExtendedProfile) => {
+    if (u.role === "superadmin") {
+      toast.error("No se puede bloquear a un superadmin");
+      return;
+    }
+    const targetRole = u.role === "blocked" ? "user" : "blocked";
+    setTogglingUserId(u.id);
+    try {
+      const res = await roleFn({ data: { targetUserId: u.id, role: targetRole } });
+      toast.success(targetRole === "blocked" ? "Cuenta bloqueada" : "Cuenta desbloqueada");
+      setUsers((prev) => prev.map((p) => (p.id === u.id ? { ...p, role: res.role } : p)));
+    } catch (e: any) {
+      toast.error(e.message || "Error al cambiar estado");
+    } finally {
+      setTogglingUserId(null);
+    }
+  };
 
   const [assignTarget, setAssignTarget] = useState<ExtendedProfile | null>(null);
   const [assignDays, setAssignDays] = useState<1 | 7 | 30 | 60>(7);
@@ -540,6 +559,7 @@ export const SuperAdminDashboard = () => {
                             onRecharge={() => { setRechargeTarget(u); setRechargeAmount("10"); }}
                             onToggleActivation={() => handleToggleActivation(u)}
                             onAssignLicense={() => { setAssignTarget(u); setAssignDays(7); setAssignedResult(null); }}
+                            onBlockToggle={() => handleBlockToggle(u)}
                             toggling={togglingUserId === u.id}
                           />
                         ))
@@ -875,9 +895,18 @@ const AdminStatCard = ({ title, value, change, icon, subtitle }: { title: string
   </Card>
 );
 
-const UserRow = ({ name, email, role, credits, created, onRecharge, onToggleActivation, onAssignLicense, toggling }: { name: string, email: string, role: string, credits: number, created: string, onRecharge: () => void, onToggleActivation: () => void, onAssignLicense: () => void, toggling: boolean }) => {
-  const isActive = role === 'reseller' || role === 'superadmin';
+const UserRow = ({ name, email, role, credits, created, onRecharge, onToggleActivation, onAssignLicense, onBlockToggle, toggling }: { name: string, email: string, role: string, credits: number, created: string, onRecharge: () => void, onToggleActivation: () => void, onAssignLicense: () => void, onBlockToggle: () => void, toggling: boolean }) => {
+  const isReseller = role === 'reseller';
   const isSuper = role === 'superadmin';
+  const isBlocked = role === 'blocked';
+  const roleLabel = role === 'user' ? 'pendiente' : role === 'blocked' ? 'bloqueado' : role;
+  const roleBadge = isSuper
+    ? 'bg-destructive/10 text-destructive border-destructive/20'
+    : isReseller
+      ? 'bg-primary/10 text-primary border-primary/20'
+      : isBlocked
+        ? 'bg-red-500/10 text-red-400 border-red-500/20'
+        : 'bg-amber-500/10 text-amber-400 border-amber-500/20';
   return (
   <tr className="border-b border-white/5 hover:bg-white/[0.02] transition-all duration-300 group">
     <td className="p-5">
@@ -892,10 +921,7 @@ const UserRow = ({ name, email, role, credits, created, onRecharge, onToggleActi
       </div>
     </td>
     <td className="p-5">
-      <Badge variant="outline" className={`rounded-lg border-white/10 uppercase text-[9px] font-black px-2.5 py-0.5 tracking-widest ${
-        role === 'superadmin' ? 'bg-destructive/10 text-destructive border-destructive/20' :
-        role === 'reseller' ? 'bg-primary/10 text-primary border-primary/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
-      }`}>{role === 'user' ? 'pendiente' : role}</Badge>
+      <Badge variant="outline" className={`rounded-lg border-white/10 uppercase text-[9px] font-black px-2.5 py-0.5 tracking-widest ${roleBadge}`}>{roleLabel}</Badge>
     </td>
     <td className="p-5">
       <div className="flex items-center gap-2">
@@ -906,23 +932,32 @@ const UserRow = ({ name, email, role, credits, created, onRecharge, onToggleActi
     <td className="p-5 text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-50">{created}</td>
     <td className="p-5 text-right">
       <div className="flex justify-end gap-2 flex-wrap">
-        {!isSuper && (
+        {!isSuper && !isBlocked && (
           <Button
             onClick={onToggleActivation}
             disabled={toggling}
             size="sm"
             className={`rounded-lg font-black italic uppercase tracking-widest text-[10px] h-9 px-3 ${
-              isActive
+              isReseller
                 ? 'bg-amber-500/15 hover:bg-amber-500/25 text-amber-400 border border-amber-500/30'
                 : 'bg-green-500/15 hover:bg-green-500/25 text-green-400 border border-green-500/30'
             }`}
           >
-            {toggling ? <RefreshCw className="w-3 h-3 animate-spin" /> : (isActive ? 'Desactivar' : 'Activar')}
+            {toggling ? <RefreshCw className="w-3 h-3 animate-spin" /> : (isReseller ? 'Quitar Reseller' : 'Hacer Reseller')}
+          </Button>
+        )}
+        {!isSuper && !isReseller && !isBlocked && (
+          <Button onClick={onAssignLicense} size="sm" className="rounded-lg bg-destructive/15 hover:bg-destructive/25 text-destructive border border-destructive/30 font-black italic uppercase tracking-widest text-[10px] h-9 px-3">
+            <Key className="w-3 h-3 mr-1" /> Asignar
           </Button>
         )}
         {!isSuper && (
-          <Button onClick={onAssignLicense} size="sm" className="rounded-lg bg-destructive/15 hover:bg-destructive/25 text-destructive border border-destructive/30 font-black italic uppercase tracking-widest text-[10px] h-9 px-3">
-            <Key className="w-3 h-3 mr-1" /> Asignar
+          <Button onClick={onBlockToggle} disabled={toggling} size="sm" className={`rounded-lg font-black italic uppercase tracking-widest text-[10px] h-9 px-3 ${
+            isBlocked
+              ? 'bg-green-500/15 hover:bg-green-500/25 text-green-400 border border-green-500/30'
+              : 'bg-red-500/15 hover:bg-red-500/25 text-red-400 border border-red-500/30'
+          }`}>
+            {toggling ? <RefreshCw className="w-3 h-3 animate-spin" /> : (isBlocked ? 'Desbloquear' : 'Bloquear')}
           </Button>
         )}
         <Button onClick={onRecharge} size="sm" className="rounded-lg bg-primary hover:bg-primary/90 text-white font-black italic uppercase tracking-widest text-[10px] h-9 px-4">
