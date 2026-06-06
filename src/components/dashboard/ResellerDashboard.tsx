@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { LayoutDashboard, Key, ClipboardList, History, Users, Wallet, Settings, LifeBuoy, Zap, Plus, Infinity, CalendarDays, LogOut } from "lucide-react";
+import { LayoutDashboard, Key, ClipboardList, History, Users, Wallet, Settings, LifeBuoy, Zap, Plus, Infinity, CalendarDays, LogOut, Coins } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -21,7 +21,19 @@ export const ResellerDashboard = () => {
   const { user, profile, loading } = useAuth(true);
   const [licenses, setLicenses] = useState<License[]>([]);
   const [fetchingLicenses, setFetchingLicenses] = useState(true);
+  const [credits, setCredits] = useState<number>(0);
+  const [isGenerating, setIsGenerating] = useState(false);
   const navigate = useNavigate();
+
+  const fetchCredits = async () => {
+    if (!user) return;
+    const { data } = await supabase
+      .from("user_credits")
+      .select("credits")
+      .eq("user_id", user.id)
+      .maybeSingle();
+    setCredits(data?.credits ?? 0);
+  };
 
   useEffect(() => {
     const getLicenses = async () => {
@@ -40,11 +52,29 @@ export const ResellerDashboard = () => {
       }
     };
 
-    if (user) getLicenses();
+    if (user) {
+      getLicenses();
+      fetchCredits();
+    }
   }, [user]);
 
   const generateLicense = async (type: string) => {
+    if (isGenerating) return;
+    if (credits < 1) {
+      toast.error("Sin créditos. Contacta al superadmin para recargar.");
+      return;
+    }
+    setIsGenerating(true);
     try {
+      // Atomic credit consumption on the server
+      const { data: consumed, error: rpcError } = await supabase.rpc("consume_credit");
+      if (rpcError) throw rpcError;
+      if (!consumed) {
+        toast.error("Sin créditos disponibles.");
+        await fetchCredits();
+        return;
+      }
+
       const code = `${type.toUpperCase()}-${Math.random().toString(36).substring(2, 10).toUpperCase()}`;
       const { data, error } = await supabase
         .from("licenses")
@@ -58,11 +88,14 @@ export const ResellerDashboard = () => {
         .single();
 
       if (error) throw error;
-      
+
       setLicenses([data, ...licenses]);
-      toast.success(`Licencia ${type} generada: ${code}`);
+      await fetchCredits();
+      toast.success(`Licencia ${type} generada: ${code} (−1 crédito)`);
     } catch (error: any) {
       toast.error("Error al generar licencia: " + error.message);
+    } finally {
+      setIsGenerating(false);
     }
   };
 
@@ -138,10 +171,17 @@ export const ResellerDashboard = () => {
 
             {/* Reseller Metrics */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <Card className="rounded-xl border-primary/40 bg-gradient-to-br from-primary/10 to-[#0A101F] p-6">
+                <div className="flex items-center gap-2 mb-2">
+                  <Coins className="w-4 h-4 text-primary" />
+                  <p className="text-[10px] font-bold text-primary uppercase tracking-widest">CRÉDITOS</p>
+                </div>
+                <h3 className="text-4xl font-bold text-white mb-1 tracking-tight">{credits}</h3>
+                <p className="text-xs text-muted-foreground">1 crédito = 1 licencia</p>
+              </Card>
               <MetricCard title="LICENÇAS GERADAS" value={licenses.length.toString()} subtitle="Total de licenças" />
               <MetricCard title="ATIVAS" value={licenses.filter(l => l.status === 'active').length.toString()} subtitle="Licenças ativas" />
               <MetricCard title="TESTE" value={licenses.filter(l => l.type === 'test').length.toString()} subtitle="Licenças de teste" />
-              <MetricCard title="REVENDA" value="70%" subtitle="Desconto aplicado" />
             </div>
 
             {/* License Generation Section */}
