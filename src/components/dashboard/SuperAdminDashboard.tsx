@@ -55,6 +55,26 @@ export const SuperAdminDashboard = () => {
   const [rechargeTarget, setRechargeTarget] = useState<ExtendedProfile | null>(null);
   const [rechargeAmount, setRechargeAmount] = useState("10");
   const [isRecharging, setIsRecharging] = useState(false);
+  const [togglingUserId, setTogglingUserId] = useState<string | null>(null);
+  const activateFn = useServerFn(setUserActivation);
+
+  const handleToggleActivation = async (u: ExtendedProfile) => {
+    const isActive = u.role === "reseller" || u.role === "superadmin";
+    if (u.role === "superadmin") {
+      toast.error("No se puede desactivar a un superadmin");
+      return;
+    }
+    setTogglingUserId(u.id);
+    try {
+      const res = await activateFn({ data: { targetUserId: u.id, activate: !isActive } });
+      toast.success(isActive ? "Cuenta desactivada" : "Cuenta activada como revendedor");
+      setUsers((prev) => prev.map((p) => (p.id === u.id ? { ...p, role: res.role } : p)));
+    } catch (e: any) {
+      toast.error(e.message || "Error al cambiar estado");
+    } finally {
+      setTogglingUserId(null);
+    }
+  };
 
   const loadUsersWithCredits = async () => {
     try {
