@@ -3,28 +3,64 @@ import { supabase } from "@/integrations/supabase/client";
 import { User, Session } from "@supabase/supabase-js";
 import { useNavigate } from "@tanstack/react-router";
 
+export interface Profile {
+  id: string;
+  email: string | null;
+  role: string | null;
+  created_at: string;
+}
+
 export const useAuth = (requireAuth = false) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  const fetchProfile = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", userId)
+        .single();
+
+      if (error) throw error;
+      setProfile(data);
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+    }
+  };
+
   useEffect(() => {
-    // Check active sessions and sets the user
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
       setSession(session);
       setUser(session?.user ?? null);
+      
+      if (session?.user) {
+        await fetchProfile(session.user.id);
+      }
+      
       setLoading(false);
       
       if (requireAuth && !session) {
         navigate({ to: "/auth" });
       }
-    });
+    };
 
-    // Listen for changes on auth state
+    checkAuth();
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
+      
+      if (session?.user) {
+        fetchProfile(session.user.id);
+      } else {
+        setProfile(null);
+      }
+      
       setLoading(false);
 
       if (requireAuth && !session) {
@@ -35,5 +71,5 @@ export const useAuth = (requireAuth = false) => {
     return () => subscription.unsubscribe();
   }, [requireAuth, navigate]);
 
-  return { user, session, loading };
+  return { user, session, profile, loading };
 };
