@@ -595,12 +595,21 @@ const AdminNavItem = ({
 }) => (
   <button 
     onClick={onClick}
-    className={`w-full flex items-center gap-3 px-4 py-3 font-black italic tracking-tighter uppercase text-sm transition-all group ${
-      active ? 'text-destructive bg-destructive/10 border-r-2 border-destructive' : 'text-muted-foreground hover:text-white hover:bg-white/5'
+    className={`w-full flex items-center gap-4 px-6 py-4 transition-all duration-300 relative group overflow-hidden ${
+      active 
+        ? 'text-white' 
+        : 'text-muted-foreground hover:text-white'
     }`}
   >
-    {icon}
-    {label}
+    {active && (
+      <div className="absolute inset-0 bg-destructive/10 border-r-4 border-destructive" />
+    )}
+    <div className={`relative z-10 p-2 rounded-lg transition-colors ${active ? 'bg-destructive text-white shadow-lg shadow-destructive/20' : 'bg-white/5 group-hover:bg-white/10'}`}>
+      {icon}
+    </div>
+    <span className="relative z-10 font-bold uppercase tracking-[0.15em] text-[11px] italic">
+      {label}
+    </span>
   </button>
 );
 
