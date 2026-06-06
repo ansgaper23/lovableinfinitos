@@ -67,9 +67,22 @@ export const ResellerDashboard = () => {
     }
   }, [user]);
 
-  const generateLicense = async (type: string) => {
-    if (isGenerating) return;
+  const openGenerateDialog = (type: string) => {
+    setPendingType(type);
+    setLicenseName("");
+    setNameDialogOpen(true);
+  };
+
+  const generateLicense = async () => {
+    if (isGenerating || !pendingType) return;
+    const type = pendingType;
     const isTest = type.toLowerCase() === 'test';
+    const name = licenseName.trim();
+
+    if (!name) {
+      toast.error("Ingresa un nombre para la licencia");
+      return;
+    }
 
     if (!isTest && credits < 1) {
       toast.error("Sin créditos. Contacta al superadmin para recargar.");
@@ -88,7 +101,8 @@ export const ResellerDashboard = () => {
         }
       }
 
-      const code = `${type.toUpperCase()}-${Math.random().toString(36).substring(2, 10).toUpperCase()}`;
+      const safeName = name.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().substring(0, 12) || 'LIC';
+      const code = `${type.toUpperCase()}-${safeName}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
       const { data, error } = await supabase
         .from("licenses")
         .insert([{
@@ -104,15 +118,26 @@ export const ResellerDashboard = () => {
 
       setLicenses([data, ...licenses]);
       if (!isTest) await fetchCredits();
-      toast.success(
-        isTest
-          ? `Licencia de prueba generada: ${code} (sin costo)`
-          : `Licencia ${type} generada: ${code} (−1 crédito)`
-      );
+      setGeneratedCode(code);
+      setCopied(false);
+      setNameDialogOpen(false);
+      setResultDialogOpen(true);
+      toast.success(isTest ? "Licencia de prueba generada (sin costo)" : "Licencia generada (−1 crédito)");
     } catch (error: any) {
       toast.error("Error al generar licencia: " + error.message);
     } finally {
       setIsGenerating(false);
+    }
+  };
+
+  const copyCode = async () => {
+    try {
+      await navigator.clipboard.writeText(generatedCode);
+      setCopied(true);
+      toast.success("Clave copiada al portapapeles");
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast.error("No se pudo copiar");
     }
   };
 
