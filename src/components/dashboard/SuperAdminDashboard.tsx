@@ -58,6 +58,25 @@ export const SuperAdminDashboard = () => {
   const [togglingUserId, setTogglingUserId] = useState<string | null>(null);
   const activateFn = useServerFn(setUserActivation);
   const assignFn = useServerFn(assignLicenseToUser);
+  const roleFn = useServerFn(setUserRole);
+
+  const handleBlockToggle = async (u: ExtendedProfile) => {
+    if (u.role === "superadmin") {
+      toast.error("No se puede bloquear a un superadmin");
+      return;
+    }
+    const targetRole = u.role === "blocked" ? "user" : "blocked";
+    setTogglingUserId(u.id);
+    try {
+      const res = await roleFn({ data: { targetUserId: u.id, role: targetRole } });
+      toast.success(targetRole === "blocked" ? "Cuenta bloqueada" : "Cuenta desbloqueada");
+      setUsers((prev) => prev.map((p) => (p.id === u.id ? { ...p, role: res.role } : p)));
+    } catch (e: any) {
+      toast.error(e.message || "Error al cambiar estado");
+    } finally {
+      setTogglingUserId(null);
+    }
+  };
 
   const [assignTarget, setAssignTarget] = useState<ExtendedProfile | null>(null);
   const [assignDays, setAssignDays] = useState<1 | 7 | 30 | 60>(7);
