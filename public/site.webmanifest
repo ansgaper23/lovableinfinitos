@@ -1,0 +1,16 @@
+{
+  "name": "Lovable Infinito",
+  "short_name": "Lovable Infinito",
+  "description": "Créditos infinitos para Lovable en Perú",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#ea384c",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    }
+  ]
+}

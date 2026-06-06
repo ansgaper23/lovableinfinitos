@@ -111,10 +111,35 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootShell({ children }: { children: ReactNode }) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Lovable Infinito",
+    "url": "https://lovable-infinito.com",
+    "description": "Créditos infinitos para Lovable. La solución ideal para builders en Perú con pagos locales y soporte en español.",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Web",
+    "author": {
+      "@type": "Organization",
+      "name": "Lovable Infinito"
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": "39.00",
+      "priceCurrency": "PEN"
+    }
+  };
+
   return (
-    <html lang="en">
+    <html lang="es">
       <head>
         <HeadContent />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        <link rel="manifest" href="/site.webmanifest" />
+        <meta name="theme-color" content="#ea384c" />
       </head>
       <body>
         {children}
