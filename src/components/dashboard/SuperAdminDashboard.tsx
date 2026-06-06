@@ -563,12 +563,12 @@ export const SuperAdminDashboard = () => {
                         ) : (
                           <table className="w-full text-left border-collapse">
                             <thead>
-                              <tr className="border-b border-white/5 bg-white/[0.01]">
-                                <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Llave</th>
-                                <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Cliente</th>
-                                <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Estado</th>
-                                <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Expira</th>
-                                <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Acción</th>
+                              <tr className="border-b border-white/5 bg-white/[0.02]">
+                                <th className="p-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60">Llave</th>
+                                <th className="p-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60">Cliente</th>
+                                <th className="p-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60 text-center">Estado</th>
+                                <th className="p-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60">Vencimiento</th>
+                                <th className="p-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60 text-right">Control</th>
                               </tr>
                             </thead>
                             <tbody>
