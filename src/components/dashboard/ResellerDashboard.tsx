@@ -57,10 +57,12 @@ export const ResellerDashboard = () => {
   };
 
   const fetchLicenses = async () => {
+    if (!user) return;
     try {
       const { data, error } = await supabase
         .from("reseller_licenses")
         .select("*")
+        .eq("user_id", user.id)
         .order("created_at", { ascending: false });
       if (error) throw error;
       const mapped: License[] = (data || []).map((r: any) => ({
@@ -84,7 +86,7 @@ export const ResellerDashboard = () => {
       fetchCredits();
       fetchApiToken();
     }
-  }, [user]);
+  }, [user?.id]);
 
   const openGenerateDialog = (type: string) => {
     setPendingType(type);

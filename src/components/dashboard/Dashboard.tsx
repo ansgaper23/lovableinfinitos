@@ -91,7 +91,7 @@ export const Dashboard = () => {
         .maybeSingle();
       if (asg) setAssigned(asg as AssignedLicense);
     })();
-  }, [user]);
+  }, [user?.id]);
 
   const handleGenerateTrial = async () => {
     setIsGenerating(true);
