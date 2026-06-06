@@ -20,9 +20,11 @@ serve(async (req) => {
     const path = url.pathname.split('/').pop();
     const body = await req.json().catch(() => ({}));
 
-    // URL del proveedor
+    // URL del proveedor actualizada a la nueva estructura de API
     const targetUrl = `https://painel.all-star.digital/api/reseller/${path}`;
     
+    console.log(`Proxying request to: ${targetUrl}`);
+
     const response = await fetch(targetUrl, {
       method: 'POST',
       headers: {
@@ -32,7 +34,21 @@ serve(async (req) => {
       body: JSON.stringify(body),
     });
 
-    const data = await response.json();
+    const text = await response.text();
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (e) {
+      console.error("Invalid JSON response from provider:", text);
+      return new Response(JSON.stringify({ 
+        success: false, 
+        message: "El servidor del proveedor no devolvió un JSON válido.",
+        rawResponse: text.substring(0, 200)
+      }), {
+        status: 502,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
     return new Response(JSON.stringify(data), {
       status: response.status,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
