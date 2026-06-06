@@ -1,14 +1,32 @@
 import { useEffect, useState } from "react";
-import { LayoutDashboard, Users, BarChart3, ShieldAlert, Settings, LogOut, Search, MoreVertical, CheckCircle2, XCircle, TrendingUp, DollarSign } from "lucide-react";
+import { 
+  LayoutDashboard, Users, BarChart3, ShieldAlert, Settings, 
+  LogOut, Search, MoreVertical, CheckCircle2, XCircle, 
+  TrendingUp, DollarSign, Key, RefreshCw, Trash2, ShieldCheck, 
+  Clock, Plus, CreditCard
+} from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { 
+  Dialog, DialogContent, DialogHeader, DialogTitle, 
+  DialogTrigger, DialogDescription, DialogFooter 
+} from "@/components/ui/dialog";
+import { 
+  Select, SelectContent, SelectItem, 
+  SelectTrigger, SelectValue 
+} from "@/components/ui/select";
 import { AnnouncementBar } from "@/components/landing/AnnouncementBar";
 import { useAuth, Profile } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
+import { resellerApi, ResellerStatus } from "@/services/resellerApi";
+
+interface ExtendedProfile extends Profile {
+  reseller_api_token?: string;
+}
 
 export const SuperAdminDashboard = () => {
   const { user, profile, loading } = useAuth(true);
