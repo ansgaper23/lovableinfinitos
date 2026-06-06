@@ -481,31 +481,63 @@ export const ResellerDashboard = () => {
 };
 
 const ResellerNavItem = ({ icon, label, active = false }: { icon: React.ReactNode, label: string, active?: boolean }) => (
-  <a href="#" className={`flex items-center gap-3 px-4 py-3 rounded-lg font-bold text-sm transition-all group ${
-    active ? 'text-white bg-primary shadow-[0_0_15px_rgba(var(--color-primary),0.3)]' : 'text-muted-foreground hover:text-white hover:bg-white/5'
+  <a href="#" className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition-all group relative ${
+    active
+      ? 'text-white bg-gradient-to-r from-primary/20 to-primary/5 border border-primary/30 font-semibold'
+      : 'text-muted-foreground hover:text-white hover:bg-white/[0.04] font-medium'
   }`}>
-    {icon}
+    {active && <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-primary rounded-r-full shadow-[0_0_10px_rgba(79,70,229,0.6)]" />}
+    <span className={active ? 'text-primary' : ''}>{icon}</span>
     {label}
   </a>
 );
 
-const MetricCard = ({ title, value, subtitle }: { title: string, value: string, subtitle: string }) => (
-  <Card className="rounded-xl border-white/5 bg-[#0A101F] p-6">
-    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">{title}</p>
-    <h3 className="text-4xl font-bold text-white mb-1 tracking-tight">{value}</h3>
-    <p className="text-xs text-muted-foreground">{subtitle}</p>
-  </Card>
+const MetricCard = ({ title, value, subtitle, icon, accent = false }: { title: string, value: string, subtitle: string, icon?: React.ReactNode, accent?: boolean }) => (
+  <div className={`relative rounded-2xl border p-5 overflow-hidden group transition-all hover:-translate-y-0.5 ${
+    accent
+      ? 'border-primary/30 bg-gradient-to-br from-primary/15 via-primary/5 to-transparent'
+      : 'border-white/[0.06] bg-[#0A101F]'
+  }`}>
+    {accent && <div className="absolute -top-12 -right-12 w-32 h-32 bg-primary/30 rounded-full blur-3xl pointer-events-none" />}
+    <div className="relative">
+      <div className="flex items-center gap-2 mb-3">
+        {icon && (
+          <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${accent ? 'bg-primary/20 text-primary border border-primary/30' : 'bg-white/[0.04] text-muted-foreground border border-white/10'}`}>
+            {icon}
+          </div>
+        )}
+        <p className={`text-[10px] font-bold uppercase tracking-[0.2em] ${accent ? 'text-primary' : 'text-muted-foreground'}`}>{title}</p>
+      </div>
+      <h3 className="text-3xl font-bold text-white mb-1 tracking-tight tabular-nums">{value}</h3>
+      <p className="text-[11px] text-muted-foreground">{subtitle}</p>
+    </div>
+  </div>
 );
 
-const LicenseTypeCard = ({ icon, title, description, onClick }: { icon: React.ReactNode, title: string, description: string, onClick: () => void }) => (
-  <div className="bg-[#111827] border border-white/5 p-8 rounded-2xl flex flex-col items-center text-center group hover:border-primary/50 transition-all">
-    <div className="mb-6 transform group-hover:scale-110 transition-transform">
-      {icon}
+const LicenseTypeCard = ({ icon, title, description, badge, badgeColor = 'primary', onClick }: { icon: React.ReactNode, title: string, description: string, badge?: string, badgeColor?: 'primary' | 'emerald', onClick: () => void }) => (
+  <div className="relative bg-gradient-to-br from-[#0F1729] to-[#0A101F] border border-white/[0.08] p-6 rounded-2xl flex flex-col group hover:border-primary/40 transition-all overflow-hidden hover:shadow-[0_0_40px_rgba(79,70,229,0.15)]">
+    <div className="absolute inset-0 bg-gradient-to-br from-primary/0 to-primary/0 group-hover:from-primary/[0.04] group-hover:to-transparent transition-all pointer-events-none" />
+    <div className="relative flex items-start justify-between mb-6">
+      <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:scale-110 group-hover:bg-primary/20 transition-all">
+        {icon}
+      </div>
+      {badge && (
+        <span className={`text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-md border ${
+          badgeColor === 'emerald'
+            ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
+            : 'text-primary bg-primary/10 border-primary/20'
+        }`}>{badge}</span>
+      )}
     </div>
-    <h3 className="text-sm font-bold text-white uppercase tracking-tight mb-2">{title}</h3>
-    <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-6">{description}</p>
-    <Button onClick={onClick} className="w-full bg-primary hover:bg-primary/90 text-white font-black italic uppercase tracking-tighter h-11 shadow-[0_0_20px_rgba(var(--color-primary),0.3)]">
-      GENERAR
+    <div className="relative flex-1">
+      <h3 className="text-base font-bold text-white tracking-tight mb-1">{title}</h3>
+      <p className="text-xs text-muted-foreground mb-6">{description}</p>
+    </div>
+    <Button onClick={onClick} className="relative w-full bg-white/[0.04] hover:bg-primary text-white font-semibold h-11 rounded-xl border border-white/10 hover:border-primary transition-all group/btn">
+      <span className="flex items-center justify-center gap-2">
+        Generar Clave
+        <Key className="w-4 h-4 transition-transform group-hover/btn:rotate-12" />
+      </span>
     </Button>
   </div>
 );
