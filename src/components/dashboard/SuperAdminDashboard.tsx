@@ -27,6 +27,7 @@ import { resellerApi, ResellerStatus } from "@/services/resellerApi";
 
 interface ExtendedProfile extends Omit<Profile, 'reseller_api_token'> {
   reseller_api_token?: string | null;
+  credits?: number;
 }
 
 export const SuperAdminDashboard = () => {
@@ -49,32 +50,62 @@ export const SuperAdminDashboard = () => {
   const [isLoadingLicenses, setIsLoadingLicenses] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const getUsers = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("profiles")
-          .select("*")
-          .order("created_at", { ascending: false });
+  const [rechargeTarget, setRechargeTarget] = useState<ExtendedProfile | null>(null);
+  const [rechargeAmount, setRechargeAmount] = useState("10");
+  const [isRecharging, setIsRecharging] = useState(false);
 
-        if (error) throw error;
-        setUsers(data || []);
-        
-        // Find current admin profile to set token
-        const currentProfile = data?.find(p => p.id === user?.id);
-        if (currentProfile?.reseller_api_token) {
-          setResellerToken(currentProfile.reseller_api_token);
-          fetchResellerStatus(currentProfile.reseller_api_token);
-        }
-      } catch (error: any) {
-        toast.error("Error al cargar usuarios: " + error.message);
-      } finally {
-        setFetchingUsers(false);
+  const loadUsersWithCredits = async () => {
+    try {
+      const [{ data: profilesData, error: pErr }, { data: creditsData }] = await Promise.all([
+        supabase.from("profiles").select("*").order("created_at", { ascending: false }),
+        supabase.from("user_credits").select("user_id, credits"),
+      ]);
+      if (pErr) throw pErr;
+      const creditMap = new Map((creditsData || []).map((c: any) => [c.user_id, c.credits]));
+      const merged = (profilesData || []).map((p: any) => ({ ...p, credits: creditMap.get(p.id) ?? 0 }));
+      setUsers(merged);
+
+      const currentProfile = profilesData?.find(p => p.id === user?.id);
+      if (currentProfile?.reseller_api_token) {
+        setResellerToken(currentProfile.reseller_api_token);
+        fetchResellerStatus(currentProfile.reseller_api_token);
       }
-    };
+    } catch (error: any) {
+      toast.error("Error al cargar usuarios: " + error.message);
+    } finally {
+      setFetchingUsers(false);
+    }
+  };
 
-    if (user) getUsers();
+  useEffect(() => {
+    if (user) loadUsersWithCredits();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
+
+  const handleRecharge = async () => {
+    if (!rechargeTarget) return;
+    const amount = parseInt(rechargeAmount, 10);
+    if (!Number.isFinite(amount) || amount === 0) {
+      toast.error("Cantidad inválida");
+      return;
+    }
+    setIsRecharging(true);
+    try {
+      const { data, error } = await supabase.rpc("add_credits", {
+        _target: rechargeTarget.id,
+        _amount: amount,
+      });
+      if (error) throw error;
+      toast.success(`Créditos actualizados. Total: ${data}`);
+      setRechargeTarget(null);
+      setRechargeAmount("10");
+      await loadUsersWithCredits();
+    } catch (error: any) {
+      toast.error("Error: " + error.message);
+    } finally {
+      setIsRecharging(false);
+    }
+  };
 
   const fetchResellerStatus = async (token: string) => {
     try {
