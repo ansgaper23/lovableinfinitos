@@ -478,52 +478,57 @@ export const SuperAdminDashboard = () => {
             {activeTab === "keys" && (
               <div className="space-y-8">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <Card className="rounded-none border-white/5 bg-white/[0.02] backdrop-blur-xl p-6">
-                    <h3 className="text-sm font-black italic uppercase mb-4 flex items-center gap-2">
-                      <Plus className="w-4 h-4 text-destructive" />
-                      Generar Nueva Llave
-                    </h3>
-                    <div className="space-y-4">
+                  <Card className="rounded-2xl border-white/5 bg-[#121214] overflow-hidden shadow-2xl p-0">
+                    <div className="bg-white/[0.01] p-6 border-b border-white/5">
+                      <div className="flex items-center gap-3 mb-1">
+                        <div className="p-2 bg-destructive/10 rounded-lg">
+                          <Plus className="w-4 h-4 text-destructive" />
+                        </div>
+                        <h3 className="text-sm font-black italic uppercase tracking-tight">Forjar Nueva Llave</h3>
+                      </div>
+                      <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest opacity-60">Emisión de licencias al instante</p>
+                    </div>
+                    <div className="p-6 space-y-6">
                       <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Nombre del Cliente</label>
+                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Identificador Cliente</label>
                         <Input 
-                          placeholder="Juan Pérez" 
+                          placeholder="p.ej. Juan Pérez" 
                           value={keyDisplayName}
                           onChange={(e) => setKeyDisplayName(e.target.value)}
-                          className="rounded-none border-white/10 bg-white/5 text-xs h-10" 
+                          className="rounded-xl border-white/5 bg-white/5 text-xs h-11 focus:bg-white/[0.08]" 
                         />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Tipo de Licencia</label>
+                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Plan de Acceso</label>
                         <Select value={keyType} onValueChange={(v: any) => setKeyType(v)}>
-                          <SelectTrigger className="rounded-none border-white/10 bg-white/5 text-xs h-10">
-                            <SelectValue placeholder="Selecciona tipo" />
+                          <SelectTrigger className="rounded-xl border-white/5 bg-white/5 text-xs h-11 focus:bg-white/[0.08]">
+                            <SelectValue placeholder="Selecciona el plan" />
                           </SelectTrigger>
-                          <SelectContent className="bg-background border-white/10 rounded-none">
-                            <SelectItem value="trial">PRUEBA (30 MIN)</SelectItem>
-                            <SelectItem value="days">DÍAS ACTIVOS</SelectItem>
-                            <SelectItem value="lifetime">VITALICIA</SelectItem>
+                          <SelectContent className="bg-[#121214] border-white/10 rounded-xl overflow-hidden shadow-2xl">
+                            <SelectItem value="trial" className="focus:bg-destructive focus:text-white uppercase font-black text-[10px] py-3">⚡ PRUEBA (30 MIN)</SelectItem>
+                            <SelectItem value="days" className="focus:bg-destructive focus:text-white uppercase font-black text-[10px] py-3">📅 DÍAS ACTIVOS</SelectItem>
+                            <SelectItem value="lifetime" className="focus:bg-destructive focus:text-white uppercase font-black text-[10px] py-3">💎 VITALICIA (LIFETIME)</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
                       {keyType === "days" && (
-                        <div className="space-y-2">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Días</label>
+                        <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
+                          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Duración (Días)</label>
                           <Input 
                             type="number"
                             value={keyDays}
                             onChange={(e) => setKeyDays(e.target.value)}
-                            className="rounded-none border-white/10 bg-white/5 text-xs h-10" 
+                            className="rounded-xl border-white/5 bg-white/5 text-xs h-11 focus:bg-white/[0.08]" 
                           />
                         </div>
                       )}
                       <Button 
                         onClick={handleGenerateKey}
                         disabled={isGeneratingKey || !resellerToken}
-                        className="w-full rounded-none bg-destructive hover:bg-destructive/90 text-white font-black italic uppercase tracking-widest text-xs h-12 shadow-[0_0_20px_rgba(var(--color-destructive),0.3)]"
+                        className="w-full rounded-xl bg-destructive hover:bg-destructive/90 text-white font-black italic uppercase tracking-[0.15em] text-[10px] h-14 shadow-xl shadow-destructive/20 border-t border-white/20 active:scale-[0.98] transition-all"
                       >
-                        {isGeneratingKey ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : <Key className="w-4 h-4 mr-2" />}
-                        GENERAR LICENCIA
+                        {isGeneratingKey ? <RefreshCw className="w-4 h-4 animate-spin mr-3" /> : <Key className="w-4 h-4 mr-3" />}
+                        GENERAR ACCESO MAESTRO
                       </Button>
                     </div>
                   </Card>
