@@ -57,6 +57,26 @@ export const SuperAdminDashboard = () => {
   const [isRecharging, setIsRecharging] = useState(false);
   const [togglingUserId, setTogglingUserId] = useState<string | null>(null);
   const activateFn = useServerFn(setUserActivation);
+  const assignFn = useServerFn(assignLicenseToUser);
+
+  const [assignTarget, setAssignTarget] = useState<ExtendedProfile | null>(null);
+  const [assignDays, setAssignDays] = useState<1 | 7 | 30 | 60>(7);
+  const [isAssigning, setIsAssigning] = useState(false);
+  const [assignedResult, setAssignedResult] = useState<{ license_key: string; expires_at: string | null } | null>(null);
+
+  const handleAssignLicense = async () => {
+    if (!assignTarget) return;
+    setIsAssigning(true);
+    try {
+      const res = await assignFn({ data: { targetUserId: assignTarget.id, days: assignDays } });
+      setAssignedResult({ license_key: res.license_key, expires_at: res.expires_at });
+      toast.success(`Licencia de ${assignDays} día${assignDays > 1 ? "s" : ""} asignada`);
+    } catch (e: any) {
+      toast.error(e.message || "Error al asignar licencia");
+    } finally {
+      setIsAssigning(false);
+    }
+  };
 
   const handleToggleActivation = async (u: ExtendedProfile) => {
     const isActive = u.role === "reseller" || u.role === "superadmin";
