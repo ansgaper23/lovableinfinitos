@@ -82,12 +82,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "author", content: "Lovable Infinito" },
       { name: "keywords", content: "lovable, créditos infinitos, inteligencia artificial, perú, desarrollo web, ia builder, lovable ai" },
       { property: "og:title", content: "Lovable Infinito — Créditos Infinitos para IA" },
-      { property: "og:description", content: "Potencia tu desarrollo con Lovable Infinito. Créditos ilimitados para la plataforma IA más potente." },
+      { property: "og:description", content: "Potencia tu desarrollo con Lovable Infinito. Créditos ilimitados para la plataforma IA más potente, soporte en español y pagos locales en Perú." },
       { property: "og:type", content: "website" },
       { property: "og:locale", content: "es_PE" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@LovableInfinito" },
       { name: "robots", content: "index, follow" },
+      { name: "twitter:title", content: "Lovable Infinito — Créditos Infinitos para IA" },
+      { name: "twitter:description", content: "Potencia tu desarrollo con Lovable Infinito. Créditos ilimitados para la plataforma IA más potente, soporte en español y pagos locales en Perú." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/65bea7a2-93df-465a-97f9-1fcbfcf817ad" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/65bea7a2-93df-465a-97f9-1fcbfcf817ad" },
     ],
     links: [
       {
