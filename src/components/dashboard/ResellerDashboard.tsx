@@ -198,138 +198,221 @@ export const ResellerDashboard = () => {
       <AnnouncementBar />
       <div className="flex-1 mt-10 flex overflow-hidden">
         {/* Sidebar */}
-        <aside className="w-64 border-r border-white/5 bg-[#050A15] hidden lg:flex flex-col">
-          <div className="p-6">
+        <aside className="w-64 border-r border-white/[0.06] bg-gradient-to-b from-[#070B18] to-[#03060F] hidden lg:flex flex-col relative">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(79,70,229,0.08),transparent_60%)] pointer-events-none" />
+          <div className="p-6 relative z-10">
             <div className="flex items-center gap-3 mb-10 group px-2">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(var(--color-primary),0.4)]">
+              <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-[0_0_25px_rgba(79,70,229,0.5)]">
                 <Zap className="w-5 h-5 text-white fill-white" />
+                <div className="absolute inset-0 rounded-xl bg-primary/40 blur-lg -z-10" />
               </div>
-              <span className="font-bold text-lg tracking-tight text-white uppercase italic">Panel de Revendedor</span>
+              <div className="flex flex-col">
+                <span className="font-bold text-sm tracking-tight text-white leading-tight">RESELLER</span>
+                <span className="text-[10px] text-primary tracking-[0.2em] uppercase">Lovable Infinito</span>
+              </div>
             </div>
 
+            <p className="text-[9px] font-bold text-muted-foreground/60 uppercase tracking-[0.2em] px-4 mb-3">Menú</p>
             <nav className="space-y-1">
-              <ResellerNavItem icon={<LayoutDashboard className="w-5 h-5" />} label="Panel" active />
-              <ResellerNavItem icon={<Key className="w-5 h-5" />} label="Generar Licencias" />
-              <ResellerNavItem icon={<ClipboardList className="w-5 h-5" />} label="Licencias Activas" />
-              <ResellerNavItem icon={<History className="w-5 h-5" />} label="Historial" />
-              <ResellerNavItem icon={<Users className="w-5 h-5" />} label="Clientes" />
-              <ResellerNavItem icon={<Wallet className="w-5 h-5" />} label="Financiero" />
-              <ResellerNavItem icon={<Settings className="w-5 h-5" />} label="Configuración" />
-              <ResellerNavItem icon={<LifeBuoy className="w-5 h-5" />} label="Soporte" />
+              <ResellerNavItem icon={<LayoutDashboard className="w-4 h-4" />} label="Panel" active />
+              <ResellerNavItem icon={<Key className="w-4 h-4" />} label="Generar Licencias" />
+              <ResellerNavItem icon={<ClipboardList className="w-4 h-4" />} label="Licencias Activas" />
+              <ResellerNavItem icon={<History className="w-4 h-4" />} label="Historial" />
+              <ResellerNavItem icon={<Users className="w-4 h-4" />} label="Clientes" />
+              <ResellerNavItem icon={<Wallet className="w-4 h-4" />} label="Financiero" />
+            </nav>
+
+            <p className="text-[9px] font-bold text-muted-foreground/60 uppercase tracking-[0.2em] px-4 mt-8 mb-3">Cuenta</p>
+            <nav className="space-y-1">
+              <ResellerNavItem icon={<Settings className="w-4 h-4" />} label="Configuración" />
+              <ResellerNavItem icon={<LifeBuoy className="w-4 h-4" />} label="Soporte" />
             </nav>
           </div>
-            <div className="mt-auto p-6 border-t border-white/5">
-              <Button variant="ghost" onClick={async () => { await supabase.auth.signOut(); navigate({ to: "/" }); }} className="w-full justify-start gap-3 text-muted-foreground hover:text-white transition-colors">
-                <LogOut className="w-5 h-5" />
-                Salir al Inicio
-              </Button>
+          <div className="mt-auto p-4 relative z-10">
+            <div className="rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-4 mb-3">
+              <div className="flex items-center gap-2 mb-2">
+                <Coins className="w-4 h-4 text-primary" />
+                <p className="text-[10px] font-bold text-primary uppercase tracking-widest">Saldo</p>
+              </div>
+              <p className="text-2xl font-bold text-white tabular-nums">{credits}</p>
+              <p className="text-[10px] text-muted-foreground">créditos disponibles</p>
             </div>
-          </aside>
+            <Button variant="ghost" onClick={async () => { await supabase.auth.signOut(); navigate({ to: "/" }); }} className="w-full justify-start gap-3 text-muted-foreground hover:text-white hover:bg-white/5 transition-colors rounded-xl">
+              <LogOut className="w-4 h-4" />
+              <span className="text-xs">Cerrar sesión</span>
+            </Button>
+          </div>
+        </aside>
 
         {/* Main Content */}
-        <main className="flex-1 overflow-y-auto p-8 bg-[#02060E]">
-          <div className="max-w-7xl mx-auto space-y-8">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center gap-4">
-                <h1 className="text-2xl font-bold text-white italic uppercase tracking-tight">Panel de Revendedor</h1>
-                <Badge className="bg-green-500/10 text-green-500 border-green-500/20 rounded-md py-0.5 font-bold text-[10px]">Activo</Badge>
+        <main className="flex-1 overflow-y-auto bg-[#02060E] relative">
+          {/* Decorative background */}
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(79,70,229,0.12),transparent_50%)] pointer-events-none" />
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:48px_48px] [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_80%)] pointer-events-none" />
+
+          <div className="relative max-w-7xl mx-auto p-8 space-y-8">
+            {/* Header */}
+            <div className="flex flex-wrap gap-4 justify-between items-start">
+              <div>
+                <div className="flex items-center gap-3 mb-2">
+                  <h1 className="text-3xl font-bold text-white tracking-tight">Panel de Revendedor</h1>
+                  <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                    <span className="relative flex h-1.5 w-1.5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
+                    </span>
+                    <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">Online</span>
+                  </span>
+                </div>
+                <p className="text-sm text-muted-foreground">Bienvenido de vuelta, gestiona tus claves y clientes.</p>
               </div>
-              <div className="flex items-center gap-4">
-                <Button variant="ghost" size="icon" className="text-muted-foreground relative">
-                  <div className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-[#02060E]" />
-                  <LifeBuoy className="w-6 h-6" />
+              <div className="flex items-center gap-3">
+                <div className="hidden md:flex items-center gap-2 px-3 py-2 rounded-xl bg-white/[0.03] border border-white/10">
+                  <div className="w-7 h-7 rounded-lg bg-primary/20 border border-primary/30 flex items-center justify-center">
+                    <Users className="w-3.5 h-3.5 text-primary" />
+                  </div>
+                  <div className="flex flex-col leading-none">
+                    <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Reseller</span>
+                    <span className="text-xs text-white font-medium truncate max-w-[160px]">{profile?.email || 'cuenta'}</span>
+                  </div>
+                </div>
+                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-white relative rounded-xl bg-white/[0.03] border border-white/10 w-10 h-10">
+                  <div className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full ring-2 ring-[#02060E]" />
+                  <LifeBuoy className="w-5 h-5" />
                 </Button>
-                <div className="w-10 h-10 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center overflow-hidden">
-                   <Users className="w-6 h-6 text-primary" />
+              </div>
+            </div>
+
+            {/* Metrics */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <MetricCard
+                accent
+                icon={<Coins className="w-4 h-4" />}
+                title="Créditos"
+                value={credits.toString()}
+                subtitle="1 crédito = 1 licencia"
+              />
+              <MetricCard
+                icon={<Key className="w-4 h-4" />}
+                title="Generadas"
+                value={licenses.length.toString()}
+                subtitle="Total acumulado"
+              />
+              <MetricCard
+                icon={<Zap className="w-4 h-4" />}
+                title="Activas"
+                value={licenses.filter(l => l.status === 'active').length.toString()}
+                subtitle="En uso por clientes"
+              />
+              <MetricCard
+                icon={<Plus className="w-4 h-4" />}
+                title="Pruebas"
+                value={licenses.filter(l => l.type === 'test' || l.type === 'trial').length.toString()}
+                subtitle="Trial gratuitas"
+              />
+            </div>
+
+            {/* License Generation */}
+            <div className="relative rounded-3xl border border-white/[0.08] bg-gradient-to-br from-[#0A1224] via-[#0A101F] to-[#070C18] p-8 overflow-hidden">
+              <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary/20 rounded-full blur-3xl pointer-events-none" />
+              <div className="relative">
+                <div className="flex items-end justify-between flex-wrap gap-4 mb-8">
+                  <div>
+                    <h2 className="text-xl font-bold text-white tracking-tight">Generar Nueva Licencia</h2>
+                    <p className="text-muted-foreground text-sm mt-1">Elige el tipo de clave que deseas emitir</p>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <Coins className="w-4 h-4 text-primary" />
+                    <span><span className="text-white font-bold">{credits}</span> créditos</span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <LicenseTypeCard
+                    icon={<Plus className="w-6 h-6" />}
+                    title="Licencia de Prueba"
+                    description="15 minutos"
+                    badge="GRATIS"
+                    badgeColor="emerald"
+                    onClick={() => openGenerateDialog('test')}
+                  />
+                  <LicenseTypeCard
+                    icon={<CalendarDays className="w-6 h-6" />}
+                    title="Licencia Mensual"
+                    description="Acceso por 30 días"
+                    badge="1 CRÉDITO"
+                    badgeColor="primary"
+                    onClick={() => openGenerateDialog('monthly')}
+                  />
+                  <LicenseTypeCard
+                    icon={<Infinity className="w-6 h-6" />}
+                    title="Licencia Vitalicia"
+                    description="Acceso ilimitado"
+                    badge="1 CRÉDITO"
+                    badgeColor="primary"
+                    onClick={() => openGenerateDialog('lifetime')}
+                  />
                 </div>
               </div>
             </div>
 
-            {/* Reseller Metrics */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <Card className="rounded-xl border-primary/40 bg-gradient-to-br from-primary/10 to-[#0A101F] p-6">
-                <div className="flex items-center gap-2 mb-2">
-                  <Coins className="w-4 h-4 text-primary" />
-                  <p className="text-[10px] font-bold text-primary uppercase tracking-widest">CRÉDITOS</p>
+            {/* Recent Licenses */}
+            <div className="rounded-3xl border border-white/[0.08] bg-[#0A101F]/80 backdrop-blur overflow-hidden">
+              <div className="p-6 flex items-center justify-between border-b border-white/5">
+                <div>
+                  <h2 className="text-lg font-bold text-white tracking-tight">Licencias Recientes</h2>
+                  <p className="text-xs text-muted-foreground mt-0.5">Historial de las claves emitidas</p>
                 </div>
-                <h3 className="text-4xl font-bold text-white mb-1 tracking-tight">{credits}</h3>
-                <p className="text-xs text-muted-foreground">1 crédito = 1 licencia</p>
-              </Card>
-              <MetricCard title="LICENCIAS GENERADAS" value={licenses.length.toString()} subtitle="Total de licencias" />
-              <MetricCard title="ACTIVAS" value={licenses.filter(l => l.status === 'active').length.toString()} subtitle="Licencias activas" />
-              <MetricCard title="PRUEBA" value={licenses.filter(l => l.type === 'test').length.toString()} subtitle="Licencias de prueba" />
-            </div>
-
-            {/* License Generation Section */}
-            <Card className="rounded-xl border-white/5 bg-[#0A101F] p-8">
-              <h2 className="text-xl font-bold text-white italic uppercase tracking-tight mb-2">Generar Nueva Licencia</h2>
-              <p className="text-muted-foreground text-sm mb-8">Elige el tipo de licencia</p>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <LicenseTypeCard 
-                  icon={<Plus className="w-10 h-10 text-primary" />} 
-                  title="LICENCIA DE PRUEBA" 
-                  description="Período de prueba" 
-                  onClick={() => openGenerateDialog('test')}
-                />
-                <LicenseTypeCard 
-                  icon={<CalendarDays className="w-10 h-10 text-primary" />} 
-                  title="LICENCIA MENSUAL" 
-                  description="Acceso por 30 días" 
-                  onClick={() => openGenerateDialog('monthly')}
-                />
-                <LicenseTypeCard 
-                  icon={<Infinity className="w-10 h-10 text-primary" />} 
-                  title="LICENCIA VITALICIA" 
-                  description="Acceso de por vida" 
-                  onClick={() => openGenerateDialog('lifetime')}
-                />
-              </div>
-            </Card>
-
-            {/* Recent Licenses Table */}
-            <Card className="rounded-xl border-white/5 bg-[#0A101F] overflow-hidden">
-              <div className="p-6">
-                <h2 className="text-lg font-bold text-white italic uppercase tracking-tight">Licencias Recientes</h2>
+                <span className="text-xs text-muted-foreground px-3 py-1 rounded-full bg-white/[0.03] border border-white/10">
+                  {licenses.length} total
+                </span>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="border-b border-white/5 text-[10px] font-bold text-muted-foreground uppercase tracking-widest bg-white/[0.01]">
-                      <th className="px-6 py-4">TIPO</th>
-                      <th className="px-6 py-4">CÓDIGO</th>
-                      <th className="px-6 py-4">ESTADO</th>
-                      <th className="px-6 py-4 text-right">FECHA</th>
+                    <tr className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] bg-white/[0.015]">
+                      <th className="px-6 py-3">Tipo</th>
+                      <th className="px-6 py-3">Código</th>
+                      <th className="px-6 py-3">Estado</th>
+                      <th className="px-6 py-3 text-right">Fecha</th>
                     </tr>
                   </thead>
                   <tbody className="text-sm">
                     {fetchingLicenses ? (
-                      <tr><td colSpan={4} className="p-8 text-center text-muted-foreground italic uppercase text-xs">Cargando datos...</td></tr>
+                      <tr><td colSpan={4} className="p-12 text-center text-muted-foreground text-xs uppercase tracking-widest">Cargando datos…</td></tr>
                     ) : licenses.length > 0 ? (
-                      licenses.map((l) => (
-                        <LicenseRow 
+                      licenses.slice(0, 10).map((l) => (
+                        <LicenseRow
                           key={l.id}
-                          type={l.type.toUpperCase()} 
-                          code={l.code} 
-                          status={l.status} 
-                          date={new Date(l.created_at).toLocaleDateString()} 
+                          type={l.type.toUpperCase()}
+                          code={l.code}
+                          status={l.status}
+                          date={new Date(l.created_at).toLocaleDateString()}
                         />
                       ))
                     ) : (
-                      <tr><td colSpan={4} className="p-8 text-center text-muted-foreground italic uppercase text-xs">Ninguna licencia generada</td></tr>
+                      <tr><td colSpan={4} className="p-12 text-center">
+                        <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                          <Key className="w-8 h-8 opacity-30" />
+                          <p className="text-xs uppercase tracking-widest">Aún no has generado licencias</p>
+                        </div>
+                      </td></tr>
                     )}
                   </tbody>
                 </table>
               </div>
-            </Card>
+            </div>
 
-            <div className="p-4 bg-primary/5 border border-primary/20 rounded-xl flex items-center gap-3">
-              <Zap className="w-5 h-5 text-primary fill-primary" />
-              <p className="text-xs text-white/90">Genera licencias y aumenta tus ganancias revendiendo Lovable Adict!</p>
+            <div className="p-4 rounded-2xl bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border border-primary/20 flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-primary/20 border border-primary/30 flex items-center justify-center shrink-0">
+                <Zap className="w-4 h-4 text-primary fill-primary" />
+              </div>
+              <p className="text-xs text-white/80">Genera licencias y aumenta tus ganancias revendiendo <span className="text-white font-bold">Lovable Infinito</span>.</p>
             </div>
           </div>
         </main>
       </div>
+
 
       {/* Name input dialog */}
       <Dialog open={nameDialogOpen} onOpenChange={setNameDialogOpen}>
@@ -398,44 +481,87 @@ export const ResellerDashboard = () => {
 };
 
 const ResellerNavItem = ({ icon, label, active = false }: { icon: React.ReactNode, label: string, active?: boolean }) => (
-  <a href="#" className={`flex items-center gap-3 px-4 py-3 rounded-lg font-bold text-sm transition-all group ${
-    active ? 'text-white bg-primary shadow-[0_0_15px_rgba(var(--color-primary),0.3)]' : 'text-muted-foreground hover:text-white hover:bg-white/5'
+  <a href="#" className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition-all group relative ${
+    active
+      ? 'text-white bg-gradient-to-r from-primary/20 to-primary/5 border border-primary/30 font-semibold'
+      : 'text-muted-foreground hover:text-white hover:bg-white/[0.04] font-medium'
   }`}>
-    {icon}
+    {active && <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-primary rounded-r-full shadow-[0_0_10px_rgba(79,70,229,0.6)]" />}
+    <span className={active ? 'text-primary' : ''}>{icon}</span>
     {label}
   </a>
 );
 
-const MetricCard = ({ title, value, subtitle }: { title: string, value: string, subtitle: string }) => (
-  <Card className="rounded-xl border-white/5 bg-[#0A101F] p-6">
-    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">{title}</p>
-    <h3 className="text-4xl font-bold text-white mb-1 tracking-tight">{value}</h3>
-    <p className="text-xs text-muted-foreground">{subtitle}</p>
-  </Card>
+const MetricCard = ({ title, value, subtitle, icon, accent = false }: { title: string, value: string, subtitle: string, icon?: React.ReactNode, accent?: boolean }) => (
+  <div className={`relative rounded-2xl border p-5 overflow-hidden group transition-all hover:-translate-y-0.5 ${
+    accent
+      ? 'border-primary/30 bg-gradient-to-br from-primary/15 via-primary/5 to-transparent'
+      : 'border-white/[0.06] bg-[#0A101F]'
+  }`}>
+    {accent && <div className="absolute -top-12 -right-12 w-32 h-32 bg-primary/30 rounded-full blur-3xl pointer-events-none" />}
+    <div className="relative">
+      <div className="flex items-center gap-2 mb-3">
+        {icon && (
+          <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${accent ? 'bg-primary/20 text-primary border border-primary/30' : 'bg-white/[0.04] text-muted-foreground border border-white/10'}`}>
+            {icon}
+          </div>
+        )}
+        <p className={`text-[10px] font-bold uppercase tracking-[0.2em] ${accent ? 'text-primary' : 'text-muted-foreground'}`}>{title}</p>
+      </div>
+      <h3 className="text-3xl font-bold text-white mb-1 tracking-tight tabular-nums">{value}</h3>
+      <p className="text-[11px] text-muted-foreground">{subtitle}</p>
+    </div>
+  </div>
 );
 
-const LicenseTypeCard = ({ icon, title, description, onClick }: { icon: React.ReactNode, title: string, description: string, onClick: () => void }) => (
-  <div className="bg-[#111827] border border-white/5 p-8 rounded-2xl flex flex-col items-center text-center group hover:border-primary/50 transition-all">
-    <div className="mb-6 transform group-hover:scale-110 transition-transform">
-      {icon}
+const LicenseTypeCard = ({ icon, title, description, badge, badgeColor = 'primary', onClick }: { icon: React.ReactNode, title: string, description: string, badge?: string, badgeColor?: 'primary' | 'emerald', onClick: () => void }) => (
+  <div className="relative bg-gradient-to-br from-[#0F1729] to-[#0A101F] border border-white/[0.08] p-6 rounded-2xl flex flex-col group hover:border-primary/40 transition-all overflow-hidden hover:shadow-[0_0_40px_rgba(79,70,229,0.15)]">
+    <div className="absolute inset-0 bg-gradient-to-br from-primary/0 to-primary/0 group-hover:from-primary/[0.04] group-hover:to-transparent transition-all pointer-events-none" />
+    <div className="relative flex items-start justify-between mb-6">
+      <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:scale-110 group-hover:bg-primary/20 transition-all">
+        {icon}
+      </div>
+      {badge && (
+        <span className={`text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-md border ${
+          badgeColor === 'emerald'
+            ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
+            : 'text-primary bg-primary/10 border-primary/20'
+        }`}>{badge}</span>
+      )}
     </div>
-    <h3 className="text-sm font-bold text-white uppercase tracking-tight mb-2">{title}</h3>
-    <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-6">{description}</p>
-    <Button onClick={onClick} className="w-full bg-primary hover:bg-primary/90 text-white font-black italic uppercase tracking-tighter h-11 shadow-[0_0_20px_rgba(var(--color-primary),0.3)]">
-      GENERAR
+    <div className="relative flex-1">
+      <h3 className="text-base font-bold text-white tracking-tight mb-1">{title}</h3>
+      <p className="text-xs text-muted-foreground mb-6">{description}</p>
+    </div>
+    <Button onClick={onClick} className="relative w-full bg-white/[0.04] hover:bg-primary text-white font-semibold h-11 rounded-xl border border-white/10 hover:border-primary transition-all group/btn">
+      <span className="flex items-center justify-center gap-2">
+        Generar Clave
+        <Key className="w-4 h-4 transition-transform group-hover/btn:rotate-12" />
+      </span>
     </Button>
   </div>
 );
 
-const LicenseRow = ({ type, code, status, date }: { type: string, code: string, status: string | null, date: string }) => (
-  <tr className="border-b border-white/5 hover:bg-white/[0.01] transition-colors group">
-    <td className="px-6 py-4 text-white font-medium">{type}</td>
-    <td className="px-6 py-4 font-mono text-muted-foreground text-xs">{code}</td>
-    <td className="px-6 py-4">
-      <Badge className={`${status === 'active' ? 'bg-green-500/10 text-green-500 border-green-500/20' : 'bg-red-500/10 text-red-500 border-red-500/20'} rounded-sm py-0.5 px-2 font-bold text-[10px]`}>
-        {status === 'active' ? 'Activa' : 'Inactiva'}
-      </Badge>
-    </td>
-    <td className="px-6 py-4 text-right text-muted-foreground font-medium">{date}</td>
-  </tr>
-);
+const LicenseRow = ({ type, code, status, date }: { type: string, code: string, status: string | null, date: string }) => {
+  const isActive = status === 'active';
+  const isExpired = status === 'expired';
+  return (
+    <tr className="border-t border-white/[0.04] hover:bg-white/[0.02] transition-colors group">
+      <td className="px-6 py-4">
+        <span className="text-[10px] font-bold text-primary uppercase tracking-widest px-2 py-1 rounded-md bg-primary/10 border border-primary/20">{type}</span>
+      </td>
+      <td className="px-6 py-4 font-mono text-white/80 text-xs">{code}</td>
+      <td className="px-6 py-4">
+        <span className={`inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md border ${
+          isActive ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
+          : isExpired ? 'text-amber-400 bg-amber-500/10 border-amber-500/20'
+          : 'text-red-400 bg-red-500/10 border-red-500/20'
+        }`}>
+          <span className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-emerald-400' : isExpired ? 'bg-amber-400' : 'bg-red-400'}`} />
+          {isActive ? 'Activa' : isExpired ? 'Expirada' : 'Inactiva'}
+        </span>
+      </td>
+      <td className="px-6 py-4 text-right text-muted-foreground text-xs tabular-nums">{date}</td>
+    </tr>
+  );
+};
