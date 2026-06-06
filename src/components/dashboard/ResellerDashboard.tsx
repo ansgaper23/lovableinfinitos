@@ -236,19 +236,19 @@ export const ResellerDashboard = () => {
                   icon={<Plus className="w-10 h-10 text-primary" />} 
                   title="LICENCIA DE PRUEBA" 
                   description="Período de prueba" 
-                  onClick={() => generateLicense('test')}
+                  onClick={() => openGenerateDialog('test')}
                 />
                 <LicenseTypeCard 
                   icon={<CalendarDays className="w-10 h-10 text-primary" />} 
                   title="LICENCIA MENSUAL" 
                   description="Acceso por 30 días" 
-                  onClick={() => generateLicense('monthly')}
+                  onClick={() => openGenerateDialog('monthly')}
                 />
                 <LicenseTypeCard 
                   icon={<Infinity className="w-10 h-10 text-primary" />} 
                   title="LICENCIA VITALICIA" 
                   description="Acceso de por vida" 
-                  onClick={() => generateLicense('lifetime')}
+                  onClick={() => openGenerateDialog('lifetime')}
                 />
               </div>
             </Card>
