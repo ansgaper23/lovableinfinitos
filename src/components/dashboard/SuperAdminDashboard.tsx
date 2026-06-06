@@ -444,12 +444,12 @@ export const SuperAdminDashboard = () => {
                 <CardContent className="p-0">
                   <table className="w-full text-left border-collapse">
                     <thead>
-                      <tr className="border-b border-white/5 bg-white/[0.01]">
-                        <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Usuario</th>
-                        <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Rol</th>
-                        <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Estado</th>
-                        <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Creado</th>
-                        <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Acción</th>
+                      <tr className="border-b border-white/5 bg-white/[0.02]">
+                        <th className="p-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60">Identidad</th>
+                        <th className="p-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60">Privilegios</th>
+                        <th className="p-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60">Estado</th>
+                        <th className="p-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60">Registro</th>
+                        <th className="p-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60 text-right">Acciones</th>
                       </tr>
                     </thead>
                     <tbody>
