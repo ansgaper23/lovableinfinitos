@@ -639,28 +639,33 @@ const AdminStatCard = ({ title, value, change, icon, subtitle }: { title: string
 );
 
 const UserRow = ({ name, email, role, status, created }: { name: string, email: string, role: string, status: string, created: string }) => (
-  <tr className="border-b border-white/5 hover:bg-white/[0.02] transition-colors group">
-    <td className="p-4">
-      <div>
-        <p className="font-bold text-sm text-white">{name}</p>
-        <p className="text-[10px] text-muted-foreground uppercase font-black">{email}</p>
+  <tr className="border-b border-white/5 hover:bg-white/[0.02] transition-all duration-300 group">
+    <td className="p-5">
+      <div className="flex items-center gap-3">
+        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-white/10 to-white/5 flex items-center justify-center font-black text-xs border border-white/10 group-hover:border-destructive/30 transition-colors">
+          {name.charAt(0).toUpperCase()}
+        </div>
+        <div>
+          <p className="font-bold text-sm text-white group-hover:text-destructive transition-colors">{name}</p>
+          <p className="text-[10px] text-muted-foreground uppercase font-black tracking-wider opacity-60">{email}</p>
+        </div>
       </div>
     </td>
-    <td className="p-4">
-      <Badge variant="outline" className={`rounded-none border-white/10 uppercase text-[9px] font-black ${
-        role === 'superadmin' ? 'text-destructive border-destructive/30' : 
-        role === 'reseller' ? 'text-primary border-primary/30' : 'text-muted-foreground'
+    <td className="p-5">
+      <Badge variant="outline" className={`rounded-lg border-white/10 uppercase text-[9px] font-black px-2.5 py-0.5 tracking-widest ${
+        role === 'superadmin' ? 'bg-destructive/10 text-destructive border-destructive/20' : 
+        role === 'reseller' ? 'bg-primary/10 text-primary border-primary/20' : 'bg-white/5 text-muted-foreground'
       }`}>{role}</Badge>
     </td>
-    <td className="p-4">
-      <div className="flex items-center gap-2">
-        {status === "Activo" ? <CheckCircle2 className="w-3 h-3 text-green-500" /> : <XCircle className="w-3 h-3 text-destructive" />}
-        <span className={`text-[10px] font-black uppercase tracking-widest ${status === "Activo" ? "text-green-500" : "text-destructive"}`}>{status}</span>
+    <td className="p-5">
+      <div className="flex items-center gap-2.5">
+        <div className={`w-1.5 h-1.5 rounded-full ${status === "Activo" ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]" : "bg-destructive shadow-[0_0_8px_rgba(239,68,68,0.5)]"}`} />
+        <span className={`text-[10px] font-black uppercase tracking-[0.15em] ${status === "Activo" ? "text-green-500" : "text-destructive"}`}>{status}</span>
       </div>
     </td>
-    <td className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">{created}</td>
-    <td className="p-4">
-      <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-white">
+    <td className="p-5 text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-50">{created}</td>
+    <td className="p-5">
+      <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-muted-foreground hover:text-white hover:bg-white/5 transition-all">
         <MoreVertical className="w-4 h-4" />
       </Button>
     </td>
