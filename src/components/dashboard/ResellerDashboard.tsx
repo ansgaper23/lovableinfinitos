@@ -26,6 +26,12 @@ export const ResellerDashboard = () => {
   const [fetchingLicenses, setFetchingLicenses] = useState(true);
   const [credits, setCredits] = useState<number>(0);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [nameDialogOpen, setNameDialogOpen] = useState(false);
+  const [pendingType, setPendingType] = useState<string | null>(null);
+  const [licenseName, setLicenseName] = useState("");
+  const [resultDialogOpen, setResultDialogOpen] = useState(false);
+  const [generatedCode, setGeneratedCode] = useState("");
+  const [copied, setCopied] = useState(false);
   const navigate = useNavigate();
 
   const fetchCredits = async () => {
