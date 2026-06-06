@@ -76,6 +76,7 @@ export type Database = {
           created_at: string
           email: string | null
           id: string
+          reseller_api_token: string | null
           role: string | null
           updated_at: string
         }
@@ -83,6 +84,7 @@ export type Database = {
           created_at?: string
           email?: string | null
           id: string
+          reseller_api_token?: string | null
           role?: string | null
           updated_at?: string
         }
@@ -90,8 +92,45 @@ export type Database = {
           created_at?: string
           email?: string | null
           id?: string
+          reseller_api_token?: string | null
           role?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      reseller_licenses: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          duration_seconds: number | null
+          expires_at: string | null
+          id: string
+          license_key: string
+          lifetime: boolean | null
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          duration_seconds?: number | null
+          expires_at?: string | null
+          id?: string
+          license_key: string
+          lifetime?: boolean | null
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          duration_seconds?: number | null
+          expires_at?: string | null
+          id?: string
+          license_key?: string
+          lifetime?: boolean | null
+          type?: string
+          user_id?: string
         }
         Relationships: []
       }
