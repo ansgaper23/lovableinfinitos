@@ -59,6 +59,7 @@ export const SuperAdminDashboard = () => {
   const activateFn = useServerFn(setUserActivation);
   const assignFn = useServerFn(assignLicenseToUser);
   const roleFn = useServerFn(setUserRole);
+  const getUsersFn = useServerFn(getAllUsers);
 
   const handleBlockToggle = async (u: ExtendedProfile) => {
     if (u.role === "superadmin") {
