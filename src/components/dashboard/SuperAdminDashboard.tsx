@@ -422,19 +422,22 @@ export const SuperAdminDashboard = () => {
             )}
 
             {activeTab === "users" && (
-              <Card className="rounded-none border-white/5 bg-white/[0.02] backdrop-blur-xl overflow-hidden">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-7 border-b border-white/5">
+              <Card className="rounded-2xl border-white/5 bg-[#121214] overflow-hidden shadow-2xl">
+                <CardHeader className="flex flex-row items-center justify-between pb-8 border-b border-white/5 bg-white/[0.01]">
                   <div>
-                    <CardTitle className="text-xl font-black italic tracking-tighter uppercase">Usuarios Recientes</CardTitle>
-                    <CardDescription className="text-[10px] uppercase font-black tracking-widest text-muted-foreground mt-1">Control de acceso y planes</CardDescription>
+                    <div className="flex items-center gap-3 mb-1">
+                      <div className="w-2 h-2 rounded-full bg-destructive animate-pulse" />
+                      <CardTitle className="text-xl font-black italic tracking-tighter uppercase">Usuarios Registrados</CardTitle>
+                    </div>
+                    <CardDescription className="text-[10px] uppercase font-black tracking-widest text-muted-foreground">Gestión total de cuentas y permisos</CardDescription>
                   </div>
-                  <div className="relative w-64">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <div className="relative w-72 group">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-destructive transition-colors" />
                     <Input 
-                      placeholder="Buscar usuario..." 
+                      placeholder="Buscar por email o rol..." 
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10 rounded-none border-white/10 bg-white/5 text-xs h-10" 
+                      className="pl-12 rounded-xl border-white/5 bg-white/5 text-[11px] h-11 tracking-wide focus:bg-white/[0.08] transition-all" 
                     />
                   </div>
                 </CardHeader>
