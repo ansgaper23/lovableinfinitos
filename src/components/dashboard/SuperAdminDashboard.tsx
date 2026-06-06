@@ -614,17 +614,26 @@ const AdminNavItem = ({
 );
 
 const AdminStatCard = ({ title, value, change, icon, subtitle }: { title: string, value: string, change?: string, icon: React.ReactNode, subtitle?: string }) => (
-  <Card className="rounded-none border-white/5 bg-white/[0.02] backdrop-blur-xl hover:border-destructive/30 transition-colors group">
+  <Card className="relative overflow-hidden group bg-[#121214] border-white/5 hover:border-destructive/20 transition-all duration-500 rounded-2xl">
+    <div className="absolute top-0 left-0 w-1 h-full bg-destructive/20 group-hover:bg-destructive transition-all" />
     <CardContent className="p-6">
-      <div className="flex justify-between items-start mb-4">
-        <div className="w-12 h-12 rounded-none bg-white/5 flex items-center justify-center group-hover:bg-destructive/10 transition-colors">
+      <div className="flex justify-between items-start">
+        <div className="p-3 bg-destructive/10 rounded-xl text-destructive group-hover:scale-110 transition-transform duration-500">
           {icon}
         </div>
+        {change && (
+          <Badge variant="outline" className="border-green-500/20 bg-green-500/5 text-green-500 text-[9px] font-black uppercase tracking-widest px-2 py-0">
+            {change}
+          </Badge>
+        )}
       </div>
-      <p className="text-[10px] font-black tracking-widest text-muted-foreground uppercase mb-1">{title}</p>
-      <h3 className="text-3xl font-black italic tracking-tighter text-white mb-1">{value}</h3>
-      {change && <p className="text-[10px] text-primary font-black uppercase tracking-widest">{change}</p>}
-      {subtitle && <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">{subtitle}</p>}
+      <div className="mt-6">
+        <p className="text-[10px] font-black tracking-[0.2em] text-muted-foreground uppercase mb-2">{title}</p>
+        <div className="flex items-baseline gap-2">
+          <h3 className="text-3xl font-black italic tracking-tighter text-white">{value}</h3>
+          {subtitle && <span className="text-[10px] text-muted-foreground uppercase font-medium">{subtitle}</span>}
+        </div>
+      </div>
     </CardContent>
   </Card>
 );
