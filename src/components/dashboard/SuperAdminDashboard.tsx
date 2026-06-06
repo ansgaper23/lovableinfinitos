@@ -34,7 +34,8 @@ export const SuperAdminDashboard = () => {
   const [users, setUsers] = useState<ExtendedProfile[]>([]);
   const [fetchingUsers, setFetchingUsers] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [activeTab, setActiveTab] = useState<"summary" | "users" | "keys">("summary");
+  const [activeTab, setActiveTab] = useState<"summary" | "users" | "keys" | "stats" | "system">("summary");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   
   // Reseller states
   const [resellerToken, setResellerToken] = useState("");
