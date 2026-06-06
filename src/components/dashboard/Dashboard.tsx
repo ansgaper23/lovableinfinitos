@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { LayoutDashboard, Zap, Clock, Settings, LogOut, MessageSquare, CreditCard, ShieldCheck, Key } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,13 +7,31 @@ import { supabase } from "@/integrations/supabase/client";
 import { AnnouncementBar } from "@/components/landing/AnnouncementBar";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "@tanstack/react-router";
-
-
-
+import { toast } from "sonner";
 
 export const Dashboard = () => {
-  const { user, loading } = useAuth(true);
+  const { user, profile, loading } = useAuth(true);
+  const [credits, setCredits] = useState<number | null>(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const getCredits = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("user_credits")
+          .select("credits")
+          .eq("user_id", user?.id)
+          .single();
+
+        if (error && error.code !== 'PGRST116') throw error;
+        setCredits(data?.credits ?? 0);
+      } catch (error: any) {
+        console.error("Error fetching credits:", error);
+      }
+    };
+
+    if (user) getCredits();
+  }, [user]);
 
   if (loading) {
     return <div className="min-h-screen bg-background flex items-center justify-center">
@@ -41,8 +60,12 @@ export const Dashboard = () => {
             <NavItem icon={<CreditCard className="w-5 h-5" />} label="Suscripción" />
             <NavItem icon={<Settings className="w-5 h-5" />} label="Ajustes" />
             <div className="pt-4 mt-4 border-t border-white/5 space-y-2">
-              <NavItem icon={<ShieldCheck className="w-5 h-5 text-destructive" />} label="SuperAdmin" href="/superadmin" />
-              <NavItem icon={<Key className="w-5 h-5 text-primary" />} label="Revendedor" href="/reseller" />
+              {(profile?.role === 'superadmin') && (
+                <NavItem icon={<ShieldCheck className="w-5 h-5 text-destructive" />} label="SuperAdmin" href="/superadmin" />
+              )}
+              {(profile?.role === 'reseller' || profile?.role === 'superadmin') && (
+                <NavItem icon={<Key className="w-5 h-5 text-primary" />} label="Revendedor" href="/reseller" />
+              )}
             </div>
           </nav>
         </div>
@@ -62,7 +85,7 @@ export const Dashboard = () => {
           <div className="flex items-center gap-4">
             <div className="text-right hidden sm:block">
               <p className="text-sm font-bold text-white leading-none">{user?.email?.split('@')[0] || 'Usuario'}</p>
-              <p className="text-[10px] font-black tracking-widest text-primary uppercase">Plan Premium</p>
+              <p className="text-[10px] font-black tracking-widest text-primary uppercase">{profile?.role || 'Plan Básico'}</p>
             </div>
             <div className="w-10 h-10 rounded-none bg-primary/20 border border-primary/30 flex items-center justify-center font-black italic text-primary uppercase">
               {user?.email?.[0] || 'U'}
@@ -92,15 +115,15 @@ export const Dashboard = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <StatCard 
               title="Estado de Suscripción" 
-              value="ACTIVA" 
-              subtitle="Quedan 6 días, 14 horas"
+              value={profile?.role === 'superadmin' ? 'ILIMITADO' : 'ACTIVA'} 
+              subtitle={profile?.role === 'superadmin' ? 'Acceso Vitalicio Maestro' : 'Quedan 6 días, 14 horas'}
               icon={<ShieldCheck className="w-6 h-6 text-primary" />}
-              progress={80}
+              progress={profile?.role === 'superadmin' ? 100 : 80}
             />
             <StatCard 
-              title="Créditos Utilizados" 
-              value="ILIMITADOS" 
-              subtitle="1,240 créditos hoy"
+              title="Créditos Disponibles" 
+              value={credits !== null ? (credits === -1 ? 'ILIMITADOS' : credits.toString()) : '...'} 
+              subtitle={credits === -1 ? 'Uso sin restricciones' : 'Créditos en tu cuenta'}
               icon={<Zap className="w-6 h-6 text-primary" />}
             />
             <StatCard 
@@ -131,16 +154,16 @@ export const Dashboard = () => {
               <CardContent>
                 <div className="p-6 border border-primary/20 bg-primary/5 mb-6">
                   <div className="flex justify-between items-center mb-4">
-                    <span className="font-black italic tracking-tighter text-xl uppercase">Plan Pro</span>
-                    <span className="text-primary font-black italic tracking-tighter">S/ 79 / 7 DÍAS</span>
+                    <span className="font-black italic tracking-tighter text-xl uppercase">{profile?.role || 'Plan Pro'}</span>
+                    <span className="text-primary font-black italic tracking-tighter">{profile?.role === 'superadmin' ? 'FREE' : 'S/ 79 / 7 DÍAS'}</span>
                   </div>
-                  <Progress value={85} className="h-1 bg-white/5" />
+                  <Progress value={profile?.role === 'superadmin' ? 100 : 85} className="h-1 bg-white/5" />
                   <p className="text-[10px] font-black tracking-widest text-muted-foreground uppercase mt-4">
-                    EXPIRA EL 12 JUN, 2026
+                    {profile?.role === 'superadmin' ? 'SINESPIRACIÓN' : 'EXPIRA EL 12 JUN, 2026'}
                   </p>
                 </div>
                 <Button variant="outline" className="w-full rounded-none font-black italic tracking-tighter uppercase border-white/10 hover:border-primary transition-colors h-12">
-                  Renovar o Mejorar Plan
+                  {profile?.role === 'superadmin' ? 'Gestionar Sistema' : 'Renovar o Mejorar Plan'}
                 </Button>
               </CardContent>
             </Card>
