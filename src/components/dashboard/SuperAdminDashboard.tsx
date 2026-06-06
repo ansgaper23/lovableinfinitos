@@ -787,7 +787,10 @@ const AdminStatCard = ({ title, value, change, icon, subtitle }: { title: string
   </Card>
 );
 
-const UserRow = ({ name, email, role, credits, created, onRecharge }: { name: string, email: string, role: string, credits: number, created: string, onRecharge: () => void }) => (
+const UserRow = ({ name, email, role, credits, created, onRecharge, onToggleActivation, toggling }: { name: string, email: string, role: string, credits: number, created: string, onRecharge: () => void, onToggleActivation: () => void, toggling: boolean }) => {
+  const isActive = role === 'reseller' || role === 'superadmin';
+  const isSuper = role === 'superadmin';
+  return (
   <tr className="border-b border-white/5 hover:bg-white/[0.02] transition-all duration-300 group">
     <td className="p-5">
       <div className="flex items-center gap-3">
@@ -803,8 +806,8 @@ const UserRow = ({ name, email, role, credits, created, onRecharge }: { name: st
     <td className="p-5">
       <Badge variant="outline" className={`rounded-lg border-white/10 uppercase text-[9px] font-black px-2.5 py-0.5 tracking-widest ${
         role === 'superadmin' ? 'bg-destructive/10 text-destructive border-destructive/20' :
-        role === 'reseller' ? 'bg-primary/10 text-primary border-primary/20' : 'bg-white/5 text-muted-foreground'
-      }`}>{role}</Badge>
+        role === 'reseller' ? 'bg-primary/10 text-primary border-primary/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+      }`}>{role === 'user' ? 'pendiente' : role}</Badge>
     </td>
     <td className="p-5">
       <div className="flex items-center gap-2">
@@ -814,10 +817,27 @@ const UserRow = ({ name, email, role, credits, created, onRecharge }: { name: st
     </td>
     <td className="p-5 text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-50">{created}</td>
     <td className="p-5 text-right">
-      <Button onClick={onRecharge} size="sm" className="rounded-lg bg-primary hover:bg-primary/90 text-white font-black italic uppercase tracking-widest text-[10px] h-9 px-4">
-        <Plus className="w-3 h-3 mr-1" /> Recargar
-      </Button>
+      <div className="flex justify-end gap-2">
+        {!isSuper && (
+          <Button
+            onClick={onToggleActivation}
+            disabled={toggling}
+            size="sm"
+            className={`rounded-lg font-black italic uppercase tracking-widest text-[10px] h-9 px-3 ${
+              isActive
+                ? 'bg-amber-500/15 hover:bg-amber-500/25 text-amber-400 border border-amber-500/30'
+                : 'bg-green-500/15 hover:bg-green-500/25 text-green-400 border border-green-500/30'
+            }`}
+          >
+            {toggling ? <RefreshCw className="w-3 h-3 animate-spin" /> : (isActive ? 'Desactivar' : 'Activar')}
+          </Button>
+        )}
+        <Button onClick={onRecharge} size="sm" className="rounded-lg bg-primary hover:bg-primary/90 text-white font-black italic uppercase tracking-widest text-[10px] h-9 px-4">
+          <Plus className="w-3 h-3 mr-1" /> Recargar
+        </Button>
+      </div>
     </td>
   </tr>
-);
+  );
+};
 
