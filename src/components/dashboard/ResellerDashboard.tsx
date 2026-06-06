@@ -517,11 +517,13 @@ const MetricCard = ({ title, value, subtitle, icon, accent = false }: { title: s
   </div>
 );
 
-const LicenseTypeCard = ({ icon, title, description, badge, badgeColor = 'primary', onClick }: { icon: React.ReactNode, title: string, description: string, badge?: string, badgeColor?: 'primary' | 'emerald', onClick: () => void }) => (
-  <div className="relative bg-gradient-to-br from-[#0F1729] to-[#0A101F] border border-white/[0.08] p-6 rounded-2xl flex flex-col group hover:border-primary/40 transition-all overflow-hidden hover:shadow-[0_0_40px_rgba(79,70,229,0.15)]">
-    <div className="absolute inset-0 bg-gradient-to-br from-primary/0 to-primary/0 group-hover:from-primary/[0.04] group-hover:to-transparent transition-all pointer-events-none" />
+const LicenseTypeCard = ({ icon, title, description, badge, badgeColor = 'primary', disabled, onClick }: { icon: React.ReactNode, title: string, description: string, badge?: string, badgeColor?: 'primary' | 'emerald', disabled?: boolean, onClick: () => void }) => (
+  <div className={`relative bg-gradient-to-br from-[#0F1729] to-[#0A101F] border border-white/[0.08] p-6 rounded-2xl flex flex-col overflow-hidden transition-all ${
+    disabled ? 'opacity-60 pointer-events-none' : 'group hover:border-primary/40 hover:shadow-[0_0_40px_rgba(79,70,229,0.15)]'
+  }`}>
+    <div className={`absolute inset-0 bg-gradient-to-br from-primary/0 to-primary/0 transition-all pointer-events-none ${disabled ? '' : 'group-hover:from-primary/[0.04] group-hover:to-transparent'}`} />
     <div className="relative flex items-start justify-between mb-6">
-      <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:scale-110 group-hover:bg-primary/20 transition-all">
+      <div className={`w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary transition-all ${disabled ? '' : 'group-hover:scale-110 group-hover:bg-primary/20'}`}>
         {icon}
       </div>
       {badge && (
@@ -536,9 +538,9 @@ const LicenseTypeCard = ({ icon, title, description, badge, badgeColor = 'primar
       <h3 className="text-base font-bold text-white tracking-tight mb-1">{title}</h3>
       <p className="text-xs text-muted-foreground mb-6">{description}</p>
     </div>
-    <Button onClick={onClick} className="relative w-full bg-white/[0.04] hover:bg-primary text-white font-semibold h-11 rounded-xl border border-white/10 hover:border-primary transition-all group/btn">
+    <Button onClick={onClick} disabled={disabled} className="relative w-full bg-white/[0.04] hover:bg-primary text-white font-semibold h-11 rounded-xl border border-white/10 hover:border-primary transition-all group/btn disabled:opacity-40 disabled:cursor-not-allowed">
       <span className="flex items-center justify-center gap-2">
-        Generar Clave
+        {disabled ? 'Bloqueado' : 'Generar Clave'}
         <Key className="w-4 h-4 transition-transform group-hover/btn:rotate-12" />
       </span>
     </Button>
