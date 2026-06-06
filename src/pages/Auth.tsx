@@ -23,12 +23,25 @@ export const Auth = () => {
     setLoading(true);
 
     try {
+      if (!email || !password) {
+        throw new Error("Por favor, completa todos los campos.");
+      }
+
+      if (!isLogin && password.length < 6) {
+        throw new Error("La contraseña debe tener al menos 6 caracteres.");
+      }
+
       if (isLogin) {
         const { error } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
-        if (error) throw error;
+        if (error) {
+          if (error.message === "Invalid login credentials") {
+            throw new Error("Credenciales inválidas. Verifica tu email y contraseña.");
+          }
+          throw error;
+        }
         toast.success("¡Bienvenido de nuevo!");
         navigate({ to: "/dashboard" });
       } else {
