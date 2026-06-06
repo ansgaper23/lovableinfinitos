@@ -118,16 +118,10 @@ export const SuperAdminDashboard = () => {
 
   const loadUsersWithCredits = async () => {
     try {
-      const [{ data: profilesData, error: pErr }, { data: creditsData }] = await Promise.all([
-        supabase.from("profiles").select("*").order("created_at", { ascending: false }),
-        supabase.from("user_credits").select("user_id, credits"),
-      ]);
-      if (pErr) throw pErr;
-      const creditMap = new Map((creditsData || []).map((c: any) => [c.user_id, c.credits]));
-      const merged = (profilesData || []).map((p: any) => ({ ...p, credits: creditMap.get(p.id) ?? 0 }));
+      const merged = await getUsersFn({});
       setUsers(merged);
 
-      const currentProfile = profilesData?.find(p => p.id === user?.id);
+      const currentProfile = merged?.find((p: any) => p.id === user?.id);
       if (currentProfile?.reseller_api_token) {
         setResellerToken(currentProfile.reseller_api_token);
         fetchResellerStatus(currentProfile.reseller_api_token);
