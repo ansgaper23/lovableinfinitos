@@ -254,100 +254,272 @@ export const SuperAdminDashboard = () => {
               </div>
             </div>
 
-            {/* Top Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <AdminStatCard title="Usuarios Totales" value={users.length.toString()} change="Real-time" icon={<Users className="text-destructive" />} />
-              <AdminStatCard title="Ingresos (S/)" value="S/ 0" change="Sin datos" icon={<DollarSign className="text-destructive" />} />
-              <AdminStatCard title="Créditos Consumidos" value="0" change="Normal" icon={<TrendingUp className="text-destructive" />} />
-              <AdminStatCard title="Alertas Sistema" value="0" subtitle="Todo estable" icon={<CheckCircle2 className="text-green-500" />} />
-            </div>
-
-            {/* User Management Table */}
-            <Card className="rounded-none border-white/5 bg-white/[0.02] backdrop-blur-xl overflow-hidden">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-7 border-b border-white/5">
-                <div>
-                  <CardTitle className="text-xl font-black italic tracking-tighter uppercase">Usuarios Recientes</CardTitle>
-                  <CardDescription className="text-[10px] uppercase font-black tracking-widest text-muted-foreground mt-1">Control de acceso y planes</CardDescription>
-                </div>
-                <div className="relative w-64">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input 
-                    placeholder="Buscar usuario..." 
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 rounded-none border-white/10 bg-white/5 text-xs h-10" 
+            {/* Tabs Content */}
+            {activeTab === "summary" && (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                  <AdminStatCard title="Usuarios Totales" value={users.length.toString()} change="Real-time" icon={<Users className="text-destructive" />} />
+                  <AdminStatCard title="Ingresos (S/)" value="S/ 0" change="Sin datos" icon={<DollarSign className="text-destructive" />} />
+                  <AdminStatCard 
+                    title="Créditos API" 
+                    value={resellerStatus ? `${resellerStatus.remaining}/${resellerStatus.max}` : "N/A"} 
+                    change={resellerStatus ? `${resellerStatus.used} usados` : "Sin Token"} 
+                    icon={<CreditCard className="text-destructive" />} 
                   />
+                  <AdminStatCard title="Alertas Sistema" value="0" subtitle="Todo estable" icon={<CheckCircle2 className="text-green-500" />} />
                 </div>
-              </CardHeader>
-              <CardContent className="p-0">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="border-b border-white/5 bg-white/[0.01]">
-                      <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Usuario</th>
-                      <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Rol</th>
-                      <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Estado</th>
-                      <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Creado</th>
-                      <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Acción</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {fetchingUsers ? (
-                      <tr><td colSpan={5} className="p-8 text-center text-muted-foreground italic uppercase text-xs">Cargando usuarios de la base de datos...</td></tr>
-                    ) : filteredUsers.length > 0 ? (
-                      filteredUsers.map((u) => (
-                        <UserRow 
-                          key={u.id}
-                          name={u.email?.split('@')[0] || 'Usuario'} 
-                          email={u.email || 'N/A'} 
-                          role={u.role || 'user'} 
-                          status="Activo" 
-                          created={new Date(u.created_at).toLocaleDateString()} 
+
+                <Card className="rounded-none border-white/5 bg-white/[0.02] backdrop-blur-xl">
+                  <CardHeader>
+                    <CardTitle className="text-lg font-black italic tracking-tighter uppercase">API Reseller Token</CardTitle>
+                    <CardDescription className="text-[10px] uppercase font-black tracking-widest text-muted-foreground mt-1">Configura tu token para generar llaves</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex gap-4">
+                      <Input 
+                        type="password"
+                        placeholder="rsl_..." 
+                        value={resellerToken}
+                        onChange={(e) => setResellerToken(e.target.value)}
+                        className="rounded-none border-white/10 bg-white/5 font-mono text-xs h-12" 
+                      />
+                      <Button 
+                        disabled={isUpdatingToken}
+                        onClick={updateToken}
+                        className="rounded-none bg-primary text-primary-foreground font-black italic uppercase tracking-widest text-xs h-12 px-8"
+                      >
+                        {isUpdatingToken ? <RefreshCw className="w-4 h-4 animate-spin" /> : "Guardar Token"}
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <Card className="rounded-none border-white/5 bg-white/[0.02] backdrop-blur-xl">
+                    <CardHeader>
+                      <CardTitle className="text-lg font-black italic tracking-tighter uppercase">Configuración Global</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="flex items-center justify-between p-4 border border-white/5 bg-white/[0.01]">
+                        <div>
+                          <p className="text-sm font-bold">Mantenimiento</p>
+                          <p className="text-[10px] text-muted-foreground uppercase">Desactiva el acceso a todos</p>
+                        </div>
+                        <Badge variant="outline" className="border-white/20 uppercase text-[10px]">OFF</Badge>
+                      </div>
+                      <div className="flex items-center justify-between p-4 border border-white/5 bg-white/[0.01]">
+                        <div>
+                          <p className="text-sm font-bold">Registro Público</p>
+                          <p className="text-[10px] text-muted-foreground uppercase">Permitir nuevos registros</p>
+                        </div>
+                        <Badge variant="outline" className="border-green-500/50 text-green-500 uppercase text-[10px]">ON</Badge>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="rounded-none border-white/5 bg-white/[0.02] backdrop-blur-xl">
+                    <CardHeader>
+                      <CardTitle className="text-lg font-black italic tracking-tighter uppercase">Mensaje de Barra (Scroll)</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <Input defaultValue="OFERTA DE LANZAMIENTO: 50% DCTO EN EL PLAN PRO" className="rounded-none border-white/10 bg-white/5 font-bold uppercase italic text-xs h-12" />
+                      <Button className="w-full rounded-none bg-primary text-primary-foreground font-black italic uppercase tracking-widest text-xs h-12">
+                        Actualizar Mensaje Global
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </div>
+              </>
+            )}
+
+            {activeTab === "users" && (
+              <Card className="rounded-none border-white/5 bg-white/[0.02] backdrop-blur-xl overflow-hidden">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-7 border-b border-white/5">
+                  <div>
+                    <CardTitle className="text-xl font-black italic tracking-tighter uppercase">Usuarios Recientes</CardTitle>
+                    <CardDescription className="text-[10px] uppercase font-black tracking-widest text-muted-foreground mt-1">Control de acceso y planes</CardDescription>
+                  </div>
+                  <div className="relative w-64">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Input 
+                      placeholder="Buscar usuario..." 
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-10 rounded-none border-white/10 bg-white/5 text-xs h-10" 
+                    />
+                  </div>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="border-b border-white/5 bg-white/[0.01]">
+                        <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Usuario</th>
+                        <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Rol</th>
+                        <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Estado</th>
+                        <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Creado</th>
+                        <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Acción</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {fetchingUsers ? (
+                        <tr><td colSpan={5} className="p-8 text-center text-muted-foreground italic uppercase text-xs">Cargando usuarios de la base de datos...</td></tr>
+                      ) : filteredUsers.length > 0 ? (
+                        filteredUsers.map((u) => (
+                          <UserRow 
+                            key={u.id}
+                            name={u.email?.split('@')[0] || 'Usuario'} 
+                            email={u.email || 'N/A'} 
+                            role={u.role || 'user'} 
+                            status="Activo" 
+                            created={new Date(u.created_at).toLocaleDateString()} 
+                          />
+                        ))
+                      ) : (
+                        <tr><td colSpan={5} className="p-8 text-center text-muted-foreground italic uppercase text-xs">No se encontraron usuarios</td></tr>
+                      )}
+                    </tbody>
+                  </table>
+                </CardContent>
+              </Card>
+            )}
+
+            {activeTab === "keys" && (
+              <div className="space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <Card className="rounded-none border-white/5 bg-white/[0.02] backdrop-blur-xl p-6">
+                    <h3 className="text-sm font-black italic uppercase mb-4 flex items-center gap-2">
+                      <Plus className="w-4 h-4 text-destructive" />
+                      Generar Nueva Llave
+                    </h3>
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Nombre del Cliente</label>
+                        <Input 
+                          placeholder="Juan Pérez" 
+                          value={keyDisplayName}
+                          onChange={(e) => setKeyDisplayName(e.target.value)}
+                          className="rounded-none border-white/10 bg-white/5 text-xs h-10" 
                         />
-                      ))
-                    ) : (
-                      <tr><td colSpan={5} className="p-8 text-center text-muted-foreground italic uppercase text-xs">No se encontraron usuarios</td></tr>
-                    )}
-                  </tbody>
-                </table>
-              </CardContent>
-            </Card>
-
-            {/* System Configuration Quick Actions */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <Card className="rounded-none border-white/5 bg-white/[0.02] backdrop-blur-xl">
-                <CardHeader>
-                  <CardTitle className="text-lg font-black italic tracking-tighter uppercase">Configuración Global</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex items-center justify-between p-4 border border-white/5 bg-white/[0.01]">
-                    <div>
-                      <p className="text-sm font-bold">Mantenimiento</p>
-                      <p className="text-[10px] text-muted-foreground uppercase">Desactiva el acceso a todos</p>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Tipo de Licencia</label>
+                        <Select value={keyType} onValueChange={(v: any) => setKeyType(v)}>
+                          <SelectTrigger className="rounded-none border-white/10 bg-white/5 text-xs h-10">
+                            <SelectValue placeholder="Selecciona tipo" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-background border-white/10 rounded-none">
+                            <SelectItem value="trial">PRUEBA (30 MIN)</SelectItem>
+                            <SelectItem value="days">DÍAS ACTIVOS</SelectItem>
+                            <SelectItem value="lifetime">VITALICIA</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      {keyType === "days" && (
+                        <div className="space-y-2">
+                          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Días</label>
+                          <Input 
+                            type="number"
+                            value={keyDays}
+                            onChange={(e) => setKeyDays(e.target.value)}
+                            className="rounded-none border-white/10 bg-white/5 text-xs h-10" 
+                          />
+                        </div>
+                      )}
+                      <Button 
+                        onClick={handleGenerateKey}
+                        disabled={isGeneratingKey || !resellerToken}
+                        className="w-full rounded-none bg-destructive hover:bg-destructive/90 text-white font-black italic uppercase tracking-widest text-xs h-12 shadow-[0_0_20px_rgba(var(--color-destructive),0.3)]"
+                      >
+                        {isGeneratingKey ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : <Key className="w-4 h-4 mr-2" />}
+                        GENERAR LICENCIA
+                      </Button>
                     </div>
-                    <Badge variant="outline" className="border-white/20 uppercase text-[10px]">OFF</Badge>
-                  </div>
-                  <div className="flex items-center justify-between p-4 border border-white/5 bg-white/[0.01]">
-                    <div>
-                      <p className="text-sm font-bold">Registro Público</p>
-                      <p className="text-[10px] text-muted-foreground uppercase">Permitir nuevos registros</p>
-                    </div>
-                    <Badge variant="outline" className="border-green-500/50 text-green-500 uppercase text-[10px]">ON</Badge>
-                  </div>
-                </CardContent>
-              </Card>
+                  </Card>
 
-              <Card className="rounded-none border-white/5 bg-white/[0.02] backdrop-blur-xl">
-                <CardHeader>
-                  <CardTitle className="text-lg font-black italic tracking-tighter uppercase">Mensaje de Barra (Scroll)</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <Input defaultValue="OFERTA DE LANZAMIENTO: 50% DCTO EN EL PLAN PRO" className="rounded-none border-white/10 bg-white/5 font-bold uppercase italic text-xs h-12" />
-                  <Button className="w-full rounded-none bg-primary text-primary-foreground font-black italic uppercase tracking-widest text-xs h-12">
-                    Actualizar Mensaje Global
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
+                  <div className="md:col-span-2">
+                    <Card className="rounded-none border-white/5 bg-white/[0.02] backdrop-blur-xl h-full">
+                      <CardHeader className="flex flex-row items-center justify-between border-b border-white/5">
+                        <div>
+                          <CardTitle className="text-xl font-black italic tracking-tighter uppercase">Historial de Licencias</CardTitle>
+                          <CardDescription className="text-[10px] uppercase font-black tracking-widest text-muted-foreground">Licencias generadas por la API</CardDescription>
+                        </div>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={fetchLicenses}
+                          disabled={isLoadingLicenses || !resellerToken}
+                          className="text-muted-foreground hover:text-white"
+                        >
+                          <RefreshCw className={`w-4 h-4 ${isLoadingLicenses ? 'animate-spin' : ''}`} />
+                        </Button>
+                      </CardHeader>
+                      <CardContent className="p-0 overflow-auto max-h-[500px]">
+                        {!resellerToken ? (
+                          <div className="p-8 text-center text-muted-foreground text-xs uppercase italic">Configura tu token para ver el historial</div>
+                        ) : isLoadingLicenses ? (
+                          <div className="p-8 text-center text-muted-foreground text-xs uppercase italic">Cargando licencias...</div>
+                        ) : licenses.length === 0 ? (
+                          <div className="p-8 text-center text-muted-foreground text-xs uppercase italic">No hay licencias generadas</div>
+                        ) : (
+                          <table className="w-full text-left border-collapse">
+                            <thead>
+                              <tr className="border-b border-white/5 bg-white/[0.01]">
+                                <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Llave</th>
+                                <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Cliente</th>
+                                <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Estado</th>
+                                <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Expira</th>
+                                <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Acción</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {licenses.map((lic) => (
+                                <tr key={lic.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                                  <td className="p-4 font-mono text-[10px] text-primary">{lic.license_key}</td>
+                                  <td className="p-4 text-xs font-bold">{lic.display_name || "N/A"}</td>
+                                  <td className="p-4">
+                                    <Badge variant="outline" className={`rounded-none uppercase text-[8px] border-white/10 ${
+                                      lic.status === 'active' ? 'text-green-500' : 
+                                      lic.status === 'trial' ? 'text-blue-500' : 'text-destructive'
+                                    }`}>
+                                      {lic.status}
+                                    </Badge>
+                                  </td>
+                                  <td className="p-4 text-[10px] uppercase font-black text-muted-foreground">
+                                    {lic.lifetime ? "VITALICIA" : lic.expires_at ? new Date(lic.expires_at).toLocaleDateString() : "N/A"}
+                                  </td>
+                                  <td className="p-4">
+                                    <div className="flex gap-2">
+                                      <Button 
+                                        variant="ghost" 
+                                        size="sm" 
+                                        onClick={() => handleResetHwid(lic.license_key)}
+                                        className="h-8 w-8 p-0 text-muted-foreground hover:text-white"
+                                        title="Reset HWID"
+                                      >
+                                        <RefreshCw className="w-3 h-3" />
+                                      </Button>
+                                      <Button 
+                                        variant="ghost" 
+                                        size="sm" 
+                                        onClick={() => handleRevoke(lic.license_key)}
+                                        className="h-8 w-8 p-0 text-destructive hover:text-destructive/80"
+                                        title="Revocar"
+                                      >
+                                        <XCircle className="w-3 h-3" />
+                                      </Button>
+                                    </div>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </main>
       </div>
@@ -355,13 +527,26 @@ export const SuperAdminDashboard = () => {
   );
 };
 
-const AdminNavItem = ({ icon, label, active = false }: { icon: React.ReactNode, label: string, active?: boolean }) => (
-  <a href="#" className={`flex items-center gap-3 px-4 py-3 font-black italic tracking-tighter uppercase text-sm transition-all group ${
-    active ? 'text-destructive bg-destructive/10 border-r-2 border-destructive' : 'text-muted-foreground hover:text-white hover:bg-white/5'
-  }`}>
+const AdminNavItem = ({ 
+  icon, 
+  label, 
+  active = false, 
+  onClick 
+}: { 
+  icon: React.ReactNode, 
+  label: string, 
+  active?: boolean,
+  onClick: () => void
+}) => (
+  <button 
+    onClick={onClick}
+    className={`w-full flex items-center gap-3 px-4 py-3 font-black italic tracking-tighter uppercase text-sm transition-all group ${
+      active ? 'text-destructive bg-destructive/10 border-r-2 border-destructive' : 'text-muted-foreground hover:text-white hover:bg-white/5'
+    }`}
+  >
     {icon}
     {label}
-  </a>
+  </button>
 );
 
 const AdminStatCard = ({ title, value, change, icon, subtitle }: { title: string, value: string, change?: string, icon: React.ReactNode, subtitle?: string }) => (
@@ -408,3 +593,4 @@ const UserRow = ({ name, email, role, status, created }: { name: string, email: 
     </td>
   </tr>
 );
+
