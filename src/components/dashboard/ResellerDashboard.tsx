@@ -103,12 +103,18 @@ export const ResellerDashboard = () => {
       return;
     }
 
+    if (!apiToken) {
+      toast.error("Tu cuenta no tiene un token de API. Contacta al superadmin.");
+      return;
+    }
+
     if (!isTest && credits < 1) {
       toast.error("Sin créditos. Contacta al superadmin para recargar.");
       return;
     }
 
     setIsGenerating(true);
+    let creditConsumed = false;
     try {
       if (!isTest) {
         const { data: consumed, error: rpcError } = await supabase.rpc("consume_credit");
@@ -118,32 +124,41 @@ export const ResellerDashboard = () => {
           await fetchCredits();
           return;
         }
+        creditConsumed = true;
       }
 
-      const safeName = name.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().substring(0, 12) || 'LIC';
-      const code = `${type.toUpperCase()}-${safeName}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
-      const { data, error } = await supabase
-        .from("licenses")
-        .insert([{
-          code,
-          type: type.toLowerCase() as any,
-          created_by: user?.id,
-          status: 'active'
-        }])
-        .select()
-        .single();
+      // Llamada real a la API del proveedor
+      let apiResp;
+      if (isTest) {
+        apiResp = await resellerApi.generateTrial(apiToken, name, 15);
+      } else if (type.toLowerCase() === 'lifetime') {
+        apiResp = await resellerApi.generateLicense(apiToken, name, 0, true);
+      } else {
+        // monthly = 30 días por defecto
+        apiResp = await resellerApi.generateLicense(apiToken, name, 30, false);
+      }
 
-      if (error) throw error;
+      if (!apiResp?.license_key) {
+        throw new Error(apiResp?.message || "La API no devolvió una clave válida");
+      }
 
-      setLicenses([data, ...licenses]);
+      // Guardar en nuestra DB
+      await resellerApi.saveLicenseLocally(user!.id, apiResp, name);
+
+      await fetchLicenses();
       if (!isTest) await fetchCredits();
-      setGeneratedCode(code);
+      setGeneratedCode(apiResp.license_key);
       setCopied(false);
       setNameDialogOpen(false);
       setResultDialogOpen(true);
       toast.success(isTest ? "Licencia de prueba generada (sin costo)" : "Licencia generada (−1 crédito)");
     } catch (error: any) {
-      toast.error("Error al generar licencia: " + error.message);
+      // Reembolsar crédito si la API falló después de consumirlo
+      if (creditConsumed) {
+        await supabase.rpc("add_credits", { _target: user!.id, _amount: 1 }).catch(() => {});
+        await fetchCredits();
+      }
+      toast.error("Error al generar licencia: " + (error?.message || "desconocido"));
     } finally {
       setIsGenerating(false);
     }
