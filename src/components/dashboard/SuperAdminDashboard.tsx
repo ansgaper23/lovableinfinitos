@@ -3,7 +3,8 @@ import {
   LayoutDashboard, Users, BarChart3, ShieldAlert, Settings, 
   LogOut, Search, MoreVertical, CheckCircle2, XCircle, 
   TrendingUp, DollarSign, Key, RefreshCw, Trash2, ShieldCheck, 
-  Clock, Plus, CreditCard
+  Clock, Plus, CreditCard, Activity, Zap, Globe, AlertCircle,
+  Menu, X
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
