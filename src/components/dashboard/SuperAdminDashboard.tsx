@@ -669,6 +669,40 @@ export const SuperAdminDashboard = () => {
           </div>
         </div>
       </main>
+
+      <Dialog open={!!rechargeTarget} onOpenChange={(open) => !open && setRechargeTarget(null)}>
+        <DialogContent className="bg-[#121214] border-white/10 text-white">
+          <DialogHeader>
+            <DialogTitle className="font-black italic uppercase tracking-tight">Recargar Créditos</DialogTitle>
+            <DialogDescription className="text-muted-foreground text-xs uppercase tracking-widest font-black">
+              {rechargeTarget?.email} · Actual: {rechargeTarget?.credits ?? 0}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 py-2">
+            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Cantidad a sumar (use negativo para restar)</label>
+            <Input
+              type="number"
+              value={rechargeAmount}
+              onChange={(e) => setRechargeAmount(e.target.value)}
+              className="rounded-xl border-white/10 bg-white/5 h-12"
+            />
+            <div className="flex gap-2 flex-wrap">
+              {[5, 10, 25, 50, 100].map(n => (
+                <Button key={n} size="sm" variant="outline" onClick={() => setRechargeAmount(String(n))} className="rounded-lg border-white/10 bg-white/5 h-8 text-xs">
+                  +{n}
+                </Button>
+              ))}
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setRechargeTarget(null)}>Cancelar</Button>
+            <Button onClick={handleRecharge} disabled={isRecharging} className="bg-primary hover:bg-primary/90 font-black uppercase italic tracking-widest text-[10px]">
+              {isRecharging ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : <Plus className="w-4 h-4 mr-2" />}
+              Aplicar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
