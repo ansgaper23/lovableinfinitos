@@ -324,26 +324,34 @@ export const SuperAdminDashboard = () => {
                   <AdminStatCard title="Alertas Sistema" value="0" subtitle="Todo estable" icon={<CheckCircle2 className="text-green-500" />} />
                 </div>
 
-                <Card className="rounded-none border-white/5 bg-white/[0.02] backdrop-blur-xl">
-                  <CardHeader>
-                    <CardTitle className="text-lg font-black italic tracking-tighter uppercase">API Reseller Token</CardTitle>
-                    <CardDescription className="text-[10px] uppercase font-black tracking-widest text-muted-foreground mt-1">Configura tu token para generar llaves</CardDescription>
+                <Card className="rounded-2xl border-white/5 bg-[#121214] overflow-hidden group shadow-2xl">
+                  <div className="h-1 w-full bg-gradient-to-r from-destructive/0 via-destructive to-destructive/0 opacity-30 group-hover:opacity-100 transition-opacity duration-500" />
+                  <CardHeader className="pb-4">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Zap className="w-4 h-4 text-destructive" />
+                      <CardTitle className="text-lg font-black italic tracking-tighter uppercase">API Reseller Token</CardTitle>
+                    </div>
+                    <CardDescription className="text-[10px] uppercase font-black tracking-widest text-muted-foreground">Configura tu token para sincronizar con el proveedor</CardDescription>
                   </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="flex gap-4">
-                      <Input 
-                        type="password"
-                        placeholder="rsl_..." 
-                        value={resellerToken}
-                        onChange={(e) => setResellerToken(e.target.value)}
-                        className="rounded-none border-white/10 bg-white/5 font-mono text-xs h-12" 
-                      />
+                  <CardContent className="space-y-4 pb-8">
+                    <div className="flex flex-col sm:flex-row gap-4">
+                      <div className="relative flex-1 group/input">
+                        <Key className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within/input:text-destructive transition-colors" />
+                        <Input 
+                          type="password"
+                          placeholder="rsl_your_token_here..." 
+                          value={resellerToken}
+                          onChange={(e) => setResellerToken(e.target.value)}
+                          className="rounded-xl border-white/5 bg-white/5 font-mono text-xs h-13 pl-12 focus:bg-white/[0.08] transition-all" 
+                        />
+                      </div>
                       <Button 
                         disabled={isUpdatingToken}
                         onClick={updateToken}
-                        className="rounded-none bg-primary text-primary-foreground font-black italic uppercase tracking-widest text-xs h-12 px-8"
+                        className="rounded-xl bg-destructive hover:bg-destructive/90 text-white font-black italic uppercase tracking-widest text-[10px] h-13 px-8 shadow-lg shadow-destructive/20 active:scale-95 transition-all"
                       >
-                        {isUpdatingToken ? <RefreshCw className="w-4 h-4 animate-spin" /> : "Guardar Token"}
+                        {isUpdatingToken ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : <ShieldCheck className="w-4 h-4 mr-2" />}
+                        Sincronizar Acceso
                       </Button>
                     </div>
                   </CardContent>
