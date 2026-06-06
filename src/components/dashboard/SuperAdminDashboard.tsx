@@ -573,39 +573,53 @@ export const SuperAdminDashboard = () => {
                             </thead>
                             <tbody>
                               {licenses.map((lic) => (
-                                <tr key={lic.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
-                                  <td className="p-4 font-mono text-[10px] text-primary">{lic.license_key}</td>
-                                  <td className="p-4 text-xs font-bold">{lic.display_name || "N/A"}</td>
-                                  <td className="p-4">
-                                    <Badge variant="outline" className={`rounded-none uppercase text-[8px] border-white/10 ${
-                                      lic.status === 'active' ? 'text-green-500' : 
-                                      lic.status === 'trial' ? 'text-blue-500' : 'text-destructive'
+                                <tr key={lic.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-all duration-300 group/row">
+                                  <td className="p-5">
+                                    <div className="flex items-center gap-3">
+                                      <div className="w-8 h-8 rounded-lg bg-destructive/5 flex items-center justify-center border border-destructive/10">
+                                        <Key className="w-3 h-3 text-destructive" />
+                                      </div>
+                                      <span className="font-mono text-[10px] text-destructive font-black tracking-wider bg-destructive/5 px-2 py-1 rounded border border-destructive/10">{lic.license_key}</span>
+                                    </div>
+                                  </td>
+                                  <td className="p-5">
+                                    <span className="text-xs font-bold uppercase tracking-tight text-white/80">{lic.display_name || "S/N"}</span>
+                                  </td>
+                                  <td className="p-5 text-center">
+                                    <Badge variant="outline" className={`rounded-lg uppercase text-[8px] font-black tracking-[0.1em] px-2 py-0.5 border-white/5 ${
+                                      lic.status === 'active' ? 'bg-green-500/10 text-green-500 border-green-500/20' : 
+                                      lic.status === 'trial' ? 'bg-blue-500/10 text-blue-500 border-blue-500/20' : 'bg-destructive/10 text-destructive border-destructive/20'
                                     }`}>
                                       {lic.status}
                                     </Badge>
                                   </td>
-                                  <td className="p-4 text-[10px] uppercase font-black text-muted-foreground">
-                                    {lic.lifetime ? "VITALICIA" : lic.expires_at ? new Date(lic.expires_at).toLocaleDateString() : "N/A"}
+                                  <td className="p-5">
+                                    <div className="flex items-center gap-2">
+                                      <Clock className="w-3 h-3 text-muted-foreground opacity-30" />
+                                      <span className="text-[10px] uppercase font-black text-muted-foreground opacity-60">
+                                        {lic.lifetime ? "VITALICIA" : lic.expires_at ? new Date(lic.expires_at).toLocaleDateString() : "N/A"}
+                                      </span>
+                                    </div>
                                   </td>
-                                  <td className="p-4">
-                                    <div className="flex gap-2">
+                                  <td className="p-5">
+                                    <div className="flex justify-end gap-2 opacity-0 group-hover/row:opacity-100 transition-opacity duration-300">
                                       <Button 
                                         variant="ghost" 
-                                        size="sm" 
+                                        size="icon" 
                                         onClick={() => handleResetHwid(lic.license_key)}
-                                        className="h-8 w-8 p-0 text-muted-foreground hover:text-white"
+                                        className="h-9 w-9 rounded-xl text-muted-foreground hover:text-white hover:bg-white/5"
                                         title="Reset HWID"
                                       >
-                                        <RefreshCw className="w-3 h-3" />
+                                        <RefreshCw className="w-3.5 h-3.5" />
                                       </Button>
                                       <Button 
                                         variant="ghost" 
-                                        size="sm" 
+                                        size="icon" 
                                         onClick={() => handleRevoke(lic.license_key)}
-                                        className="h-8 w-8 p-0 text-destructive hover:text-destructive/80"
+                                        className="h-9 w-9 rounded-xl text-destructive hover:text-white hover:bg-destructive shadow-lg hover:shadow-destructive/20"
                                         title="Revocar"
                                       >
-                                        <XCircle className="w-3 h-3" />
+                                        <XCircle className="w-3.5 h-3.5" />
                                       </Button>
                                     </div>
                                   </td>
