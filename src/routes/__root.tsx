@@ -77,19 +77,30 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Lovable Infinito — Créditos Infinitos para IA" },
+      { name: "description", content: "Potencia tu desarrollo con Lovable Infinito. Créditos ilimitados para la plataforma IA más potente, soporte en español y pagos locales en Perú." },
+      { name: "author", content: "Lovable Infinito" },
+      { name: "keywords", content: "lovable, créditos infinitos, inteligencia artificial, perú, desarrollo web, ia builder, lovable ai" },
+      { property: "og:title", content: "Lovable Infinito — Créditos Infinitos para IA" },
+      { property: "og:description", content: "Potencia tu desarrollo con Lovable Infinito. Créditos ilimitados para la plataforma IA más potente." },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
+      { property: "og:locale", content: "es_PE" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:site", content: "@LovableInfinito" },
+      { name: "robots", content: "index, follow" },
     ],
     links: [
       {
         rel: "stylesheet",
         href: appCss,
+      },
+      {
+        rel: "canonical",
+        href: "https://lovable-infinito.com",
+      },
+      {
+        rel: "icon",
+        href: "/favicon.ico",
       },
     ],
   }),
@@ -100,10 +111,35 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootShell({ children }: { children: ReactNode }) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Lovable Infinito",
+    "url": "https://lovable-infinito.com",
+    "description": "Créditos infinitos para Lovable. La solución ideal para builders en Perú con pagos locales y soporte en español.",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Web",
+    "author": {
+      "@type": "Organization",
+      "name": "Lovable Infinito"
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": "39.00",
+      "priceCurrency": "PEN"
+    }
+  };
+
   return (
-    <html lang="en">
+    <html lang="es">
       <head>
         <HeadContent />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        <link rel="manifest" href="/site.webmanifest" />
+        <meta name="theme-color" content="#ea384c" />
       </head>
       <body>
         {children}
