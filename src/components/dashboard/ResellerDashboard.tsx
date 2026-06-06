@@ -542,15 +542,26 @@ const LicenseTypeCard = ({ icon, title, description, badge, badgeColor = 'primar
   </div>
 );
 
-const LicenseRow = ({ type, code, status, date }: { type: string, code: string, status: string | null, date: string }) => (
-  <tr className="border-b border-white/5 hover:bg-white/[0.01] transition-colors group">
-    <td className="px-6 py-4 text-white font-medium">{type}</td>
-    <td className="px-6 py-4 font-mono text-muted-foreground text-xs">{code}</td>
-    <td className="px-6 py-4">
-      <Badge className={`${status === 'active' ? 'bg-green-500/10 text-green-500 border-green-500/20' : 'bg-red-500/10 text-red-500 border-red-500/20'} rounded-sm py-0.5 px-2 font-bold text-[10px]`}>
-        {status === 'active' ? 'Activa' : 'Inactiva'}
-      </Badge>
-    </td>
-    <td className="px-6 py-4 text-right text-muted-foreground font-medium">{date}</td>
-  </tr>
-);
+const LicenseRow = ({ type, code, status, date }: { type: string, code: string, status: string | null, date: string }) => {
+  const isActive = status === 'active';
+  const isExpired = status === 'expired';
+  return (
+    <tr className="border-t border-white/[0.04] hover:bg-white/[0.02] transition-colors group">
+      <td className="px-6 py-4">
+        <span className="text-[10px] font-bold text-primary uppercase tracking-widest px-2 py-1 rounded-md bg-primary/10 border border-primary/20">{type}</span>
+      </td>
+      <td className="px-6 py-4 font-mono text-white/80 text-xs">{code}</td>
+      <td className="px-6 py-4">
+        <span className={`inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md border ${
+          isActive ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
+          : isExpired ? 'text-amber-400 bg-amber-500/10 border-amber-500/20'
+          : 'text-red-400 bg-red-500/10 border-red-500/20'
+        }`}>
+          <span className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-emerald-400' : isExpired ? 'bg-amber-400' : 'bg-red-400'}`} />
+          {isActive ? 'Activa' : isExpired ? 'Expirada' : 'Inactiva'}
+        </span>
+      </td>
+      <td className="px-6 py-4 text-right text-muted-foreground text-xs tabular-nums">{date}</td>
+    </tr>
+  );
+};
