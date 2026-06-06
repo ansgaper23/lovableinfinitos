@@ -32,13 +32,19 @@ export const Auth = () => {
         toast.success("¡Bienvenido de nuevo!");
         navigate({ to: "/dashboard" });
       } else {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
         });
         if (error) throw error;
-        toast.success("¡Cuenta creada con éxito! Ya puedes iniciar sesión.");
-        setIsLogin(true);
+        
+        if (data.session) {
+          toast.success("¡Bienvenido! Tu cuenta ha sido creada.");
+          navigate({ to: "/dashboard" });
+        } else {
+          toast.success("¡Cuenta creada con éxito! Revisa tu correo o inicia sesión.");
+          setIsLogin(true);
+        }
       }
     } catch (error: any) {
       toast.error(error.message || "Ocurrió un error");
