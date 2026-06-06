@@ -97,7 +97,7 @@ export const ResellerDashboard = () => {
       if (!isTest) await fetchCredits();
       toast.success(
         isTest
-          ? `Licencia de testeo generada: ${code} (sin costo)`
+          ? `Licencia de prueba generada: ${code} (sin costo)`
           : `Licencia ${type} generada: ${code} (−1 crédito)`
       );
     } catch (error: any) {
@@ -108,7 +108,7 @@ export const ResellerDashboard = () => {
   };
 
   if (loading) {
-    return <div className="min-h-screen bg-background flex items-center justify-center text-white italic font-black">ENTRANDO AO PAINEL...</div>;
+    return <div className="min-h-screen bg-background flex items-center justify-center text-white italic font-black">ENTRANDO AL PANEL...</div>;
   }
 
   // Permission check
@@ -116,10 +116,10 @@ export const ResellerDashboard = () => {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
         <Key className="w-16 h-16 text-primary mb-4" />
-        <h1 className="text-2xl font-black italic uppercase mb-2">Acesso Negado</h1>
-        <p className="text-muted-foreground mb-6 text-center">Você não tem permissões de revendedor.</p>
+        <h1 className="text-2xl font-black italic uppercase mb-2">Acceso Denegado</h1>
+        <p className="text-muted-foreground mb-6 text-center">No tienes permisos de revendedor.</p>
         <Button onClick={() => navigate({ to: "/dashboard" })} className="bg-primary text-white font-black uppercase tracking-tighter italic h-12 px-8">
-          Voltar ao meu Painel
+          Volver a mi Panel
         </Button>
       </div>
     );
@@ -136,24 +136,24 @@ export const ResellerDashboard = () => {
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(var(--color-primary),0.4)]">
                 <Zap className="w-5 h-5 text-white fill-white" />
               </div>
-              <span className="font-bold text-lg tracking-tight text-white uppercase italic">Painel de Revenda</span>
+              <span className="font-bold text-lg tracking-tight text-white uppercase italic">Panel de Revendedor</span>
             </div>
 
             <nav className="space-y-1">
-              <ResellerNavItem icon={<LayoutDashboard className="w-5 h-5" />} label="Dashboard" active />
-              <ResellerNavItem icon={<Key className="w-5 h-5" />} label="Gerar Licenças" />
-              <ResellerNavItem icon={<ClipboardList className="w-5 h-5" />} label="Licenças Ativas" />
-              <ResellerNavItem icon={<History className="w-5 h-5" />} label="Histórico" />
+              <ResellerNavItem icon={<LayoutDashboard className="w-5 h-5" />} label="Panel" active />
+              <ResellerNavItem icon={<Key className="w-5 h-5" />} label="Generar Licencias" />
+              <ResellerNavItem icon={<ClipboardList className="w-5 h-5" />} label="Licencias Activas" />
+              <ResellerNavItem icon={<History className="w-5 h-5" />} label="Historial" />
               <ResellerNavItem icon={<Users className="w-5 h-5" />} label="Clientes" />
-              <ResellerNavItem icon={<Wallet className="w-5 h-5" />} label="Financeiro" />
-              <ResellerNavItem icon={<Settings className="w-5 h-5" />} label="Configurações" />
-              <ResellerNavItem icon={<LifeBuoy className="w-5 h-5" />} label="Suporte" />
+              <ResellerNavItem icon={<Wallet className="w-5 h-5" />} label="Financiero" />
+              <ResellerNavItem icon={<Settings className="w-5 h-5" />} label="Configuración" />
+              <ResellerNavItem icon={<LifeBuoy className="w-5 h-5" />} label="Soporte" />
             </nav>
           </div>
             <div className="mt-auto p-6 border-t border-white/5">
               <Button variant="ghost" onClick={async () => { await supabase.auth.signOut(); navigate({ to: "/" }); }} className="w-full justify-start gap-3 text-muted-foreground hover:text-white transition-colors">
                 <LogOut className="w-5 h-5" />
-                Sair ao Início
+                Salir al Inicio
               </Button>
             </div>
           </aside>
@@ -163,8 +163,8 @@ export const ResellerDashboard = () => {
           <div className="max-w-7xl mx-auto space-y-8">
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-4">
-                <h1 className="text-2xl font-bold text-white italic uppercase tracking-tight">Painel de Revenda</h1>
-                <Badge className="bg-green-500/10 text-green-500 border-green-500/20 rounded-md py-0.5 font-bold text-[10px]">Ativo</Badge>
+                <h1 className="text-2xl font-bold text-white italic uppercase tracking-tight">Panel de Revendedor</h1>
+                <Badge className="bg-green-500/10 text-green-500 border-green-500/20 rounded-md py-0.5 font-bold text-[10px]">Activo</Badge>
               </div>
               <div className="flex items-center gap-4">
                 <Button variant="ghost" size="icon" className="text-muted-foreground relative">
@@ -187,33 +187,33 @@ export const ResellerDashboard = () => {
                 <h3 className="text-4xl font-bold text-white mb-1 tracking-tight">{credits}</h3>
                 <p className="text-xs text-muted-foreground">1 crédito = 1 licencia</p>
               </Card>
-              <MetricCard title="LICENÇAS GERADAS" value={licenses.length.toString()} subtitle="Total de licenças" />
-              <MetricCard title="ATIVAS" value={licenses.filter(l => l.status === 'active').length.toString()} subtitle="Licenças ativas" />
-              <MetricCard title="TESTE" value={licenses.filter(l => l.type === 'test').length.toString()} subtitle="Licenças de teste" />
+              <MetricCard title="LICENCIAS GENERADAS" value={licenses.length.toString()} subtitle="Total de licencias" />
+              <MetricCard title="ACTIVAS" value={licenses.filter(l => l.status === 'active').length.toString()} subtitle="Licencias activas" />
+              <MetricCard title="PRUEBA" value={licenses.filter(l => l.type === 'test').length.toString()} subtitle="Licencias de prueba" />
             </div>
 
             {/* License Generation Section */}
             <Card className="rounded-xl border-white/5 bg-[#0A101F] p-8">
-              <h2 className="text-xl font-bold text-white italic uppercase tracking-tight mb-2">Gerar Nova Licença</h2>
-              <p className="text-muted-foreground text-sm mb-8">Escolha o tipo de licença</p>
+              <h2 className="text-xl font-bold text-white italic uppercase tracking-tight mb-2">Generar Nueva Licencia</h2>
+              <p className="text-muted-foreground text-sm mb-8">Elige el tipo de licencia</p>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <LicenseTypeCard 
                   icon={<Plus className="w-10 h-10 text-primary" />} 
-                  title="LICENÇA DE TESTE" 
-                  description="Período de teste" 
+                  title="LICENCIA DE PRUEBA" 
+                  description="Período de prueba" 
                   onClick={() => generateLicense('test')}
                 />
                 <LicenseTypeCard 
                   icon={<CalendarDays className="w-10 h-10 text-primary" />} 
-                  title="LICENÇA MENSAL" 
-                  description="Acesso por 30 dias" 
+                  title="LICENCIA MENSUAL" 
+                  description="Acceso por 30 días" 
                   onClick={() => generateLicense('monthly')}
                 />
                 <LicenseTypeCard 
                   icon={<Infinity className="w-10 h-10 text-primary" />} 
-                  title="LICENÇA VITALÍCIA" 
-                  description="Acesso vitalício" 
+                  title="LICENCIA VITALICIA" 
+                  description="Acceso de por vida" 
                   onClick={() => generateLicense('lifetime')}
                 />
               </div>
@@ -222,7 +222,7 @@ export const ResellerDashboard = () => {
             {/* Recent Licenses Table */}
             <Card className="rounded-xl border-white/5 bg-[#0A101F] overflow-hidden">
               <div className="p-6">
-                <h2 className="text-lg font-bold text-white italic uppercase tracking-tight">Licenças Recentes</h2>
+                <h2 className="text-lg font-bold text-white italic uppercase tracking-tight">Licencias Recientes</h2>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
@@ -230,13 +230,13 @@ export const ResellerDashboard = () => {
                     <tr className="border-b border-white/5 text-[10px] font-bold text-muted-foreground uppercase tracking-widest bg-white/[0.01]">
                       <th className="px-6 py-4">TIPO</th>
                       <th className="px-6 py-4">CÓDIGO</th>
-                      <th className="px-6 py-4">STATUS</th>
-                      <th className="px-6 py-4 text-right">DATA</th>
+                      <th className="px-6 py-4">ESTADO</th>
+                      <th className="px-6 py-4 text-right">FECHA</th>
                     </tr>
                   </thead>
                   <tbody className="text-sm">
                     {fetchingLicenses ? (
-                      <tr><td colSpan={4} className="p-8 text-center text-muted-foreground italic uppercase text-xs">Carregando dados reais...</td></tr>
+                      <tr><td colSpan={4} className="p-8 text-center text-muted-foreground italic uppercase text-xs">Cargando datos...</td></tr>
                     ) : licenses.length > 0 ? (
                       licenses.map((l) => (
                         <LicenseRow 
@@ -248,7 +248,7 @@ export const ResellerDashboard = () => {
                         />
                       ))
                     ) : (
-                      <tr><td colSpan={4} className="p-8 text-center text-muted-foreground italic uppercase text-xs">Nenhuma licença gerada</td></tr>
+                      <tr><td colSpan={4} className="p-8 text-center text-muted-foreground italic uppercase text-xs">Ninguna licencia generada</td></tr>
                     )}
                   </tbody>
                 </table>
@@ -257,7 +257,7 @@ export const ResellerDashboard = () => {
 
             <div className="p-4 bg-primary/5 border border-primary/20 rounded-xl flex items-center gap-3">
               <Zap className="w-5 h-5 text-primary fill-primary" />
-              <p className="text-xs text-white/90">Gere licenças e aumente seus lucros revendendo Lovable Adict!</p>
+              <p className="text-xs text-white/90">Genera licencias y aumenta tus ganancias revendiendo Lovable Adict!</p>
             </div>
           </div>
         </main>
@@ -291,7 +291,7 @@ const LicenseTypeCard = ({ icon, title, description, onClick }: { icon: React.Re
     <h3 className="text-sm font-bold text-white uppercase tracking-tight mb-2">{title}</h3>
     <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-6">{description}</p>
     <Button onClick={onClick} className="w-full bg-primary hover:bg-primary/90 text-white font-black italic uppercase tracking-tighter h-11 shadow-[0_0_20px_rgba(var(--color-primary),0.3)]">
-      GERAR
+      GENERAR
     </Button>
   </div>
 );
@@ -302,7 +302,7 @@ const LicenseRow = ({ type, code, status, date }: { type: string, code: string, 
     <td className="px-6 py-4 font-mono text-muted-foreground text-xs">{code}</td>
     <td className="px-6 py-4">
       <Badge className={`${status === 'active' ? 'bg-green-500/10 text-green-500 border-green-500/20' : 'bg-red-500/10 text-red-500 border-red-500/20'} rounded-sm py-0.5 px-2 font-bold text-[10px]`}>
-        {status === 'active' ? 'Ativa' : 'Inativa'}
+        {status === 'active' ? 'Activa' : 'Inactiva'}
       </Badge>
     </td>
     <td className="px-6 py-4 text-right text-muted-foreground font-medium">{date}</td>
