@@ -205,11 +205,26 @@ export const SuperAdminDashboard = () => {
             </div>
 
             <nav className="space-y-2">
-              <AdminNavItem icon={<LayoutDashboard className="w-5 h-5" />} label="Resumen" active />
-              <AdminNavItem icon={<Users className="w-5 h-5" />} label="Gestión Usuarios" />
-              <AdminNavItem icon={<BarChart3 className="w-5 h-5" />} label="Estadísticas" />
-              <AdminNavItem icon={<ShieldAlert className="w-5 h-5" />} label="Seguridad" />
-              <AdminNavItem icon={<Settings className="w-5 h-5" />} label="Sistema" />
+              <AdminNavItem 
+                icon={<LayoutDashboard className="w-5 h-5" />} 
+                label="Resumen" 
+                active={activeTab === "summary"} 
+                onClick={() => setActiveTab("summary")}
+              />
+              <AdminNavItem 
+                icon={<Users className="w-5 h-5" />} 
+                label="Usuarios" 
+                active={activeTab === "users"} 
+                onClick={() => setActiveTab("users")}
+              />
+              <AdminNavItem 
+                icon={<Key className="w-5 h-5" />} 
+                label="Licencias API" 
+                active={activeTab === "keys"} 
+                onClick={() => setActiveTab("keys")}
+              />
+              <AdminNavItem icon={<BarChart3 className="w-5 h-5" />} label="Estadísticas" onClick={() => {}} />
+              <AdminNavItem icon={<Settings className="w-5 h-5" />} label="Sistema" onClick={() => {}} />
             </nav>
           </div>
 
