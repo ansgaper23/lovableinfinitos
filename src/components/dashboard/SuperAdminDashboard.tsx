@@ -30,9 +30,21 @@ interface ExtendedProfile extends Profile {
 
 export const SuperAdminDashboard = () => {
   const { user, profile, loading } = useAuth(true);
-  const [users, setUsers] = useState<Profile[]>([]);
+  const [users, setUsers] = useState<ExtendedProfile[]>([]);
   const [fetchingUsers, setFetchingUsers] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [activeTab, setActiveTab] = useState<"summary" | "users" | "keys">("summary");
+  
+  // Reseller states
+  const [resellerToken, setResellerToken] = useState("");
+  const [resellerStatus, setResellerStatus] = useState<ResellerStatus | null>(null);
+  const [isGeneratingKey, setIsGeneratingKey] = useState(false);
+  const [keyType, setKeyType] = useState<"trial" | "days" | "lifetime">("days");
+  const [keyDisplayName, setKeyDisplayName] = useState("");
+  const [keyDays, setKeyDays] = useState("30");
+  const [isUpdatingToken, setIsUpdatingToken] = useState(false);
+  const [licenses, setLicenses] = useState<any[]>([]);
+  const [isLoadingLicenses, setIsLoadingLicenses] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
