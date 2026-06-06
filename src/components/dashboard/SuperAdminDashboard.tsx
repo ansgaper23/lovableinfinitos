@@ -478,7 +478,7 @@ export const SuperAdminDashboard = () => {
                       <tr className="border-b border-white/5 bg-white/[0.02]">
                         <th className="p-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60">Identidad</th>
                         <th className="p-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60">Privilegios</th>
-                        <th className="p-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60">Estado</th>
+                        <th className="p-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60">Créditos</th>
                         <th className="p-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60">Registro</th>
                         <th className="p-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60 text-right">Acciones</th>
                       </tr>
@@ -488,13 +488,14 @@ export const SuperAdminDashboard = () => {
                         <tr><td colSpan={5} className="p-8 text-center text-muted-foreground italic uppercase text-xs">Cargando usuarios de la base de datos...</td></tr>
                       ) : filteredUsers.length > 0 ? (
                         filteredUsers.map((u) => (
-                          <UserRow 
+                          <UserRow
                             key={u.id}
-                            name={u.email?.split('@')[0] || 'Usuario'} 
-                            email={u.email || 'N/A'} 
-                            role={u.role || 'user'} 
-                            status="Activo" 
-                            created={new Date(u.created_at).toLocaleDateString()} 
+                            name={u.email?.split('@')[0] || 'Usuario'}
+                            email={u.email || 'N/A'}
+                            role={u.role || 'user'}
+                            credits={u.credits ?? 0}
+                            created={new Date(u.created_at).toLocaleDateString()}
+                            onRecharge={() => { setRechargeTarget(u); setRechargeAmount("10"); }}
                           />
                         ))
                       ) : (
@@ -728,7 +729,7 @@ const AdminStatCard = ({ title, value, change, icon, subtitle }: { title: string
   </Card>
 );
 
-const UserRow = ({ name, email, role, status, created }: { name: string, email: string, role: string, status: string, created: string }) => (
+const UserRow = ({ name, email, role, credits, created, onRecharge }: { name: string, email: string, role: string, credits: number, created: string, onRecharge: () => void }) => (
   <tr className="border-b border-white/5 hover:bg-white/[0.02] transition-all duration-300 group">
     <td className="p-5">
       <div className="flex items-center gap-3">
@@ -743,20 +744,20 @@ const UserRow = ({ name, email, role, status, created }: { name: string, email: 
     </td>
     <td className="p-5">
       <Badge variant="outline" className={`rounded-lg border-white/10 uppercase text-[9px] font-black px-2.5 py-0.5 tracking-widest ${
-        role === 'superadmin' ? 'bg-destructive/10 text-destructive border-destructive/20' : 
+        role === 'superadmin' ? 'bg-destructive/10 text-destructive border-destructive/20' :
         role === 'reseller' ? 'bg-primary/10 text-primary border-primary/20' : 'bg-white/5 text-muted-foreground'
       }`}>{role}</Badge>
     </td>
     <td className="p-5">
-      <div className="flex items-center gap-2.5">
-        <div className={`w-1.5 h-1.5 rounded-full ${status === "Activo" ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]" : "bg-destructive shadow-[0_0_8px_rgba(239,68,68,0.5)]"}`} />
-        <span className={`text-[10px] font-black uppercase tracking-[0.15em] ${status === "Activo" ? "text-green-500" : "text-destructive"}`}>{status}</span>
+      <div className="flex items-center gap-2">
+        <CreditCard className="w-3.5 h-3.5 text-primary" />
+        <span className="text-sm font-black text-white tabular-nums">{credits}</span>
       </div>
     </td>
     <td className="p-5 text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-50">{created}</td>
-    <td className="p-5">
-      <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-muted-foreground hover:text-white hover:bg-white/5 transition-all">
-        <MoreVertical className="w-4 h-4" />
+    <td className="p-5 text-right">
+      <Button onClick={onRecharge} size="sm" className="rounded-lg bg-primary hover:bg-primary/90 text-white font-black italic uppercase tracking-widest text-[10px] h-9 px-4">
+        <Plus className="w-3 h-3 mr-1" /> Recargar
       </Button>
     </td>
   </tr>
