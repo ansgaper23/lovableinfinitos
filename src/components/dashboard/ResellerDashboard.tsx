@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { LayoutDashboard, Key, ClipboardList, History, Users, Wallet, Settings, LifeBuoy, Zap, Plus, Infinity, CalendarDays, LogOut } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,16 +7,81 @@ import { AnnouncementBar } from "@/components/landing/AnnouncementBar";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "@tanstack/react-router";
+import { toast } from "sonner";
 
-
+interface License {
+  id: string;
+  code: string;
+  type: string;
+  status: string;
+  created_at: string;
+}
 
 export const ResellerDashboard = () => {
-  const { user, loading } = useAuth(true);
+  const { user, profile, loading } = useAuth(true);
+  const [licenses, setLicenses] = useState<License[]>([]);
+  const [fetchingLicenses, setFetchingLicenses] = useState(true);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const getLicenses = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("licenses")
+          .select("*")
+          .order("created_at", { ascending: false });
+
+        if (error) throw error;
+        setLicenses(data || []);
+      } catch (error: any) {
+        toast.error("Error al cargar licencias: " + error.message);
+      } finally {
+        setFetchingLicenses(false);
+      }
+    };
+
+    if (user) getLicenses();
+  }, [user]);
+
+  const generateLicense = async (type: string) => {
+    try {
+      const code = `${type.toUpperCase()}-${Math.random().toString(36).substring(2, 10).toUpperCase()}`;
+      const { data, error } = await supabase
+        .from("licenses")
+        .insert([{
+          code,
+          type: type.toLowerCase() as any,
+          created_by: user?.id,
+          status: 'active'
+        }])
+        .select()
+        .single();
+
+      if (error) throw error;
+      
+      setLicenses([data, ...licenses]);
+      toast.success(`Licencia ${type} generada: ${code}`);
+    } catch (error: any) {
+      toast.error("Error al generar licencia: " + error.message);
+    }
+  };
 
   if (loading) {
     return <div className="min-h-screen bg-background flex items-center justify-center text-white italic font-black">ENTRANDO AO PAINEL...</div>;
+  }
+
+  // Permission check
+  if (profile && profile.role !== 'reseller' && profile.role !== 'superadmin') {
+    return (
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
+        <Key className="w-16 h-16 text-primary mb-4" />
+        <h1 className="text-2xl font-black italic uppercase mb-2">Acesso Negado</h1>
+        <p className="text-muted-foreground mb-6 text-center">Você não tem permissões de revendedor.</p>
+        <Button onClick={() => navigate({ to: "/dashboard" })} className="bg-primary text-white font-black uppercase tracking-tighter italic h-12 px-8">
+          Voltar ao meu Painel
+        </Button>
+      </div>
+    );
   }
 
   return (
@@ -72,9 +138,9 @@ export const ResellerDashboard = () => {
 
             {/* Reseller Metrics */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <MetricCard title="LICENÇAS GERADAS" value="128" subtitle="Total de licenças" />
-              <MetricCard title="ATIVAS" value="96" subtitle="Licenças ativas" />
-              <MetricCard title="TESTE" value="32" subtitle="Licenças de teste" />
+              <MetricCard title="LICENÇAS GERADAS" value={licenses.length.toString()} subtitle="Total de licenças" />
+              <MetricCard title="ATIVAS" value={licenses.filter(l => l.status === 'active').length.toString()} subtitle="Licenças ativas" />
+              <MetricCard title="TESTE" value={licenses.filter(l => l.type === 'test').length.toString()} subtitle="Licenças de teste" />
               <MetricCard title="REVENDA" value="70%" subtitle="Desconto aplicado" />
             </div>
 
@@ -88,16 +154,19 @@ export const ResellerDashboard = () => {
                   icon={<Plus className="w-10 h-10 text-primary" />} 
                   title="LICENÇA DE TESTE" 
                   description="Período de teste" 
+                  onClick={() => generateLicense('test')}
                 />
                 <LicenseTypeCard 
                   icon={<CalendarDays className="w-10 h-10 text-primary" />} 
                   title="LICENÇA MENSAL" 
                   description="Acesso por 30 dias" 
+                  onClick={() => generateLicense('monthly')}
                 />
                 <LicenseTypeCard 
                   icon={<Infinity className="w-10 h-10 text-primary" />} 
                   title="LICENÇA VITALÍCIA" 
                   description="Acesso vitalício" 
+                  onClick={() => generateLicense('lifetime')}
                 />
               </div>
             </Card>
@@ -113,15 +182,26 @@ export const ResellerDashboard = () => {
                     <tr className="border-b border-white/5 text-[10px] font-bold text-muted-foreground uppercase tracking-widest bg-white/[0.01]">
                       <th className="px-6 py-4">TIPO</th>
                       <th className="px-6 py-4">CÓDIGO</th>
-                      <th className="px-6 py-4">PLANO</th>
                       <th className="px-6 py-4">STATUS</th>
                       <th className="px-6 py-4 text-right">DATA</th>
                     </tr>
                   </thead>
                   <tbody className="text-sm">
-                    <LicenseRow type="Teste" code="TEST-ABCD-1234" plan="7 dias" date="20/05/2024" />
-                    <LicenseRow type="Mensal" code="MENS-EFGH-5678" plan="30 dias" date="20/05/2024" />
-                    <LicenseRow type="Vitalícia" code="VITA-IJKL-9101" plan="Vitalício" date="20/05/2024" />
+                    {fetchingLicenses ? (
+                      <tr><td colSpan={4} className="p-8 text-center text-muted-foreground italic uppercase text-xs">Carregando dados reais...</td></tr>
+                    ) : licenses.length > 0 ? (
+                      licenses.map((l) => (
+                        <LicenseRow 
+                          key={l.id}
+                          type={l.type.toUpperCase()} 
+                          code={l.code} 
+                          status={l.status} 
+                          date={new Date(l.created_at).toLocaleDateString()} 
+                        />
+                      ))
+                    ) : (
+                      <tr><td colSpan={4} className="p-8 text-center text-muted-foreground italic uppercase text-xs">Nenhuma licença gerada</td></tr>
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -155,26 +235,27 @@ const MetricCard = ({ title, value, subtitle }: { title: string, value: string, 
   </Card>
 );
 
-const LicenseTypeCard = ({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) => (
+const LicenseTypeCard = ({ icon, title, description, onClick }: { icon: React.ReactNode, title: string, description: string, onClick: () => void }) => (
   <div className="bg-[#111827] border border-white/5 p-8 rounded-2xl flex flex-col items-center text-center group hover:border-primary/50 transition-all">
     <div className="mb-6 transform group-hover:scale-110 transition-transform">
       {icon}
     </div>
     <h3 className="text-sm font-bold text-white uppercase tracking-tight mb-2">{title}</h3>
     <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-6">{description}</p>
-    <Button className="w-full bg-primary hover:bg-primary/90 text-white font-black italic uppercase tracking-tighter h-11 shadow-[0_0_20px_rgba(var(--color-primary),0.3)]">
+    <Button onClick={onClick} className="w-full bg-primary hover:bg-primary/90 text-white font-black italic uppercase tracking-tighter h-11 shadow-[0_0_20px_rgba(var(--color-primary),0.3)]">
       GERAR
     </Button>
   </div>
 );
 
-const LicenseRow = ({ type, code, plan, date }: { type: string, code: string, plan: string, date: string }) => (
+const LicenseRow = ({ type, code, status, date }: { type: string, code: string, status: string, date: string }) => (
   <tr className="border-b border-white/5 hover:bg-white/[0.01] transition-colors group">
     <td className="px-6 py-4 text-white font-medium">{type}</td>
     <td className="px-6 py-4 font-mono text-muted-foreground text-xs">{code}</td>
-    <td className="px-6 py-4 text-muted-foreground">{plan}</td>
     <td className="px-6 py-4">
-      <Badge className="bg-green-500/10 text-green-500 border-green-500/20 rounded-sm py-0.5 px-2 font-bold text-[10px]">Ativa</Badge>
+      <Badge className={`${status === 'active' ? 'bg-green-500/10 text-green-500 border-green-500/20' : 'bg-red-500/10 text-red-500 border-red-500/20'} rounded-sm py-0.5 px-2 font-bold text-[10px]`}>
+        {status === 'active' ? 'Ativa' : 'Inativa'}
+      </Badge>
     </td>
     <td className="px-6 py-4 text-right text-muted-foreground font-medium">{date}</td>
   </tr>
