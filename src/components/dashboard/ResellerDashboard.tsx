@@ -11,6 +11,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
+import { resellerApi } from "@/services/resellerApi";
 
 interface License {
   id: string;
@@ -32,6 +33,7 @@ export const ResellerDashboard = () => {
   const [resultDialogOpen, setResultDialogOpen] = useState(false);
   const [generatedCode, setGeneratedCode] = useState("");
   const [copied, setCopied] = useState(false);
+  const [apiToken, setApiToken] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const fetchCredits = async () => {
@@ -44,26 +46,43 @@ export const ResellerDashboard = () => {
     setCredits(data?.credits ?? 0);
   };
 
+  const fetchApiToken = async () => {
+    if (!user) return;
+    const { data } = await supabase
+      .from("profiles")
+      .select("reseller_api_token")
+      .eq("id", user.id)
+      .maybeSingle();
+    setApiToken(data?.reseller_api_token ?? null);
+  };
+
+  const fetchLicenses = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("reseller_licenses")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      const mapped: License[] = (data || []).map((r: any) => ({
+        id: r.id,
+        code: r.license_key,
+        type: r.type,
+        status: r.expires_at && new Date(r.expires_at) < new Date() ? 'expired' : 'active',
+        created_at: r.created_at,
+      }));
+      setLicenses(mapped);
+    } catch (error: any) {
+      toast.error("Error al cargar licencias: " + error.message);
+    } finally {
+      setFetchingLicenses(false);
+    }
+  };
+
   useEffect(() => {
-    const getLicenses = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("licenses")
-          .select("*")
-          .order("created_at", { ascending: false });
-
-        if (error) throw error;
-        setLicenses(data || []);
-      } catch (error: any) {
-        toast.error("Error al cargar licencias: " + error.message);
-      } finally {
-        setFetchingLicenses(false);
-      }
-    };
-
     if (user) {
-      getLicenses();
+      fetchLicenses();
       fetchCredits();
+      fetchApiToken();
     }
   }, [user]);
 
@@ -84,12 +103,18 @@ export const ResellerDashboard = () => {
       return;
     }
 
+    if (!apiToken) {
+      toast.error("Tu cuenta no tiene un token de API. Contacta al superadmin.");
+      return;
+    }
+
     if (!isTest && credits < 1) {
       toast.error("Sin créditos. Contacta al superadmin para recargar.");
       return;
     }
 
     setIsGenerating(true);
+    let creditConsumed = false;
     try {
       if (!isTest) {
         const { data: consumed, error: rpcError } = await supabase.rpc("consume_credit");
@@ -99,32 +124,41 @@ export const ResellerDashboard = () => {
           await fetchCredits();
           return;
         }
+        creditConsumed = true;
       }
 
-      const safeName = name.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().substring(0, 12) || 'LIC';
-      const code = `${type.toUpperCase()}-${safeName}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
-      const { data, error } = await supabase
-        .from("licenses")
-        .insert([{
-          code,
-          type: type.toLowerCase() as any,
-          created_by: user?.id,
-          status: 'active'
-        }])
-        .select()
-        .single();
+      // Llamada real a la API del proveedor
+      let apiResp;
+      if (isTest) {
+        apiResp = await resellerApi.generateTrial(apiToken, name, 15);
+      } else if (type.toLowerCase() === 'lifetime') {
+        apiResp = await resellerApi.generateLicense(apiToken, name, 0, true);
+      } else {
+        // monthly = 30 días por defecto
+        apiResp = await resellerApi.generateLicense(apiToken, name, 30, false);
+      }
 
-      if (error) throw error;
+      if (!apiResp?.license_key) {
+        throw new Error(apiResp?.message || "La API no devolvió una clave válida");
+      }
 
-      setLicenses([data, ...licenses]);
+      // Guardar en nuestra DB
+      await resellerApi.saveLicenseLocally(user!.id, apiResp, name);
+
+      await fetchLicenses();
       if (!isTest) await fetchCredits();
-      setGeneratedCode(code);
+      setGeneratedCode(apiResp.license_key);
       setCopied(false);
       setNameDialogOpen(false);
       setResultDialogOpen(true);
       toast.success(isTest ? "Licencia de prueba generada (sin costo)" : "Licencia generada (−1 crédito)");
     } catch (error: any) {
-      toast.error("Error al generar licencia: " + error.message);
+      // Reembolsar crédito si la API falló después de consumirlo
+      if (creditConsumed) {
+        try { await supabase.rpc("add_credits", { _target: user!.id, _amount: 1 }); } catch {}
+        await fetchCredits();
+      }
+      toast.error("Error al generar licencia: " + (error?.message || "desconocido"));
     } finally {
       setIsGenerating(false);
     }
