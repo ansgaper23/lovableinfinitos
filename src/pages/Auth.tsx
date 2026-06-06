@@ -23,24 +23,44 @@ export const Auth = () => {
     setLoading(true);
 
     try {
+      if (!email || !password) {
+        throw new Error("Por favor, completa todos los campos.");
+      }
+
+      if (!isLogin && password.length < 6) {
+        throw new Error("La contraseña debe tener al menos 6 caracteres.");
+      }
+
       if (isLogin) {
         const { error } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
-        if (error) throw error;
+        if (error) {
+          if (error.message === "Invalid login credentials") {
+            throw new Error("Credenciales inválidas. Verifica tu email y contraseña.");
+          }
+          throw error;
+        }
         toast.success("¡Bienvenido de nuevo!");
         navigate({ to: "/dashboard" });
       } else {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
         });
         if (error) throw error;
-        toast.success("¡Cuenta creada con éxito! Ya puedes iniciar sesión.");
-        setIsLogin(true);
+        
+        if (data.session) {
+          toast.success("¡Bienvenido! Tu cuenta ha sido creada.");
+          navigate({ to: "/dashboard" });
+        } else {
+          toast.success("¡Cuenta creada con éxito! Revisa tu correo o inicia sesión.");
+          setIsLogin(true);
+        }
       }
     } catch (error: any) {
+      console.error("Auth error:", error);
       toast.error(error.message || "Ocurrió un error");
     } finally {
       setLoading(false);
