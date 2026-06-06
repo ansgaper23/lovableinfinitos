@@ -24,8 +24,8 @@ import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { resellerApi, ResellerStatus } from "@/services/resellerApi";
 
-interface ExtendedProfile extends Profile {
-  reseller_api_token?: string;
+interface ExtendedProfile extends Omit<Profile, 'reseller_api_token'> {
+  reseller_api_token?: string | null;
 }
 
 export const SuperAdminDashboard = () => {
@@ -57,6 +57,13 @@ export const SuperAdminDashboard = () => {
 
         if (error) throw error;
         setUsers(data || []);
+        
+        // Find current admin profile to set token
+        const currentProfile = data?.find(p => p.id === user?.id);
+        if (currentProfile?.reseller_api_token) {
+          setResellerToken(currentProfile.reseller_api_token);
+          fetchResellerStatus(currentProfile.reseller_api_token);
+        }
       } catch (error: any) {
         toast.error("Error al cargar usuarios: " + error.message);
       } finally {
@@ -66,6 +73,99 @@ export const SuperAdminDashboard = () => {
 
     if (user) getUsers();
   }, [user]);
+
+  const fetchResellerStatus = async (token: string) => {
+    try {
+      const status = await resellerApi.getStatus(token);
+      setResellerStatus(status);
+    } catch (error) {
+      console.error("Error fetching status:", error);
+    }
+  };
+
+  const fetchLicenses = async () => {
+    if (!resellerToken) return;
+    setIsLoadingLicenses(true);
+    try {
+      const data = await resellerApi.listLicenses(resellerToken);
+      setLicenses(data.licenses || []);
+    } catch (error: any) {
+      toast.error("Error al cargar licencias: " + error.message);
+    } finally {
+      setIsLoadingLicenses(false);
+    }
+  };
+
+  const updateToken = async () => {
+    if (!user) return;
+    setIsUpdatingToken(true);
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ reseller_api_token: resellerToken })
+        .eq("id", user.id);
+      
+      if (error) throw error;
+      toast.success("Token actualizado correctamente");
+      fetchResellerStatus(resellerToken);
+    } catch (error: any) {
+      toast.error("Error al actualizar token: " + error.message);
+    } finally {
+      setIsUpdatingToken(false);
+    }
+  };
+
+  const handleGenerateKey = async () => {
+    if (!resellerToken) {
+      toast.error("Debes configurar tu API Token primero");
+      return;
+    }
+    
+    setIsGeneratingKey(true);
+    try {
+      let result;
+      if (keyType === "trial") {
+        result = await resellerApi.generateTrial(resellerToken, keyDisplayName);
+      } else if (keyType === "lifetime") {
+        result = await resellerApi.generateLicense(resellerToken, keyDisplayName, 0, true);
+      } else {
+        result = await resellerApi.generateLicense(resellerToken, keyDisplayName, parseInt(keyDays));
+      }
+      
+      if (result.success) {
+        toast.success(`Llave generada: ${result.license_key}`);
+        if (user) await resellerApi.saveLicenseLocally(user.id, result, keyDisplayName);
+        fetchResellerStatus(resellerToken);
+        fetchLicenses();
+        setKeyDisplayName("");
+      }
+    } catch (error: any) {
+      toast.error("Error al generar llave: " + error.message);
+    } finally {
+      setIsGeneratingKey(false);
+    }
+  };
+
+  const handleResetHwid = async (key: string) => {
+    try {
+      await resellerApi.resetHwid(resellerToken, key);
+      toast.success("HWID reseteado");
+      fetchLicenses();
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
+
+  const handleRevoke = async (key: string) => {
+    try {
+      await resellerApi.revokeLicense(resellerToken, key);
+      toast.success("Licencia revocada");
+      fetchLicenses();
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
+
 
   if (loading) {
     return <div className="min-h-screen bg-background flex items-center justify-center text-white">Cargando...</div>;
