@@ -308,6 +308,7 @@ export const SuperAdminDashboard = () => {
             </div>
           </header>
 
+          <div className="space-y-10">
             {/* Tabs Content */}
             {activeTab === "summary" && (
               <>
