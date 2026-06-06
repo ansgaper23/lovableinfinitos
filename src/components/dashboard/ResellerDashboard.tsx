@@ -60,19 +60,23 @@ export const ResellerDashboard = () => {
 
   const generateLicense = async (type: string) => {
     if (isGenerating) return;
-    if (credits < 1) {
+    const isTest = type.toLowerCase() === 'test';
+
+    if (!isTest && credits < 1) {
       toast.error("Sin créditos. Contacta al superadmin para recargar.");
       return;
     }
+
     setIsGenerating(true);
     try {
-      // Atomic credit consumption on the server
-      const { data: consumed, error: rpcError } = await supabase.rpc("consume_credit");
-      if (rpcError) throw rpcError;
-      if (!consumed) {
-        toast.error("Sin créditos disponibles.");
-        await fetchCredits();
-        return;
+      if (!isTest) {
+        const { data: consumed, error: rpcError } = await supabase.rpc("consume_credit");
+        if (rpcError) throw rpcError;
+        if (!consumed) {
+          toast.error("Sin créditos disponibles.");
+          await fetchCredits();
+          return;
+        }
       }
 
       const code = `${type.toUpperCase()}-${Math.random().toString(36).substring(2, 10).toUpperCase()}`;
@@ -90,8 +94,12 @@ export const ResellerDashboard = () => {
       if (error) throw error;
 
       setLicenses([data, ...licenses]);
-      await fetchCredits();
-      toast.success(`Licencia ${type} generada: ${code} (−1 crédito)`);
+      if (!isTest) await fetchCredits();
+      toast.success(
+        isTest
+          ? `Licencia de testeo generada: ${code} (sin costo)`
+          : `Licencia ${type} generada: ${code} (−1 crédito)`
+      );
     } catch (error: any) {
       toast.error("Error al generar licencia: " + error.message);
     } finally {
