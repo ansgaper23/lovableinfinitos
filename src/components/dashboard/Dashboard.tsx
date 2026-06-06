@@ -194,7 +194,97 @@ export const Dashboard = () => {
                   activación del administrador.
                 </p>
               </div>
-            </div>
+
+            {/* Assigned license card */}
+            <Card className="rounded-none border-white/10 bg-white/[0.02] backdrop-blur-xl">
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-none bg-primary/10 border border-primary/20 flex items-center justify-center">
+                    <ShieldCheck className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-lg font-black italic tracking-tighter uppercase">Mi Licencia</CardTitle>
+                    <p className="text-[10px] font-black tracking-widest text-muted-foreground uppercase mt-1">
+                      {assigned ? "Licencia asignada por el administrador" : "Estado de tu licencia"}
+                    </p>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {!assigned ? (
+                  <div className="p-8 border border-dashed border-white/10 bg-black/20 flex flex-col items-start gap-5">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-none bg-amber-500/10 border border-amber-500/30 flex items-center justify-center">
+                        <Lock className="w-6 h-6 text-amber-400" />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-black italic tracking-tighter uppercase">Sin licencia asignada</h3>
+                        <p className="text-sm text-muted-foreground">Adquiere una para empezar a usar Lovable Infinito.</p>
+                      </div>
+                    </div>
+                    <div className="flex flex-wrap gap-3">
+                      <Button
+                        onClick={() => window.open("https://wa.me/?text=Hola,%20quiero%20adquirir%20una%20licencia%20de%20Lovable%20Infinito", "_blank")}
+                        className="rounded-none font-black italic tracking-tighter uppercase gap-2 px-6 h-12"
+                      >
+                        Adquirir Licencia <ArrowRight className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        onClick={() => navigate({ to: "/" })}
+                        variant="outline"
+                        className="rounded-none font-black italic tracking-tighter uppercase gap-2 px-6 h-12 border-white/10"
+                      >
+                        Ver Planes
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="p-6 border border-primary/30 bg-primary/5">
+                      <div className="flex items-center justify-between flex-wrap gap-3 mb-4">
+                        <Badge variant="outline" className={`rounded-none text-[10px] font-black uppercase tracking-widest px-3 py-1 ${
+                          countdown?.expired
+                            ? "border-destructive/40 bg-destructive/10 text-destructive"
+                            : "border-green-500/30 bg-green-500/10 text-green-400"
+                        }`}>
+                          {countdown?.expired ? "EXPIRADA" : "ACTIVA"}
+                        </Badge>
+                        <p className="text-[10px] font-black tracking-widest text-muted-foreground uppercase flex items-center gap-2">
+                          <Clock className="w-3 h-3" />
+                          {countdown?.expired
+                            ? `Expiró: ${new Date(assigned.expires_at!).toLocaleString()}`
+                            : `Tiempo restante: ${countdown?.label}`}
+                        </p>
+                      </div>
+                      <p className="text-[10px] font-black tracking-widest text-primary uppercase mb-3">Tu llave de acceso</p>
+                      <div className="flex items-center gap-3 flex-wrap">
+                        <code className="flex-1 min-w-0 font-mono text-sm sm:text-base text-white break-all bg-black/40 px-4 py-3 border border-white/10">
+                          {assigned.license_key}
+                        </code>
+                        <Button
+                          onClick={async () => {
+                            await navigator.clipboard.writeText(assigned.license_key);
+                            setCopiedAssigned(true);
+                            setTimeout(() => setCopiedAssigned(false), 1800);
+                          }}
+                          variant="outline"
+                          className="rounded-none font-black italic tracking-tighter uppercase h-12 px-4 border-white/10"
+                        >
+                          {copiedAssigned ? <Check className="w-4 h-4 mr-2 text-green-500" /> : <Copy className="w-4 h-4 mr-2" />}
+                          {copiedAssigned ? "Copiado" : "Copiar"}
+                        </Button>
+                      </div>
+                      {assigned.expires_at && (
+                        <p className="text-[10px] font-black tracking-widest text-muted-foreground uppercase mt-3">
+                          Expira: {new Date(assigned.expires_at).toLocaleString()}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
 
             {/* Trial license card */}
             <Card className="rounded-none border-white/10 bg-white/[0.02] backdrop-blur-xl">
