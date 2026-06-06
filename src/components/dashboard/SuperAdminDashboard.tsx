@@ -576,8 +576,8 @@ export const SuperAdminDashboard = () => {
               </div>
             )}
           </div>
-        </main>
-      </div>
+        </div>
+      </main>
     </div>
   );
 };
