@@ -18,7 +18,7 @@ import {
   Select, SelectContent, SelectItem, 
   SelectTrigger, SelectValue 
 } from "@/components/ui/select";
-import { AnnouncementBar } from "@/components/landing/AnnouncementBar";
+
 import { useAuth, Profile } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "@tanstack/react-router";
@@ -225,7 +225,7 @@ export const SuperAdminDashboard = () => {
 
   return (
     <div className="flex h-screen bg-[#0A0A0B] text-white overflow-hidden font-sans">
-      <AnnouncementBar />
+      
       
       {/* Mobile Sidebar Toggle */}
       <div className="lg:hidden fixed top-14 left-4 z-50">
