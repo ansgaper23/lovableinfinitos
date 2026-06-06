@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
-import { LayoutDashboard, Key, ClipboardList, History, Users, Wallet, Settings, LifeBuoy, Zap, Plus, Infinity, CalendarDays, LogOut, Coins } from "lucide-react";
+import { LayoutDashboard, Key, ClipboardList, History, Users, Wallet, Settings, LifeBuoy, Zap, Plus, Infinity, CalendarDays, LogOut, Coins, Copy, Check } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { AnnouncementBar } from "@/components/landing/AnnouncementBar";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,6 +26,12 @@ export const ResellerDashboard = () => {
   const [fetchingLicenses, setFetchingLicenses] = useState(true);
   const [credits, setCredits] = useState<number>(0);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [nameDialogOpen, setNameDialogOpen] = useState(false);
+  const [pendingType, setPendingType] = useState<string | null>(null);
+  const [licenseName, setLicenseName] = useState("");
+  const [resultDialogOpen, setResultDialogOpen] = useState(false);
+  const [generatedCode, setGeneratedCode] = useState("");
+  const [copied, setCopied] = useState(false);
   const navigate = useNavigate();
 
   const fetchCredits = async () => {
@@ -58,9 +67,22 @@ export const ResellerDashboard = () => {
     }
   }, [user]);
 
-  const generateLicense = async (type: string) => {
-    if (isGenerating) return;
+  const openGenerateDialog = (type: string) => {
+    setPendingType(type);
+    setLicenseName("");
+    setNameDialogOpen(true);
+  };
+
+  const generateLicense = async () => {
+    if (isGenerating || !pendingType) return;
+    const type = pendingType;
     const isTest = type.toLowerCase() === 'test';
+    const name = licenseName.trim();
+
+    if (!name) {
+      toast.error("Ingresa un nombre para la licencia");
+      return;
+    }
 
     if (!isTest && credits < 1) {
       toast.error("Sin créditos. Contacta al superadmin para recargar.");
@@ -79,7 +101,8 @@ export const ResellerDashboard = () => {
         }
       }
 
-      const code = `${type.toUpperCase()}-${Math.random().toString(36).substring(2, 10).toUpperCase()}`;
+      const safeName = name.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().substring(0, 12) || 'LIC';
+      const code = `${type.toUpperCase()}-${safeName}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
       const { data, error } = await supabase
         .from("licenses")
         .insert([{
@@ -95,15 +118,26 @@ export const ResellerDashboard = () => {
 
       setLicenses([data, ...licenses]);
       if (!isTest) await fetchCredits();
-      toast.success(
-        isTest
-          ? `Licencia de prueba generada: ${code} (sin costo)`
-          : `Licencia ${type} generada: ${code} (−1 crédito)`
-      );
+      setGeneratedCode(code);
+      setCopied(false);
+      setNameDialogOpen(false);
+      setResultDialogOpen(true);
+      toast.success(isTest ? "Licencia de prueba generada (sin costo)" : "Licencia generada (−1 crédito)");
     } catch (error: any) {
       toast.error("Error al generar licencia: " + error.message);
     } finally {
       setIsGenerating(false);
+    }
+  };
+
+  const copyCode = async () => {
+    try {
+      await navigator.clipboard.writeText(generatedCode);
+      setCopied(true);
+      toast.success("Clave copiada al portapapeles");
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast.error("No se pudo copiar");
     }
   };
 
@@ -202,19 +236,19 @@ export const ResellerDashboard = () => {
                   icon={<Plus className="w-10 h-10 text-primary" />} 
                   title="LICENCIA DE PRUEBA" 
                   description="Período de prueba" 
-                  onClick={() => generateLicense('test')}
+                  onClick={() => openGenerateDialog('test')}
                 />
                 <LicenseTypeCard 
                   icon={<CalendarDays className="w-10 h-10 text-primary" />} 
                   title="LICENCIA MENSUAL" 
                   description="Acceso por 30 días" 
-                  onClick={() => generateLicense('monthly')}
+                  onClick={() => openGenerateDialog('monthly')}
                 />
                 <LicenseTypeCard 
                   icon={<Infinity className="w-10 h-10 text-primary" />} 
                   title="LICENCIA VITALICIA" 
                   description="Acceso de por vida" 
-                  onClick={() => generateLicense('lifetime')}
+                  onClick={() => openGenerateDialog('lifetime')}
                 />
               </div>
             </Card>
@@ -262,6 +296,69 @@ export const ResellerDashboard = () => {
           </div>
         </main>
       </div>
+
+      {/* Name input dialog */}
+      <Dialog open={nameDialogOpen} onOpenChange={setNameDialogOpen}>
+        <DialogContent className="bg-[#0A101F] border-white/10 text-white">
+          <DialogHeader>
+            <DialogTitle className="italic uppercase tracking-tight">
+              Nombre de la licencia {pendingType ? `(${pendingType.toUpperCase()})` : ''}
+            </DialogTitle>
+            <DialogDescription className="text-muted-foreground">
+              Asigna un nombre para identificar al cliente o destino de esta clave.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2 py-2">
+            <Label htmlFor="license-name">Nombre / Cliente</Label>
+            <Input
+              id="license-name"
+              autoFocus
+              value={licenseName}
+              onChange={(e) => setLicenseName(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter') generateLicense(); }}
+              placeholder="Ej: Juan Pérez"
+              maxLength={50}
+              className="bg-[#02060E] border-white/10 text-white"
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setNameDialogOpen(false)} disabled={isGenerating}>
+              Cancelar
+            </Button>
+            <Button
+              onClick={generateLicense}
+              disabled={isGenerating || !licenseName.trim()}
+              className="bg-primary hover:bg-primary/90 text-white font-black italic uppercase"
+            >
+              {isGenerating ? 'Generando...' : 'Generar Clave'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Result dialog */}
+      <Dialog open={resultDialogOpen} onOpenChange={setResultDialogOpen}>
+        <DialogContent className="bg-[#0A101F] border-white/10 text-white">
+          <DialogHeader>
+            <DialogTitle className="italic uppercase tracking-tight">Licencia generada</DialogTitle>
+            <DialogDescription className="text-muted-foreground">
+              Copia esta clave y entrégala al cliente. No se mostrará de nuevo en este diálogo.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="bg-[#02060E] border border-primary/30 rounded-lg p-4 flex items-center justify-between gap-3">
+            <code className="text-primary font-mono text-sm break-all">{generatedCode}</code>
+            <Button size="icon" variant="ghost" onClick={copyCode} className="shrink-0 text-white hover:bg-white/5">
+              {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+            </Button>
+          </div>
+          <DialogFooter>
+            <Button onClick={copyCode} className="bg-primary hover:bg-primary/90 text-white font-black italic uppercase">
+              {copied ? 'Copiado ✓' : 'Copiar Clave'}
+            </Button>
+            <Button variant="ghost" onClick={() => setResultDialogOpen(false)}>Cerrar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
