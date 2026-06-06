@@ -121,6 +121,27 @@ export const Dashboard = () => {
     );
   }
 
+  if (profile?.role === "blocked") {
+    return (
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 text-center">
+        <div className="w-16 h-16 rounded-none bg-red-500/10 border border-red-500/30 flex items-center justify-center mb-6">
+          <Lock className="w-8 h-8 text-red-400" />
+        </div>
+        <h1 className="text-3xl font-black italic uppercase tracking-tighter mb-2">Cuenta Bloqueada</h1>
+        <p className="text-muted-foreground max-w-md mb-6">
+          Tu cuenta ha sido bloqueada por el administrador. Contacta con soporte para más información.
+        </p>
+        <Button
+          onClick={async () => { await supabase.auth.signOut(); navigate({ to: "/" }); }}
+          variant="outline"
+          className="rounded-none font-black italic uppercase tracking-tighter h-12 px-6 border-white/10"
+        >
+          <LogOut className="w-4 h-4 mr-2" /> Cerrar Sesión
+        </Button>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col h-screen overflow-hidden">
       <div className="flex-1 bg-background text-foreground dark font-sans flex overflow-hidden">
