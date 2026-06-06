@@ -54,7 +54,7 @@ export const Dashboard = () => {
           </a>
 
           <nav className="space-y-2">
-            <NavItem icon={<LayoutDashboard className="w-5 h-5" />} label="Dashboard" active />
+            <NavItem icon={<LayoutDashboard className="w-5 h-5" />} label="Panel" active />
             <NavItem icon={<Zap className="w-5 h-5" />} label="Créditos" />
             <NavItem icon={<Clock className="w-5 h-5" />} label="Historial" />
             <NavItem icon={<CreditCard className="w-5 h-5" />} label="Suscripción" />

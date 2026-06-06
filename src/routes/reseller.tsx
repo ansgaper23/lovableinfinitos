@@ -4,8 +4,8 @@ import { ResellerDashboard } from "@/components/dashboard/ResellerDashboard";
 export const Route = createFileRoute("/reseller")({
   head: () => ({
     meta: [
-      { title: "Painel de Revenda — Lovable Infinito" },
-      { name: "description", content: "Gere e gerencie licenças para seus clientes." },
+      { title: "Panel de Revendedor — Lovable Infinito" },
+      { name: "description", content: "Genera y gestiona licencias para tus clientes." },
     ],
   }),
   component: ResellerDashboard,
