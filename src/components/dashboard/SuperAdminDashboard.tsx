@@ -358,36 +358,62 @@ export const SuperAdminDashboard = () => {
                 </Card>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <Card className="rounded-none border-white/5 bg-white/[0.02] backdrop-blur-xl">
-                    <CardHeader>
-                      <CardTitle className="text-lg font-black italic tracking-tighter uppercase">Configuración Global</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div className="flex items-center justify-between p-4 border border-white/5 bg-white/[0.01]">
-                        <div>
-                          <p className="text-sm font-bold">Mantenimiento</p>
-                          <p className="text-[10px] text-muted-foreground uppercase">Desactiva el acceso a todos</p>
-                        </div>
-                        <Badge variant="outline" className="border-white/20 uppercase text-[10px]">OFF</Badge>
+                  <Card className="rounded-2xl border-white/5 bg-[#121214] overflow-hidden group">
+                    <CardHeader className="flex flex-row items-center justify-between pb-6 border-b border-white/5 bg-white/[0.01]">
+                      <div>
+                        <CardTitle className="text-lg font-black italic tracking-tighter uppercase">Configuración Global</CardTitle>
+                        <CardDescription className="text-[10px] uppercase font-black tracking-widest text-muted-foreground">Reglas de negocio y visibilidad</CardDescription>
                       </div>
-                      <div className="flex items-center justify-between p-4 border border-white/5 bg-white/[0.01]">
-                        <div>
-                          <p className="text-sm font-bold">Registro Público</p>
-                          <p className="text-[10px] text-muted-foreground uppercase">Permitir nuevos registros</p>
+                      <Settings className="w-5 h-5 text-muted-foreground/30 group-hover:rotate-90 transition-transform duration-700" />
+                    </CardHeader>
+                    <CardContent className="p-0">
+                      <div className="divide-y divide-white/5">
+                        <div className="flex items-center justify-between p-6 hover:bg-white/[0.02] transition-colors group/item">
+                          <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center group-hover/item:bg-destructive/10 transition-colors">
+                              <AlertCircle className="w-5 h-5 text-muted-foreground group-hover/item:text-destructive transition-colors" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-bold">Modo Mantenimiento</p>
+                              <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest opacity-60">Bloqueo temporal de acceso</p>
+                            </div>
+                          </div>
+                          <Badge variant="outline" className="border-white/10 bg-white/5 uppercase text-[9px] font-black px-3 py-1 tracking-widest">Inactivo</Badge>
                         </div>
-                        <Badge variant="outline" className="border-green-500/50 text-green-500 uppercase text-[10px]">ON</Badge>
+                        <div className="flex items-center justify-between p-6 hover:bg-white/[0.02] transition-colors group/item">
+                          <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center group-hover/item:bg-green-500/10 transition-colors">
+                              <Globe className="w-5 h-5 text-muted-foreground group-hover/item:text-green-500 transition-colors" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-bold">Registro Público</p>
+                              <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest opacity-60">Permitir nuevos usuarios</p>
+                            </div>
+                          </div>
+                          <Badge variant="outline" className="border-green-500/20 bg-green-500/10 text-green-500 uppercase text-[9px] font-black px-3 py-1 tracking-widest shadow-[0_0_10px_rgba(34,197,94,0.2)]">Activo</Badge>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
 
-                  <Card className="rounded-none border-white/5 bg-white/[0.02] backdrop-blur-xl">
-                    <CardHeader>
-                      <CardTitle className="text-lg font-black italic tracking-tighter uppercase">Mensaje de Barra (Scroll)</CardTitle>
+                  <Card className="rounded-2xl border-white/5 bg-[#121214] overflow-hidden group flex flex-col">
+                    <CardHeader className="pb-6 border-b border-white/5 bg-white/[0.01]">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Activity className="w-4 h-4 text-destructive" />
+                        <CardTitle className="text-lg font-black italic tracking-tighter uppercase">Barra Informativa</CardTitle>
+                      </div>
+                      <CardDescription className="text-[10px] uppercase font-black tracking-widest text-muted-foreground">Anuncio global con scroll infinito</CardDescription>
                     </CardHeader>
-                    <CardContent className="space-y-4">
-                      <Input defaultValue="OFERTA DE LANZAMIENTO: 50% DCTO EN EL PLAN PRO" className="rounded-none border-white/10 bg-white/5 font-bold uppercase italic text-xs h-12" />
-                      <Button className="w-full rounded-none bg-primary text-primary-foreground font-black italic uppercase tracking-widest text-xs h-12">
-                        Actualizar Mensaje Global
+                    <CardContent className="flex-1 p-6 space-y-4 flex flex-col justify-center">
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-50">Contenido del Anuncio</label>
+                        <Input 
+                          defaultValue="OFERTA DE LANZAMIENTO: 50% DCTO EN EL PLAN PRO — UNETE AHORA" 
+                          className="rounded-xl border-white/5 bg-white/5 font-black uppercase italic text-[11px] h-13 tracking-tight focus:bg-white/[0.08]" 
+                        />
+                      </div>
+                      <Button className="w-full rounded-xl bg-white/10 hover:bg-white/15 text-white font-black italic uppercase tracking-widest text-[10px] h-13 border border-white/10">
+                        Propagar Cambios
                       </Button>
                     </CardContent>
                   </Card>
