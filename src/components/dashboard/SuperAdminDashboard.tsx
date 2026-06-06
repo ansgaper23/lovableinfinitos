@@ -1,23 +1,64 @@
+import { useEffect, useState } from "react";
 import { LayoutDashboard, Users, BarChart3, ShieldAlert, Settings, LogOut, Search, MoreVertical, CheckCircle2, XCircle, TrendingUp, DollarSign } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { AnnouncementBar } from "@/components/landing/AnnouncementBar";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth, Profile } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "@tanstack/react-router";
-
-
+import { toast } from "sonner";
 
 export const SuperAdminDashboard = () => {
-  const { user, loading } = useAuth(true);
+  const { user, profile, loading } = useAuth(true);
+  const [users, setUsers] = useState<Profile[]>([]);
+  const [fetchingUsers, setFetchingUsers] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const getUsers = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("*")
+          .order("created_at", { ascending: false });
+
+        if (error) throw error;
+        setUsers(data || []);
+      } catch (error: any) {
+        toast.error("Error al cargar usuarios: " + error.message);
+      } finally {
+        setFetchingUsers(false);
+      }
+    };
+
+    if (user) getUsers();
+  }, [user]);
 
   if (loading) {
     return <div className="min-h-screen bg-background flex items-center justify-center text-white">Cargando...</div>;
   }
+
+  // Check if user is actually a superadmin (only if profile loaded)
+  if (profile && profile.role !== 'superadmin') {
+    return (
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
+        <ShieldAlert className="w-16 h-16 text-destructive mb-4" />
+        <h1 className="text-2xl font-black italic uppercase mb-2">Acceso Denegado</h1>
+        <p className="text-muted-foreground mb-6 text-center">No tienes permisos para acceder al Panel Maestro.</p>
+        <Button onClick={() => navigate({ to: "/dashboard" })} className="bg-primary text-white font-black uppercase tracking-tighter italic h-12 px-8">
+          Volver a mi Panel
+        </Button>
+      </div>
+    );
+  }
+
+  const filteredUsers = users.filter(u => 
+    u.email?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    u.role?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-background">
@@ -70,9 +111,9 @@ export const SuperAdminDashboard = () => {
 
             {/* Top Stats */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <AdminStatCard title="Usuarios Totales" value="1,284" change="+12% mensual" icon={<Users className="text-destructive" />} />
-              <AdminStatCard title="Ingresos (S/)" value="S/ 45,200" change="+8% esta semana" icon={<DollarSign className="text-destructive" />} />
-              <AdminStatCard title="Créditos Consumidos" value="4.2M" change="Normal" icon={<TrendingUp className="text-destructive" />} />
+              <AdminStatCard title="Usuarios Totales" value={users.length.toString()} change="Real-time" icon={<Users className="text-destructive" />} />
+              <AdminStatCard title="Ingresos (S/)" value="S/ 0" change="Sin datos" icon={<DollarSign className="text-destructive" />} />
+              <AdminStatCard title="Créditos Consumidos" value="0" change="Normal" icon={<TrendingUp className="text-destructive" />} />
               <AdminStatCard title="Alertas Sistema" value="0" subtitle="Todo estable" icon={<CheckCircle2 className="text-green-500" />} />
             </div>
 
@@ -85,7 +126,12 @@ export const SuperAdminDashboard = () => {
                 </div>
                 <div className="relative w-64">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input placeholder="Buscar usuario..." className="pl-10 rounded-none border-white/10 bg-white/5 text-xs h-10" />
+                  <Input 
+                    placeholder="Buscar usuario..." 
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10 rounded-none border-white/10 bg-white/5 text-xs h-10" 
+                  />
                 </div>
               </CardHeader>
               <CardContent className="p-0">
@@ -93,17 +139,29 @@ export const SuperAdminDashboard = () => {
                   <thead>
                     <tr className="border-b border-white/5 bg-white/[0.01]">
                       <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Usuario</th>
-                      <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Plan</th>
+                      <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Rol</th>
                       <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Estado</th>
-                      <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Expira</th>
+                      <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Creado</th>
                       <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Acción</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <UserRow name="Carlos Ruiz" email="carlos@example.com" plan="Premium" status="Activo" expiry="15 Jun 2026" />
-                    <UserRow name="Ana Belén" email="ana@peru.pe" plan="Pro" status="Activo" expiry="12 Jun 2026" />
-                    <UserRow name="Miguel Angel" email="miguel@agencia.com" plan="Básico" status="Expirado" expiry="01 Jun 2026" />
-                    <UserRow name="Lucía Torres" email="lucia@builder.dev" plan="Pro" status="Activo" expiry="20 Jun 2026" />
+                    {fetchingUsers ? (
+                      <tr><td colSpan={5} className="p-8 text-center text-muted-foreground italic uppercase text-xs">Cargando usuarios de la base de datos...</td></tr>
+                    ) : filteredUsers.length > 0 ? (
+                      filteredUsers.map((u) => (
+                        <UserRow 
+                          key={u.id}
+                          name={u.email?.split('@')[0] || 'Usuario'} 
+                          email={u.email || 'N/A'} 
+                          role={u.role || 'user'} 
+                          status="Activo" 
+                          created={new Date(u.created_at).toLocaleDateString()} 
+                        />
+                      ))
+                    ) : (
+                      <tr><td colSpan={5} className="p-8 text-center text-muted-foreground italic uppercase text-xs">No se encontraron usuarios</td></tr>
+                    )}
                   </tbody>
                 </table>
               </CardContent>
@@ -177,7 +235,7 @@ const AdminStatCard = ({ title, value, change, icon, subtitle }: { title: string
   </Card>
 );
 
-const UserRow = ({ name, email, plan, status, expiry }: { name: string, email: string, plan: string, status: string, expiry: string }) => (
+const UserRow = ({ name, email, role, status, created }: { name: string, email: string, role: string, status: string, created: string }) => (
   <tr className="border-b border-white/5 hover:bg-white/[0.02] transition-colors group">
     <td className="p-4">
       <div>
@@ -186,7 +244,10 @@ const UserRow = ({ name, email, plan, status, expiry }: { name: string, email: s
       </div>
     </td>
     <td className="p-4">
-      <Badge variant="outline" className="rounded-none border-primary/30 text-primary uppercase text-[9px] font-black">{plan}</Badge>
+      <Badge variant="outline" className={`rounded-none border-white/10 uppercase text-[9px] font-black ${
+        role === 'superadmin' ? 'text-destructive border-destructive/30' : 
+        role === 'reseller' ? 'text-primary border-primary/30' : 'text-muted-foreground'
+      }`}>{role}</Badge>
     </td>
     <td className="p-4">
       <div className="flex items-center gap-2">
@@ -194,7 +255,7 @@ const UserRow = ({ name, email, plan, status, expiry }: { name: string, email: s
         <span className={`text-[10px] font-black uppercase tracking-widest ${status === "Activo" ? "text-green-500" : "text-destructive"}`}>{status}</span>
       </div>
     </td>
-    <td className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">{expiry}</td>
+    <td className="p-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">{created}</td>
     <td className="p-4">
       <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-muted-foreground hover:text-white">
         <MoreVertical className="w-4 h-4" />
