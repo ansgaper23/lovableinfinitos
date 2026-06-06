@@ -20,7 +20,7 @@ serve(async (req) => {
     const path = url.pathname.split('/').pop();
     const body = await req.json().catch(() => ({}));
 
-    // URL del proveedor actualizada a la nueva estructura de API
+    // URL del proveedor actualizada a la nueva estructura de API según documentación
     const targetUrl = `https://painel.all-star.digital/api/reseller/${path}`;
     
     console.log(`Proxying request to: ${targetUrl}`);
