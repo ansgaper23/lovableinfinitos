@@ -179,37 +179,7 @@ export const ResellerDashboard = () => {
     return <div className="min-h-screen bg-background flex items-center justify-center text-white italic font-black">ENTRANDO AL PANEL...</div>;
   }
 
-  // Pending activation screen for non-activated users
-  if (profile && profile.role !== 'reseller' && profile.role !== 'superadmin') {
-    return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(79,70,229,0.10),transparent_60%)] pointer-events-none" />
-        <div className="relative z-10 max-w-lg w-full text-center">
-          <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-          </div>
-          <Badge variant="outline" className="mb-3 rounded-none border-amber-500/30 bg-amber-500/10 text-amber-400 text-[10px] font-black uppercase tracking-widest px-3 py-1">
-            Cuenta pendiente
-          </Badge>
-          <h1 className="text-3xl font-black italic uppercase tracking-tighter mb-3">Esperando activación</h1>
-          <p className="text-muted-foreground mb-2">
-            Tu cuenta aún no ha sido activada por el administrador.
-          </p>
-          <p className="text-muted-foreground mb-8 text-sm">
-            Una vez activada, podrás generar y gestionar licencias (1 día, 7 días, 30 días y 60 días) desde este panel.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Button onClick={() => navigate({ to: "/dashboard" })} className="bg-primary text-white font-black uppercase tracking-tighter italic h-12 px-8 rounded-none">
-              Volver a mi Panel
-            </Button>
-            <Button onClick={async () => { await supabase.auth.signOut(); navigate({ to: "/" }); }} variant="outline" className="font-black uppercase tracking-tighter italic h-12 px-8 rounded-none border-white/10">
-              Cerrar Sesión
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const isActivated = profile && (profile.role === 'reseller' || profile.role === 'superadmin');
 
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-background">
