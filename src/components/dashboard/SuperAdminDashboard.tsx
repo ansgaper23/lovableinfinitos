@@ -193,68 +193,120 @@ export const SuperAdminDashboard = () => {
   );
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-background">
+    <div className="flex h-screen bg-[#0A0A0B] text-white overflow-hidden font-sans">
       <AnnouncementBar />
-      <div className="flex-1 mt-10 flex overflow-hidden">
-        {/* Sidebar */}
-        <aside className="w-64 border-r border-white/5 bg-card/30 backdrop-blur-xl hidden lg:flex flex-col">
-          <div className="p-8">
-            <div className="flex items-center gap-3 mb-12 group">
-              <div className="w-10 h-10 bg-destructive rounded-none flex items-center justify-center shadow-[0_0_20px_rgba(var(--color-destructive),0.3)]">
-                <span className="text-white font-black text-2xl italic">A</span>
-              </div>
-              <span className="font-black text-xl tracking-tighter italic">SUPER<span className="text-destructive">ADMIN</span></span>
-            </div>
+      
+      {/* Mobile Sidebar Toggle */}
+      <div className="lg:hidden fixed top-14 left-4 z-50">
+        <Button 
+          variant="outline" 
+          size="icon" 
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="bg-[#121214] border-white/5"
+        >
+          {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </Button>
+      </div>
 
-            <nav className="space-y-2">
-              <AdminNavItem 
-                icon={<LayoutDashboard className="w-5 h-5" />} 
-                label="Resumen" 
-                active={activeTab === "summary"} 
-                onClick={() => setActiveTab("summary")}
-              />
-              <AdminNavItem 
-                icon={<Users className="w-5 h-5" />} 
-                label="Usuarios" 
-                active={activeTab === "users"} 
-                onClick={() => setActiveTab("users")}
-              />
-              <AdminNavItem 
-                icon={<Key className="w-5 h-5" />} 
-                label="Licencias API" 
-                active={activeTab === "keys"} 
-                onClick={() => setActiveTab("keys")}
-              />
-              <AdminNavItem icon={<BarChart3 className="w-5 h-5" />} label="Estadísticas" onClick={() => {}} />
-              <AdminNavItem icon={<Settings className="w-5 h-5" />} label="Sistema" onClick={() => {}} />
-            </nav>
+      {/* Sidebar */}
+      <aside className={`
+        fixed inset-y-0 left-0 z-40 w-72 bg-[#121214] border-r border-white/5 
+        transition-transform duration-300 lg:static lg:translate-x-0
+        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+        flex flex-col pt-10
+      `}>
+        <div className="p-8 flex-1">
+          <div className="flex items-center gap-3 mb-12">
+            <div className="w-12 h-12 bg-gradient-to-br from-destructive to-red-900 rounded-xl flex items-center justify-center shadow-lg shadow-destructive/20 ring-1 ring-white/10">
+              <ShieldCheck className="text-white w-7 h-7" />
+            </div>
+            <div>
+              <span className="font-black text-xl tracking-tighter italic block leading-none">SUPER<span className="text-destructive">ADMIN</span></span>
+              <span className="text-[10px] uppercase font-black tracking-[0.2em] text-muted-foreground opacity-50">Master Control</span>
+            </div>
           </div>
 
-          <div className="mt-auto p-8 border-t border-white/5">
-            <Button variant="ghost" onClick={async () => { await supabase.auth.signOut(); navigate({ to: "/" }); }} className="w-full justify-start gap-3 text-muted-foreground hover:text-white transition-colors">
-              <LogOut className="w-5 h-5" />
-              Salir al Inicio
-            </Button>
-          </div>
-        </aside>
+          <nav className="space-y-1">
+            <AdminNavItem 
+              icon={<LayoutDashboard className="w-4 h-4" />} 
+              label="Resumen General" 
+              active={activeTab === "summary"} 
+              onClick={() => { setActiveTab("summary"); setSidebarOpen(false); }}
+            />
+            <AdminNavItem 
+              icon={<Users className="w-4 h-4" />} 
+              label="Gestión Usuarios" 
+              active={activeTab === "users"} 
+              onClick={() => { setActiveTab("users"); setSidebarOpen(false); }}
+            />
+            <AdminNavItem 
+              icon={<Key className="w-4 h-4" />} 
+              label="Sistema Licencias" 
+              active={activeTab === "keys"} 
+              onClick={() => { setActiveTab("keys"); setSidebarOpen(false); }}
+            />
+            <AdminNavItem 
+              icon={<BarChart3 className="w-4 h-4" />} 
+              label="Estadísticas" 
+              active={activeTab === "stats"}
+              onClick={() => { setActiveTab("stats"); setSidebarOpen(false); }} 
+            />
+            <AdminNavItem 
+              icon={<Settings className="w-4 h-4" />} 
+              label="Configuración" 
+              active={activeTab === "system"}
+              onClick={() => { setActiveTab("system"); setSidebarOpen(false); }} 
+            />
+          </nav>
+        </div>
 
-        {/* Main Content */}
-        <main className="flex-1 overflow-y-auto p-8 bg-[radial-gradient(circle_at_top_left,var(--color-destructive),transparent_90%)] bg-opacity-[0.02]">
-          <div className="max-w-7xl mx-auto space-y-8">
-            <div className="flex justify-between items-end">
-              <div>
-                <h1 className="text-4xl font-black italic tracking-tighter uppercase mb-2">Control Maestro</h1>
-                <p className="text-muted-foreground uppercase tracking-widest text-[10px] font-black">Sistema de Gestión Centralizada</p>
+        <div className="p-6 border-t border-white/5 bg-[#0A0A0B]/50">
+          <div className="mb-4 px-4 py-3 rounded-lg bg-destructive/5 border border-destructive/10">
+            <p className="text-[10px] font-black uppercase text-destructive tracking-widest mb-1 text-center">Modo Administrador</p>
+            <p className="text-[11px] text-white/60 text-center leading-tight">Acceso total al núcleo del sistema</p>
+          </div>
+          <Button 
+            variant="ghost" 
+            onClick={async () => { await supabase.auth.signOut(); navigate({ to: "/" }); }} 
+            className="w-full justify-start gap-3 text-muted-foreground hover:text-white hover:bg-white/5 transition-all h-11 px-4 rounded-xl"
+          >
+            <LogOut className="w-4 h-4" />
+            <span className="text-xs font-bold uppercase tracking-widest">Cerrar Sesión</span>
+          </Button>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 overflow-y-auto bg-[#0A0A0B] relative pt-10">
+        {/* Background Gradients */}
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-destructive/5 rounded-full blur-[120px] -z-10 opacity-30 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] -z-10 opacity-30 pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto p-6 lg:p-10 space-y-10">
+          <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <Badge variant="outline" className="rounded-full border-destructive/20 bg-destructive/5 text-destructive text-[10px] font-black px-3 py-1 uppercase tracking-widest">
+                  Panel Principal
+                </Badge>
+                <div className="h-[1px] w-12 bg-white/10" />
+                <span className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.3em]">v4.0.2 Stable</span>
               </div>
-              <div className="flex gap-4">
-                <Button variant="outline" className="rounded-none border-white/10 bg-white/5 uppercase font-black text-xs tracking-widest">
-                  Exportar Reporte
-                </Button>
-                <Button className="rounded-none bg-destructive hover:bg-destructive/90 text-white uppercase font-black text-xs tracking-widest shadow-[0_0_20px_rgba(var(--color-destructive),0.3)]">
-                  Nuevo Usuario
-                </Button>
-              </div>
+              <h1 className="text-4xl lg:text-5xl font-black italic tracking-tighter uppercase leading-none">
+                Panel de <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-white/40">Control</span>
+              </h1>
             </div>
+            <div className="flex items-center gap-3">
+              <Button variant="outline" className="rounded-xl border-white/5 bg-white/5 hover:bg-white/10 uppercase font-black text-[10px] tracking-widest h-11 px-6 backdrop-blur-md">
+                <Globe className="w-3 h-3 mr-2 opacity-50" />
+                Ver Sitio
+              </Button>
+              <Button className="rounded-xl bg-destructive hover:bg-destructive/90 text-white uppercase font-black text-[10px] tracking-widest h-11 px-6 shadow-xl shadow-destructive/20 border-t border-white/20">
+                <Plus className="w-3 h-3 mr-2" />
+                Acción Rápida
+              </Button>
+            </div>
+          </header>
 
             {/* Tabs Content */}
             {activeTab === "summary" && (
