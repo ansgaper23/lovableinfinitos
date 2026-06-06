@@ -334,6 +334,7 @@ export const ResellerDashboard = () => {
                     description="15 minutos"
                     badge="GRATIS"
                     badgeColor="emerald"
+                    disabled={!isActivated}
                     onClick={() => openGenerateDialog('test')}
                   />
                   <LicenseTypeCard
@@ -342,6 +343,7 @@ export const ResellerDashboard = () => {
                     description="Acceso por 30 días"
                     badge="1 CRÉDITO"
                     badgeColor="primary"
+                    disabled={!isActivated}
                     onClick={() => openGenerateDialog('monthly')}
                   />
                   <LicenseTypeCard
@@ -350,6 +352,7 @@ export const ResellerDashboard = () => {
                     description="Acceso ilimitado"
                     badge="1 CRÉDITO"
                     badgeColor="primary"
+                    disabled={!isActivated}
                     onClick={() => openGenerateDialog('lifetime')}
                   />
                 </div>
