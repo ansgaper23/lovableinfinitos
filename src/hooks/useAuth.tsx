@@ -8,6 +8,8 @@ export interface Profile {
   email: string | null;
   role: string | null;
   created_at: string;
+  updated_at?: string;
+  reseller_api_token?: string | null;
 }
 
 export const useAuth = (requireAuth = false) => {
@@ -23,12 +25,13 @@ export const useAuth = (requireAuth = false) => {
         .from("profiles")
         .select("*")
         .eq("id", userId)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
-      setProfile(data);
+      setProfile(data as Profile | null);
     } catch (error) {
       console.error("Error fetching profile:", error);
+      setProfile(null);
     }
   };
 

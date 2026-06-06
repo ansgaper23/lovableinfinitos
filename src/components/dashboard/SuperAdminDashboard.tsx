@@ -136,7 +136,7 @@ export const SuperAdminDashboard = () => {
   useEffect(() => {
     if (user) loadUsersWithCredits();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
+  }, [user?.id]);
 
   const handleRecharge = async () => {
     if (!rechargeTarget) return;
