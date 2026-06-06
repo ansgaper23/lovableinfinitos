@@ -25,7 +25,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { resellerApi, ResellerStatus } from "@/services/resellerApi";
 import { useServerFn } from "@tanstack/react-start";
-import { setUserActivation } from "@/lib/user-actions.functions";
+import { setUserActivation, assignLicenseToUser } from "@/lib/user-actions.functions";
 
 interface ExtendedProfile extends Omit<Profile, 'reseller_api_token'> {
   reseller_api_token?: string | null;
@@ -57,6 +57,26 @@ export const SuperAdminDashboard = () => {
   const [isRecharging, setIsRecharging] = useState(false);
   const [togglingUserId, setTogglingUserId] = useState<string | null>(null);
   const activateFn = useServerFn(setUserActivation);
+  const assignFn = useServerFn(assignLicenseToUser);
+
+  const [assignTarget, setAssignTarget] = useState<ExtendedProfile | null>(null);
+  const [assignDays, setAssignDays] = useState<1 | 7 | 30 | 60>(7);
+  const [isAssigning, setIsAssigning] = useState(false);
+  const [assignedResult, setAssignedResult] = useState<{ license_key: string; expires_at: string | null } | null>(null);
+
+  const handleAssignLicense = async () => {
+    if (!assignTarget) return;
+    setIsAssigning(true);
+    try {
+      const res = await assignFn({ data: { targetUserId: assignTarget.id, days: assignDays } });
+      setAssignedResult({ license_key: res.license_key, expires_at: res.expires_at });
+      toast.success(`Licencia de ${assignDays} día${assignDays > 1 ? "s" : ""} asignada`);
+    } catch (e: any) {
+      toast.error(e.message || "Error al asignar licencia");
+    } finally {
+      setIsAssigning(false);
+    }
+  };
 
   const handleToggleActivation = async (u: ExtendedProfile) => {
     const isActive = u.role === "reseller" || u.role === "superadmin";
@@ -519,6 +539,7 @@ export const SuperAdminDashboard = () => {
                             created={new Date(u.created_at).toLocaleDateString()}
                             onRecharge={() => { setRechargeTarget(u); setRechargeAmount("10"); }}
                             onToggleActivation={() => handleToggleActivation(u)}
+                            onAssignLicense={() => { setAssignTarget(u); setAssignDays(7); setAssignedResult(null); }}
                             toggling={togglingUserId === u.id}
                           />
                         ))
@@ -727,6 +748,73 @@ export const SuperAdminDashboard = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Assign License Dialog */}
+      <Dialog open={!!assignTarget} onOpenChange={(o) => { if (!o) { setAssignTarget(null); setAssignedResult(null); } }}>
+        <DialogContent className="bg-[#121214] border-white/10 rounded-2xl max-w-md">
+          <DialogHeader>
+            <DialogTitle className="font-black italic uppercase tracking-tight flex items-center gap-2">
+              <Key className="w-4 h-4 text-destructive" /> Asignar Licencia
+            </DialogTitle>
+            <DialogDescription className="text-muted-foreground text-xs uppercase tracking-widest font-black">
+              {assignTarget?.email}
+            </DialogDescription>
+          </DialogHeader>
+
+          {!assignedResult ? (
+            <div className="space-y-4 py-2">
+              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Duración</label>
+              <div className="grid grid-cols-4 gap-2">
+                {[1, 7, 30, 60].map((d) => (
+                  <button
+                    key={d}
+                    onClick={() => setAssignDays(d as 1 | 7 | 30 | 60)}
+                    className={`rounded-xl border h-16 flex flex-col items-center justify-center transition-all ${
+                      assignDays === d
+                        ? "border-destructive bg-destructive/15 text-white"
+                        : "border-white/10 bg-white/5 text-muted-foreground hover:border-white/20"
+                    }`}
+                  >
+                    <span className="text-xl font-black italic tracking-tighter">{d}</span>
+                    <span className="text-[9px] font-black uppercase tracking-widest opacity-70">{d === 1 ? "día" : "días"}</span>
+                  </button>
+                ))}
+              </div>
+              <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest">
+                Se generará una licencia de {assignDays} {assignDays === 1 ? "día" : "días"} y se asignará a este usuario.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-3 py-2">
+              <p className="text-[10px] font-black uppercase tracking-widest text-green-500">Licencia asignada</p>
+              <code className="block w-full font-mono text-xs text-white break-all bg-black/40 px-3 py-3 border border-white/10 rounded-lg">
+                {assignedResult.license_key}
+              </code>
+              {assignedResult.expires_at && (
+                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                  Expira: {new Date(assignedResult.expires_at).toLocaleString()}
+                </p>
+              )}
+            </div>
+          )}
+
+          <DialogFooter>
+            {!assignedResult ? (
+              <>
+                <Button variant="ghost" onClick={() => setAssignTarget(null)}>Cancelar</Button>
+                <Button onClick={handleAssignLicense} disabled={isAssigning} className="bg-destructive hover:bg-destructive/90 font-black uppercase italic tracking-widest text-[10px]">
+                  {isAssigning ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : <Key className="w-4 h-4 mr-2" />}
+                  Asignar {assignDays}{assignDays === 1 ? "d" : "d"}
+                </Button>
+              </>
+            ) : (
+              <Button onClick={() => { setAssignTarget(null); setAssignedResult(null); }} className="bg-primary hover:bg-primary/90 font-black uppercase italic tracking-widest text-[10px]">
+                Cerrar
+              </Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
@@ -787,7 +875,7 @@ const AdminStatCard = ({ title, value, change, icon, subtitle }: { title: string
   </Card>
 );
 
-const UserRow = ({ name, email, role, credits, created, onRecharge, onToggleActivation, toggling }: { name: string, email: string, role: string, credits: number, created: string, onRecharge: () => void, onToggleActivation: () => void, toggling: boolean }) => {
+const UserRow = ({ name, email, role, credits, created, onRecharge, onToggleActivation, onAssignLicense, toggling }: { name: string, email: string, role: string, credits: number, created: string, onRecharge: () => void, onToggleActivation: () => void, onAssignLicense: () => void, toggling: boolean }) => {
   const isActive = role === 'reseller' || role === 'superadmin';
   const isSuper = role === 'superadmin';
   return (
@@ -817,7 +905,7 @@ const UserRow = ({ name, email, role, credits, created, onRecharge, onToggleActi
     </td>
     <td className="p-5 text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-50">{created}</td>
     <td className="p-5 text-right">
-      <div className="flex justify-end gap-2">
+      <div className="flex justify-end gap-2 flex-wrap">
         {!isSuper && (
           <Button
             onClick={onToggleActivation}
@@ -830,6 +918,11 @@ const UserRow = ({ name, email, role, credits, created, onRecharge, onToggleActi
             }`}
           >
             {toggling ? <RefreshCw className="w-3 h-3 animate-spin" /> : (isActive ? 'Desactivar' : 'Activar')}
+          </Button>
+        )}
+        {!isSuper && (
+          <Button onClick={onAssignLicense} size="sm" className="rounded-lg bg-destructive/15 hover:bg-destructive/25 text-destructive border border-destructive/30 font-black italic uppercase tracking-widest text-[10px] h-9 px-3">
+            <Key className="w-3 h-3 mr-1" /> Asignar
           </Button>
         )}
         <Button onClick={onRecharge} size="sm" className="rounded-lg bg-primary hover:bg-primary/90 text-white font-black italic uppercase tracking-widest text-[10px] h-9 px-4">

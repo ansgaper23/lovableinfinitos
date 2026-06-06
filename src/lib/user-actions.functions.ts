@@ -63,3 +63,57 @@ export const setUserActivation = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { role: result as string };
   });
+
+export const assignLicenseToUser = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { targetUserId: string; days: number; displayName?: string }) => input)
+  .handler(async ({ data, context }) => {
+    const token = process.env.RESELLER_API_KEY;
+    if (!token) throw new Error("RESELLER_API_KEY no está configurada");
+
+    const { supabase, userId } = context;
+
+    const { data: prof, error: pErr } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", userId)
+      .maybeSingle();
+    if (pErr) throw new Error(pErr.message);
+    if (prof?.role !== "superadmin") throw new Error("Solo el superadmin puede asignar licencias");
+
+    if (![1, 7, 30, 60].includes(data.days)) throw new Error("Duración inválida");
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const { data: targetProf } = await supabaseAdmin
+      .from("profiles")
+      .select("email")
+      .eq("id", data.targetUserId)
+      .maybeSingle();
+    const displayName = (data.displayName || targetProf?.email?.split("@")[0] || "Usuario").slice(0, 60);
+
+    const res = await fetch("https://ynvrijkuampxpsmshftm.supabase.co/functions/v1/reseller-api/generate-license", {
+      method: "POST",
+      headers: { "x-api-token": token, "Content-Type": "application/json" },
+      body: JSON.stringify({ display_name: displayName, days: data.days }),
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json?.message || "Error al generar licencia");
+
+    const { error: insErr } = await supabaseAdmin.from("reseller_licenses").insert({
+      user_id: data.targetUserId,
+      license_key: json.license_key,
+      display_name: displayName,
+      type: "assigned",
+      expires_at: json.expires_at,
+      duration_seconds: json.duration_seconds,
+      lifetime: false,
+    });
+    if (insErr) throw new Error(insErr.message);
+
+    return {
+      license_key: json.license_key as string,
+      expires_at: json.expires_at as string | null,
+      days: data.days,
+    };
+  });
