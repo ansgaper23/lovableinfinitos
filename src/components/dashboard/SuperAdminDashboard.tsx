@@ -808,7 +808,7 @@ const AdminStatCard = ({ title, value, change, icon, subtitle }: { title: string
   </Card>
 );
 
-const UserRow = ({ name, email, role, credits, created, onRecharge, onToggleActivation, toggling }: { name: string, email: string, role: string, credits: number, created: string, onRecharge: () => void, onToggleActivation: () => void, toggling: boolean }) => {
+const UserRow = ({ name, email, role, credits, created, onRecharge, onToggleActivation, onAssignLicense, toggling }: { name: string, email: string, role: string, credits: number, created: string, onRecharge: () => void, onToggleActivation: () => void, onAssignLicense: () => void, toggling: boolean }) => {
   const isActive = role === 'reseller' || role === 'superadmin';
   const isSuper = role === 'superadmin';
   return (
@@ -838,7 +838,7 @@ const UserRow = ({ name, email, role, credits, created, onRecharge, onToggleActi
     </td>
     <td className="p-5 text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-50">{created}</td>
     <td className="p-5 text-right">
-      <div className="flex justify-end gap-2">
+      <div className="flex justify-end gap-2 flex-wrap">
         {!isSuper && (
           <Button
             onClick={onToggleActivation}
@@ -851,6 +851,11 @@ const UserRow = ({ name, email, role, credits, created, onRecharge, onToggleActi
             }`}
           >
             {toggling ? <RefreshCw className="w-3 h-3 animate-spin" /> : (isActive ? 'Desactivar' : 'Activar')}
+          </Button>
+        )}
+        {!isSuper && (
+          <Button onClick={onAssignLicense} size="sm" className="rounded-lg bg-destructive/15 hover:bg-destructive/25 text-destructive border border-destructive/30 font-black italic uppercase tracking-widest text-[10px] h-9 px-3">
+            <Key className="w-3 h-3 mr-1" /> Asignar
           </Button>
         )}
         <Button onClick={onRecharge} size="sm" className="rounded-lg bg-primary hover:bg-primary/90 text-white font-black italic uppercase tracking-widest text-[10px] h-9 px-4">
