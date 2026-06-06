@@ -166,6 +166,10 @@ export type Database = {
       }
       consume_credit: { Args: never; Returns: boolean }
       is_superadmin: { Args: { _user_id: string }; Returns: boolean }
+      set_user_role: {
+        Args: { _role: string; _target: string }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never
