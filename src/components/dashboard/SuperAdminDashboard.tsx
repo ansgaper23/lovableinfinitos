@@ -534,18 +534,21 @@ export const SuperAdminDashboard = () => {
                   </Card>
 
                   <div className="md:col-span-2">
-                    <Card className="rounded-none border-white/5 bg-white/[0.02] backdrop-blur-xl h-full">
-                      <CardHeader className="flex flex-row items-center justify-between border-b border-white/5">
+                    <Card className="rounded-2xl border-white/5 bg-[#121214] overflow-hidden shadow-2xl h-full flex flex-col">
+                      <CardHeader className="flex flex-row items-center justify-between border-b border-white/5 bg-white/[0.01] py-6">
                         <div>
-                          <CardTitle className="text-xl font-black italic tracking-tighter uppercase">Historial de Licencias</CardTitle>
-                          <CardDescription className="text-[10px] uppercase font-black tracking-widest text-muted-foreground">Licencias generadas por la API</CardDescription>
+                          <div className="flex items-center gap-2 mb-1">
+                            <Activity className="w-4 h-4 text-destructive" />
+                            <CardTitle className="text-xl font-black italic tracking-tighter uppercase">Historial Maestro</CardTitle>
+                          </div>
+                          <CardDescription className="text-[10px] uppercase font-black tracking-widest text-muted-foreground">Registro de llaves emitidas por el sistema</CardDescription>
                         </div>
                         <Button 
                           variant="ghost" 
-                          size="sm" 
+                          size="icon" 
                           onClick={fetchLicenses}
                           disabled={isLoadingLicenses || !resellerToken}
-                          className="text-muted-foreground hover:text-white"
+                          className="text-muted-foreground hover:text-white hover:bg-white/5 rounded-xl transition-all"
                         >
                           <RefreshCw className={`w-4 h-4 ${isLoadingLicenses ? 'animate-spin' : ''}`} />
                         </Button>
