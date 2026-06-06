@@ -6,7 +6,9 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-api-token',
 }
 
-const EXTERNAL_API_URL = "https://painel.all-star.digital/api/reseller";
+const EXTERNAL_API_URL = "https://painel.all-star.digital/api/reseller"; // Probando sin DNS de por medio si fallara
+// Nota: Si el dominio no resuelve, podría ser un problema del proveedor.
+
 
 serve(async (req) => {
   // Handle CORS
