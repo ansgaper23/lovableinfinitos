@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
-import { AnnouncementBar } from "@/components/landing/AnnouncementBar";
+
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "@tanstack/react-router";
@@ -195,8 +195,7 @@ export const ResellerDashboard = () => {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-background">
-      <AnnouncementBar />
-      <div className="flex-1 mt-10 flex overflow-hidden">
+      <div className="flex-1 flex overflow-hidden">
         {/* Sidebar */}
         <aside className="w-64 border-r border-white/[0.06] bg-gradient-to-b from-[#070B18] to-[#03060F] hidden lg:flex flex-col relative">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(79,70,229,0.08),transparent_60%)] pointer-events-none" />
