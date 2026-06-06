@@ -539,6 +539,7 @@ export const SuperAdminDashboard = () => {
                             created={new Date(u.created_at).toLocaleDateString()}
                             onRecharge={() => { setRechargeTarget(u); setRechargeAmount("10"); }}
                             onToggleActivation={() => handleToggleActivation(u)}
+                            onAssignLicense={() => { setAssignTarget(u); setAssignDays(7); setAssignedResult(null); }}
                             toggling={togglingUserId === u.id}
                           />
                         ))
