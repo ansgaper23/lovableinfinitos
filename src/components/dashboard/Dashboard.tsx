@@ -194,6 +194,9 @@ export const Dashboard = () => {
                   activación del administrador.
                 </p>
               </div>
+            </div>
+
+
 
             {/* Assigned license card */}
             <Card className="rounded-none border-white/10 bg-white/[0.02] backdrop-blur-xl">
