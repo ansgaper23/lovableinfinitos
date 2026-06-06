@@ -18,16 +18,48 @@ interface TrialLicense {
   created_at: string;
 }
 
+interface AssignedLicense {
+  license_key: string;
+  expires_at: string | null;
+  created_at: string;
+  display_name: string | null;
+  type: string;
+}
+
+function useCountdown(expiresAt: string | null) {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (!expiresAt) return;
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, [expiresAt]);
+  if (!expiresAt) return null;
+  const diff = new Date(expiresAt).getTime() - now;
+  if (diff <= 0) return { expired: true, label: "Expirada", d: 0, h: 0, m: 0, s: 0 };
+  const s = Math.floor(diff / 1000);
+  return {
+    expired: false,
+    label: `${Math.floor(s / 86400)}d ${Math.floor((s % 86400) / 3600)}h ${Math.floor((s % 3600) / 60)}m ${s % 60}s`,
+    d: Math.floor(s / 86400),
+    h: Math.floor((s % 86400) / 3600),
+    m: Math.floor((s % 3600) / 60),
+    s: s % 60,
+  };
+}
+
 export const Dashboard = () => {
   const { user, profile, loading } = useAuth(true);
   const [credits, setCredits] = useState<number | null>(null);
   const [trial, setTrial] = useState<TrialLicense | null>(null);
+  const [assigned, setAssigned] = useState<AssignedLicense | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [copiedAssigned, setCopiedAssigned] = useState(false);
   const navigate = useNavigate();
   const genTrial = useServerFn(generateTrialForNewUser);
 
   const isBasicUser = profile?.role === "user" || !profile?.role;
+  const countdown = useCountdown(assigned?.expires_at ?? null);
 
   useEffect(() => {
     if (!user) return;
@@ -48,6 +80,16 @@ export const Dashboard = () => {
         .limit(1)
         .maybeSingle();
       if (lic) setTrial(lic as TrialLicense);
+
+      const { data: asg } = await supabase
+        .from("reseller_licenses")
+        .select("license_key, expires_at, created_at, display_name, type")
+        .eq("user_id", user.id)
+        .neq("type", "trial")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (asg) setAssigned(asg as AssignedLicense);
     })();
   }, [user]);
 
