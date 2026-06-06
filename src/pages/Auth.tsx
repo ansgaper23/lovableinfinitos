@@ -60,6 +60,7 @@ export const Auth = () => {
         }
       }
     } catch (error: any) {
+      console.error("Auth error:", error);
       toast.error(error.message || "Ocurrió un error");
     } finally {
       setLoading(false);
