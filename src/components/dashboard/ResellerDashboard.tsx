@@ -296,6 +296,69 @@ export const ResellerDashboard = () => {
           </div>
         </main>
       </div>
+
+      {/* Name input dialog */}
+      <Dialog open={nameDialogOpen} onOpenChange={setNameDialogOpen}>
+        <DialogContent className="bg-[#0A101F] border-white/10 text-white">
+          <DialogHeader>
+            <DialogTitle className="italic uppercase tracking-tight">
+              Nombre de la licencia {pendingType ? `(${pendingType.toUpperCase()})` : ''}
+            </DialogTitle>
+            <DialogDescription className="text-muted-foreground">
+              Asigna un nombre para identificar al cliente o destino de esta clave.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2 py-2">
+            <Label htmlFor="license-name">Nombre / Cliente</Label>
+            <Input
+              id="license-name"
+              autoFocus
+              value={licenseName}
+              onChange={(e) => setLicenseName(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter') generateLicense(); }}
+              placeholder="Ej: Juan Pérez"
+              maxLength={50}
+              className="bg-[#02060E] border-white/10 text-white"
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setNameDialogOpen(false)} disabled={isGenerating}>
+              Cancelar
+            </Button>
+            <Button
+              onClick={generateLicense}
+              disabled={isGenerating || !licenseName.trim()}
+              className="bg-primary hover:bg-primary/90 text-white font-black italic uppercase"
+            >
+              {isGenerating ? 'Generando...' : 'Generar Clave'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Result dialog */}
+      <Dialog open={resultDialogOpen} onOpenChange={setResultDialogOpen}>
+        <DialogContent className="bg-[#0A101F] border-white/10 text-white">
+          <DialogHeader>
+            <DialogTitle className="italic uppercase tracking-tight">Licencia generada</DialogTitle>
+            <DialogDescription className="text-muted-foreground">
+              Copia esta clave y entrégala al cliente. No se mostrará de nuevo en este diálogo.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="bg-[#02060E] border border-primary/30 rounded-lg p-4 flex items-center justify-between gap-3">
+            <code className="text-primary font-mono text-sm break-all">{generatedCode}</code>
+            <Button size="icon" variant="ghost" onClick={copyCode} className="shrink-0 text-white hover:bg-white/5">
+              {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+            </Button>
+          </div>
+          <DialogFooter>
+            <Button onClick={copyCode} className="bg-primary hover:bg-primary/90 text-white font-black italic uppercase">
+              {copied ? 'Copiado ✓' : 'Copiar Clave'}
+            </Button>
+            <Button variant="ghost" onClick={() => setResultDialogOpen(false)}>Cerrar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
