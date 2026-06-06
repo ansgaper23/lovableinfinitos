@@ -20,7 +20,7 @@ export const Dashboard = () => {
         const { data, error } = await supabase
           .from("user_credits")
           .select("credits")
-          .eq("user_id", user?.id)
+          .eq("user_id", user?.id as string)
           .single();
 
         if (error && error.code !== 'PGRST116') throw error;
