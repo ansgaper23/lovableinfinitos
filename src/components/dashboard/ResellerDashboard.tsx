@@ -33,6 +33,7 @@ export const ResellerDashboard = () => {
   const [resultDialogOpen, setResultDialogOpen] = useState(false);
   const [generatedCode, setGeneratedCode] = useState("");
   const [copied, setCopied] = useState(false);
+  const [apiToken, setApiToken] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const fetchCredits = async () => {
@@ -45,26 +46,43 @@ export const ResellerDashboard = () => {
     setCredits(data?.credits ?? 0);
   };
 
+  const fetchApiToken = async () => {
+    if (!user) return;
+    const { data } = await supabase
+      .from("profiles")
+      .select("reseller_api_token")
+      .eq("id", user.id)
+      .maybeSingle();
+    setApiToken(data?.reseller_api_token ?? null);
+  };
+
+  const fetchLicenses = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("reseller_licenses")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      const mapped: License[] = (data || []).map((r: any) => ({
+        id: r.id,
+        code: r.license_key,
+        type: r.type,
+        status: r.expires_at && new Date(r.expires_at) < new Date() ? 'expired' : 'active',
+        created_at: r.created_at,
+      }));
+      setLicenses(mapped);
+    } catch (error: any) {
+      toast.error("Error al cargar licencias: " + error.message);
+    } finally {
+      setFetchingLicenses(false);
+    }
+  };
+
   useEffect(() => {
-    const getLicenses = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("licenses")
-          .select("*")
-          .order("created_at", { ascending: false });
-
-        if (error) throw error;
-        setLicenses(data || []);
-      } catch (error: any) {
-        toast.error("Error al cargar licencias: " + error.message);
-      } finally {
-        setFetchingLicenses(false);
-      }
-    };
-
     if (user) {
-      getLicenses();
+      fetchLicenses();
       fetchCredits();
+      fetchApiToken();
     }
   }, [user]);
 
