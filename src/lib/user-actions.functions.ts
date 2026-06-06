@@ -130,3 +130,35 @@ export const assignLicenseToUser = createServerFn({ method: "POST" })
       days: data.days,
     };
   });
+
+export const getAllUsers = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase, userId } = context;
+
+    const { data: prof, error: pErr } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", userId)
+      .maybeSingle();
+    if (pErr) throw new Error(pErr.message);
+    if (prof?.role !== "superadmin") throw new Error("Solo el superadmin puede ver todos los usuarios");
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const { data: profilesData, error: profilesError } = await supabaseAdmin
+      .from("profiles")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (profilesError) throw new Error(profilesError.message);
+
+    const { data: creditsData, error: creditsError } = await supabaseAdmin
+      .from("user_credits")
+      .select("user_id, credits");
+    if (creditsError) throw new Error(creditsError.message);
+
+    const creditMap = new Map((creditsData || []).map((c: any) => [c.user_id, c.credits]));
+    const merged = (profilesData || []).map((p: any) => ({ ...p, credits: creditMap.get(p.id) ?? 0 }));
+
+    return merged as any[];
+  });
