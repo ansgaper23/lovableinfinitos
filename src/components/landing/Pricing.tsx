@@ -32,11 +32,11 @@ export const Pricing = () => {
     },
     {
       name: "Plan Premium",
-      duration: "15 Días",
+      duration: "30 Días",
       price: "S/ 69",
       description: "Para agencias y desarrolladores de alto rendimiento.",
       features: [
-        "Lovable ilimitado por 15 días",
+        "Lovable ilimitado por 30 días",
         "Sin consumo de créditos oficiales",
         "Acceso inmediato al panel",
         "Soporte VIP directo",
