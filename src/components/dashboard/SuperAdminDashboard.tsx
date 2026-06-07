@@ -137,12 +137,9 @@ export const SuperAdminDashboard = () => {
     try {
       const merged = await getUsersFn({});
       setUsers(merged);
-
-      const currentProfile = merged?.find((p: any) => p.id === user?.id);
-      if (currentProfile?.reseller_api_token) {
-        setResellerToken(currentProfile.reseller_api_token);
-        fetchResellerStatus(currentProfile.reseller_api_token);
-      }
+      // El token de revendedor vive en el servidor (RESELLER_API_KEY).
+      // Cargamos el estado vía server function.
+      fetchResellerStatus();
     } catch (error: any) {
       toast.error("Error al cargar usuarios: " + error.message);
     } finally {
