@@ -157,7 +157,11 @@ export const ResellerDashboard = () => {
     } catch (error: any) {
       // Reembolsar crédito si la API falló después de consumirlo
       if (creditConsumed) {
-        try { await supabase.rpc("add_credits", { _target: user!.id, _amount: 1 }); } catch {}
+        const { error: refundErr } = await supabase.rpc("refund_credit");
+        if (refundErr) {
+          console.error("refund_credit failed:", refundErr);
+          toast.error("Crédito consumido pero el reembolso falló. Contacta al admin.");
+        }
         await fetchCredits();
       }
       toast.error("Error al generar licencia: " + (error?.message || "desconocido"));
