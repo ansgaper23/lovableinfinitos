@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SuperadminRouteImport } from './routes/superadmin'
 import { Route as ResellerRouteImport } from './routes/reseller'
 import { Route as PreciosRouteImport } from './routes/precios'
+import { Route as LegalRouteImport } from './routes/legal'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ComoFuncionaRouteImport } from './routes/como-funciona'
@@ -31,6 +32,11 @@ const ResellerRoute = ResellerRouteImport.update({
 const PreciosRoute = PreciosRouteImport.update({
   id: '/precios',
   path: '/precios',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegalRoute = LegalRouteImport.update({
+  id: '/legal',
+  path: '/legal',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FaqRoute = FaqRouteImport.update({
@@ -65,6 +71,7 @@ export interface FileRoutesByFullPath {
   '/como-funciona': typeof ComoFuncionaRoute
   '/dashboard': typeof DashboardRoute
   '/faq': typeof FaqRoute
+  '/legal': typeof LegalRoute
   '/precios': typeof PreciosRoute
   '/reseller': typeof ResellerRoute
   '/superadmin': typeof SuperadminRoute
@@ -75,6 +82,7 @@ export interface FileRoutesByTo {
   '/como-funciona': typeof ComoFuncionaRoute
   '/dashboard': typeof DashboardRoute
   '/faq': typeof FaqRoute
+  '/legal': typeof LegalRoute
   '/precios': typeof PreciosRoute
   '/reseller': typeof ResellerRoute
   '/superadmin': typeof SuperadminRoute
@@ -86,6 +94,7 @@ export interface FileRoutesById {
   '/como-funciona': typeof ComoFuncionaRoute
   '/dashboard': typeof DashboardRoute
   '/faq': typeof FaqRoute
+  '/legal': typeof LegalRoute
   '/precios': typeof PreciosRoute
   '/reseller': typeof ResellerRoute
   '/superadmin': typeof SuperadminRoute
@@ -98,6 +107,7 @@ export interface FileRouteTypes {
     | '/como-funciona'
     | '/dashboard'
     | '/faq'
+    | '/legal'
     | '/precios'
     | '/reseller'
     | '/superadmin'
@@ -108,6 +118,7 @@ export interface FileRouteTypes {
     | '/como-funciona'
     | '/dashboard'
     | '/faq'
+    | '/legal'
     | '/precios'
     | '/reseller'
     | '/superadmin'
@@ -118,6 +129,7 @@ export interface FileRouteTypes {
     | '/como-funciona'
     | '/dashboard'
     | '/faq'
+    | '/legal'
     | '/precios'
     | '/reseller'
     | '/superadmin'
@@ -129,6 +141,7 @@ export interface RootRouteChildren {
   ComoFuncionaRoute: typeof ComoFuncionaRoute
   DashboardRoute: typeof DashboardRoute
   FaqRoute: typeof FaqRoute
+  LegalRoute: typeof LegalRoute
   PreciosRoute: typeof PreciosRoute
   ResellerRoute: typeof ResellerRoute
   SuperadminRoute: typeof SuperadminRoute
@@ -155,6 +168,13 @@ declare module '@tanstack/react-router' {
       path: '/precios'
       fullPath: '/precios'
       preLoaderRoute: typeof PreciosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legal': {
+      id: '/legal'
+      path: '/legal'
+      fullPath: '/legal'
+      preLoaderRoute: typeof LegalRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/faq': {
@@ -201,6 +221,7 @@ const rootRouteChildren: RootRouteChildren = {
   ComoFuncionaRoute: ComoFuncionaRoute,
   DashboardRoute: DashboardRoute,
   FaqRoute: FaqRoute,
+  LegalRoute: LegalRoute,
   PreciosRoute: PreciosRoute,
   ResellerRoute: ResellerRoute,
   SuperadminRoute: SuperadminRoute,
