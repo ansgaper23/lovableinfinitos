@@ -1024,6 +1024,10 @@ const UserCard = (props: UserActionProps) => {
           <span>créditos</span>
         </div>
       </div>
+      <div className="flex items-center justify-between text-xs">
+        <span className="text-zinc-500">IP</span>
+        <span className="font-mono text-zinc-300">{user.signup_ip || "—"}</span>
+      </div>
       <div className="text-xs text-zinc-500 text-right">{new Date(user.created_at).toLocaleDateString()}</div>
       <UserActions {...props} />
     </div>
