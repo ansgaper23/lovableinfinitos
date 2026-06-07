@@ -466,6 +466,7 @@ export const SuperAdminDashboard = () => {
                       <tr className="border-y border-zinc-800 bg-zinc-950/50">
                         <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">Usuario</th>
                         <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">Rol</th>
+                        <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">Prueba</th>
                         <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">Créditos</th>
                         <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">Registro</th>
                         <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide text-right">Acciones</th>
@@ -473,7 +474,7 @@ export const SuperAdminDashboard = () => {
                     </thead>
                     <tbody>
                       {fetchingUsers ? (
-                        <tr><td colSpan={5} className="p-8 text-center text-zinc-500 text-xs">Cargando...</td></tr>
+                        <tr><td colSpan={6} className="p-8 text-center text-zinc-500 text-xs">Cargando...</td></tr>
                       ) : filteredUsers.length > 0 ? (
                         filteredUsers.map((u) => (
                         <UserRow
