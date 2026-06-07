@@ -142,6 +142,15 @@ export const Auth = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {isLogin && signupSuccess && (
+            <div className="mb-6 p-4 border border-green-500/30 bg-green-500/10 rounded-none flex items-start gap-3">
+              <CheckCircle className="w-5 h-5 text-green-400 mt-0.5 shrink-0" />
+              <div>
+                <p className="text-sm font-bold text-green-400 uppercase tracking-wider">¡Cuenta creada con éxito!</p>
+                <p className="text-xs text-green-300/80 mt-1">Tu cuenta fue registrada correctamente. Ahora puedes iniciar sesión con tu email y contraseña.</p>
+              </div>
+            </div>
+          )}
           <form onSubmit={handleAuth} className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="email" className="text-xs font-black uppercase tracking-widest text-muted-foreground">Email</Label>
