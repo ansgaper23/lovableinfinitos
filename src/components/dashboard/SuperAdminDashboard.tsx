@@ -1010,13 +1010,14 @@ const UserCard = (props: UserActionProps) => {
       </div>
       <TrialBadge user={user} />
       <div className="flex items-center justify-between text-xs text-zinc-500">
+        <LicenseCountBadge user={user} />
         <div className="flex items-center gap-1.5">
           <CreditCard className="w-3.5 h-3.5 text-primary" />
           <span className="text-zinc-200 tabular-nums">{user.credits ?? 0}</span>
           <span>créditos</span>
         </div>
-        <span>{new Date(user.created_at).toLocaleDateString()}</span>
       </div>
+      <div className="text-xs text-zinc-500 text-right">{new Date(user.created_at).toLocaleDateString()}</div>
       <UserActions {...props} />
     </div>
   );
