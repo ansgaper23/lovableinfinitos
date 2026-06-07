@@ -86,7 +86,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "language", content: "Spanish" },
       { name: "geo.region", content: "ES-LATAM" },
       { property: "og:title", content: "Lovable Gratis — Créditos Lovable Ilimitados | Lovable Infinito" },
-      { property: "og:description", content: "Usa Lovable gratis con créditos ilimitados. Lovable AI sin límites para builders hispanohablantes. Acceso inmediato, soporte 24/7 en español." },
+      { property: "og:description", content: "Usa Lovable gratis con créditos ilimitados. Accede a Lovable AI sin límites, sin consumir tus créditos oficiales. Soporte en español para builders de Latinoamérica y España." },
       { property: "og:type", content: "website" },
       { property: "og:locale", content: "es_ES" },
       { property: "og:locale:alternate", content: "es_MX" },
@@ -95,10 +95,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@LovableInfinito" },
       { name: "robots", content: "index, follow, max-image-preview:large, max-snippet:-1" },
-      { name: "twitter:title", content: "Lovable Gratis — Créditos Lovable Ilimitados" },
-      { name: "twitter:description", content: "Usa Lovable gratis con créditos ilimitados. Sin límites, sin fricción, en español." },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/65bea7a2-93df-465a-97f9-1fcbfcf817ad" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/65bea7a2-93df-465a-97f9-1fcbfcf817ad" },
+      { name: "twitter:title", content: "Lovable Gratis — Créditos Lovable Ilimitados | Lovable Infinito" },
+      { name: "twitter:description", content: "Usa Lovable gratis con créditos ilimitados. Accede a Lovable AI sin límites, sin consumir tus créditos oficiales. Soporte en español para builders de Latinoamérica y España." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/9095f738-b7b4-4783-8954-2280bf6eebd7" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/9095f738-b7b4-4783-8954-2280bf6eebd7" },
     ],
     links: [
       {
