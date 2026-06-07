@@ -151,7 +151,7 @@ export const Pricing = () => {
                   </li>
                   <li className="flex items-center gap-3">
                     <Check className="w-5 h-5 text-primary shrink-0" />
-                    <span className="font-medium text-foreground">Optimizado para Perú: Precios accesibles en Soles.</span>
+                    <span className="font-medium text-foreground">Precios Globales: Accesibles en dólares (USD).</span>
                   </li>
                   <li className="flex items-center gap-3">
                     <Check className="w-5 h-5 text-primary shrink-0" />
