@@ -912,6 +912,9 @@ const UserRow = (props: UserActionProps) => {
         </Badge>
       </td>
       <td className="px-4 py-3">
+        <TrialBadge user={user} />
+      </td>
+      <td className="px-4 py-3">
         <div className="flex items-center gap-1.5 text-sm">
           <CreditCard className="w-3.5 h-3.5 text-primary" />
           <span className="tabular-nums">{user.credits ?? 0}</span>
