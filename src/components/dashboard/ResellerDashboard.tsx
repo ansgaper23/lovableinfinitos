@@ -424,6 +424,8 @@ export const ResellerDashboard = () => {
               </div>
             </div>
 
+            <ExtensionDownloadCard />
+
             <div className="p-4 rounded-2xl bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border border-primary/20 flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-primary/20 border border-primary/30 flex items-center justify-center shrink-0">
                 <Zap className="w-4 h-4 text-primary fill-primary" />

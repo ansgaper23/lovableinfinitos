@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
+import { ExtensionDownloadCard } from "./ExtensionDownloadCard";
 
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "@tanstack/react-router";
@@ -447,6 +448,8 @@ export const Dashboard = () => {
                 icon={<Key className="w-6 h-6 text-primary" />}
               />
             </div>
+
+            <ExtensionDownloadCard />
           </div>
         </main>
       </div>
