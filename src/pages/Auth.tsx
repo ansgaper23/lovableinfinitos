@@ -218,6 +218,15 @@ export const Auth = () => {
               </div>
             </div>
           )}
+          {errorMsg && (
+            <div className="mb-6 p-4 border border-red-500/40 bg-red-500/10 rounded-none flex items-start gap-3" role="alert">
+              <AlertCircle className="w-5 h-5 text-red-400 mt-0.5 shrink-0" />
+              <div className="flex-1">
+                <p className="text-sm font-bold text-red-400 uppercase tracking-wider">Error</p>
+                <p className="text-xs text-red-200/90 mt-1 leading-relaxed">{errorMsg}</p>
+              </div>
+            </div>
+          )}
           <form onSubmit={handleAuth} className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="email" className="text-xs font-black uppercase tracking-widest text-muted-foreground">Email</Label>
