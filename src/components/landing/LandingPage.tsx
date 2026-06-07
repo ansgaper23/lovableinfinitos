@@ -1,13 +1,20 @@
+import { lazy, Suspense } from "react";
 import { Navbar } from "@/components/landing/Navbar";
 import { AnnouncementBar } from "@/components/landing/AnnouncementBar";
 import { Hero } from "@/components/landing/Hero";
-import { HowItWorks } from "@/components/landing/HowItWorks";
-import { Pricing } from "@/components/landing/Pricing";
-import { FAQ } from "@/components/landing/FAQ";
-import { Stats } from "@/components/landing/Stats";
 
+// Below-the-fold: split into separate chunks to shrink the initial JS payload
+// and improve LCP/TTI on the landing page.
+const Stats = lazy(() => import("@/components/landing/Stats").then(m => ({ default: m.Stats })));
+const HowItWorks = lazy(() => import("@/components/landing/HowItWorks").then(m => ({ default: m.HowItWorks })));
+const Pricing = lazy(() => import("@/components/landing/Pricing").then(m => ({ default: m.Pricing })));
+const FAQ = lazy(() => import("@/components/landing/FAQ").then(m => ({ default: m.FAQ })));
 
-import { Button } from "@/components/ui/button";
+const SectionFallback = () => (
+  <div className="py-24 flex items-center justify-center">
+    <div className="h-8 w-8 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
+  </div>
+);
 
 export const LandingPage = () => {
   return (
@@ -16,12 +23,14 @@ export const LandingPage = () => {
       <Navbar />
       <main>
         <Hero />
-        <Stats />
-        <HowItWorks />
-        <Pricing />
-        <FAQ />
+        <Suspense fallback={<SectionFallback />}>
+          <Stats />
+          <HowItWorks />
+          <Pricing />
+          <FAQ />
+        </Suspense>
       </main>
-      
+
       <footer className="py-24 px-4 border-t border-white/5 bg-background relative overflow-hidden">
         <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
         <div className="container mx-auto">
@@ -35,14 +44,14 @@ export const LandingPage = () => {
                 <span className="text-[10px] font-black tracking-[0.3em] text-primary uppercase">Elite Builder Access</span>
               </div>
             </div>
-            
+
             <nav className="flex flex-wrap justify-center gap-12 text-sm font-black uppercase tracking-widest text-muted-foreground">
               <a href="#inicio" className="hover:text-primary transition-colors hover:text-glow">Inicio</a>
               <a href="#precios" className="hover:text-primary transition-colors hover:text-glow">Planes</a>
               <a href="#faq" className="hover:text-primary transition-colors hover:text-glow">FAQ</a>
               <a href="#" className="hover:text-primary transition-colors hover:text-glow opacity-50 cursor-not-allowed">Legal</a>
             </nav>
-            
+
             <div className="text-right flex flex-col items-center md:items-end gap-2">
               <p className="text-sm font-light text-muted-foreground uppercase tracking-widest">
                 © 2026 LOVABLE INFINITO PERÚ
