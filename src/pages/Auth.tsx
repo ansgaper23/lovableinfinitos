@@ -76,12 +76,13 @@ export const Auth = () => {
           password,
         });
         if (error) throw error;
-        
+
         if (data.session) {
           toast.success("¡Bienvenido! Tu cuenta ha sido creada.");
           navigate({ to: "/dashboard" });
         } else {
           toast.success("¡Cuenta creada con éxito! Revisa tu correo o inicia sesión.");
+          setSignupSuccess(true);
           setIsLogin(true);
         }
       }
