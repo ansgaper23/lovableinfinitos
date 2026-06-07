@@ -48,6 +48,36 @@ function useCountdown(expiresAt: string | null) {
   };
 }
 
+/**
+ * Isolated countdown UI — its 1Hz state update only re-renders this small
+ * component instead of the entire Dashboard tree.
+ */
+function LicenseStatusBadge({ expiresAt }: { expiresAt: string | null }) {
+  const countdown = useCountdown(expiresAt);
+  const isLifetime = !expiresAt;
+  const isExpired = !isLifetime && !!countdown?.expired;
+  const statusLabel = isLifetime ? "VITALICIA" : isExpired ? "EXPIRADA" : "ACTIVA";
+  const statusClasses = isExpired
+    ? "border-destructive/40 bg-destructive/10 text-destructive"
+    : "border-green-500/30 bg-green-500/10 text-green-400";
+  const timeText = isLifetime
+    ? "Sin vencimiento"
+    : isExpired
+      ? `Expiró: ${new Date(expiresAt as string).toLocaleString()}`
+      : `Tiempo restante: ${countdown?.label ?? "—"}`;
+  return (
+    <>
+      <Badge variant="outline" className={`rounded-none text-[10px] font-black uppercase tracking-widest px-3 py-1 ${statusClasses}`}>
+        {statusLabel}
+      </Badge>
+      <p className="text-[10px] font-black tracking-widest text-muted-foreground uppercase flex items-center gap-2">
+        <Clock className="w-3 h-3" />
+        {timeText}
+      </p>
+    </>
+  );
+}
+
 export const Dashboard = () => {
   const { user, profile, loading } = useAuth(true);
   const [credits, setCredits] = useState<number | null>(null);
