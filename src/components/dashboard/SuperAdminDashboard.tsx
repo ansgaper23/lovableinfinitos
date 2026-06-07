@@ -177,20 +177,19 @@ export const SuperAdminDashboard = () => {
     }
   };
 
-  const fetchResellerStatus = async (token: string) => {
+  const fetchResellerStatus = async () => {
     try {
-      const status = await resellerApi.getStatus(token);
-      setResellerStatus(status);
+      const status = await getStatusFn({});
+      setResellerStatus(status as ResellerStatus);
     } catch (error) {
-      console.error("Error fetching status:", error);
+      console.error("Error fetching status");
     }
   };
 
   const fetchLicenses = async () => {
-    if (!resellerToken) return;
     setIsLoadingLicenses(true);
     try {
-      const data = await resellerApi.listLicenses(resellerToken);
+      const data = await listLicensesFn({ data: { page: 1, perPage: 50 } });
       setLicenses(data.licenses || []);
     } catch (error: any) {
       toast.error("Error al cargar licencias: " + error.message);
@@ -200,45 +199,35 @@ export const SuperAdminDashboard = () => {
   };
 
   const updateToken = async () => {
-    if (!user) return;
-    setIsUpdatingToken(true);
-    try {
-      const { error } = await supabase
-        .from("profiles")
-        .update({ reseller_api_token: resellerToken })
-        .eq("id", user.id);
-      
-      if (error) throw error;
-      toast.success("Token actualizado correctamente");
-      fetchResellerStatus(resellerToken);
-    } catch (error: any) {
-      toast.error("Error al actualizar token: " + error.message);
-    } finally {
-      setIsUpdatingToken(false);
-    }
+    toast.info("El token del proveedor se gestiona de forma segura en el servidor.");
   };
 
   const handleGenerateKey = async () => {
-    if (!resellerToken) {
-      toast.error("Debes configurar tu API Token primero");
-      return;
-    }
-    
     setIsGeneratingKey(true);
     try {
-      let result;
+      let result: any;
       if (keyType === "trial") {
-        result = await resellerApi.generateTrial(resellerToken, keyDisplayName);
+        result = await generateTrialFn({ data: { displayName: keyDisplayName, minutes: 15 } });
       } else if (keyType === "lifetime") {
-        result = await resellerApi.generateLicense(resellerToken, keyDisplayName, 0, true);
+        result = await generateLicenseFn({ data: { displayName: keyDisplayName, lifetime: true } });
       } else {
-        result = await resellerApi.generateLicense(resellerToken, keyDisplayName, parseInt(keyDays));
+        result = await generateLicenseFn({ data: { displayName: keyDisplayName, days: parseInt(keyDays), lifetime: false } });
       }
-      
+
       if (result.success) {
         toast.success(`Llave generada: ${result.license_key}`);
-        if (user) await resellerApi.saveLicenseLocally(user.id, result, keyDisplayName);
-        fetchResellerStatus(resellerToken);
+        if (user) {
+          await supabase.from("reseller_licenses").insert({
+            user_id: user.id,
+            license_key: result.license_key,
+            display_name: keyDisplayName,
+            type: result.type,
+            expires_at: result.expires_at,
+            duration_seconds: result.duration_seconds,
+            lifetime: result.lifetime || false,
+          });
+        }
+        fetchResellerStatus();
         fetchLicenses();
         setKeyDisplayName("");
       }
@@ -251,7 +240,7 @@ export const SuperAdminDashboard = () => {
 
   const handleResetHwid = async (key: string) => {
     try {
-      await resellerApi.resetHwid(resellerToken, key);
+      await resetHwidFn({ data: { licenseKey: key } });
       toast.success("HWID reseteado");
       fetchLicenses();
     } catch (error: any) {
@@ -261,13 +250,14 @@ export const SuperAdminDashboard = () => {
 
   const handleRevoke = async (key: string) => {
     try {
-      await resellerApi.revokeLicense(resellerToken, key);
+      await revokeLicenseFn({ data: { licenseKey: key } });
       toast.success("Licencia revocada");
       fetchLicenses();
     } catch (error: any) {
       toast.error(error.message);
     }
   };
+
 
 
   if (loading) {
