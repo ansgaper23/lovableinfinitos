@@ -981,6 +981,11 @@ const UserRow = (props: UserActionProps) => {
           <span className="tabular-nums">{user.credits ?? 0}</span>
         </div>
       </td>
+      <td className="px-4 py-3">
+        <span className="font-mono text-xs text-zinc-400" title={user.signup_ip || "Sin registro"}>
+          {user.signup_ip || "—"}
+        </span>
+      </td>
       <td className="px-4 py-3 text-xs text-zinc-500">
         {new Date(user.created_at).toLocaleDateString()}
       </td>
