@@ -125,29 +125,36 @@ export const Auth = () => {
         msg.includes("límite") ||
         msg.includes("limite") ||
         msg.includes("esta red") ||
-        msg.includes("ip")
+        (msg.includes("ip") && !msg.includes("incorrect"))
       ) {
-        friendly = "parece que tienes muchas cuentas y ningun plan activo :(";
+        friendly = "Parece que tienes muchas cuentas y ningún plan activo :(";
+      } else if (msg.includes("no está registrado") || msg.includes("not registered")) {
+        friendly = "✉️ Este correo no está registrado. Crea una cuenta primero.";
+      } else if (msg.includes("contraseña incorrecta")) {
+        friendly = "🔒 Contraseña incorrecta. Verifica e intenta de nuevo.";
       } else if (msg.includes("correos temporales") || msg.includes("desechables") || msg.includes("disposable")) {
         friendly = "✉️ No se permiten correos temporales o desechables. Usa un correo real (Gmail, Hotmail u Outlook).";
-      } else if (msg.includes("gmail") || msg.includes("hotmail") || msg.includes("solo se aceptan")) {
+      } else if (msg.includes("solo se aceptan") || msg.includes("gmail o hotmail")) {
         friendly = "✉️ Solo se aceptan correos de Gmail o Hotmail/Outlook.";
       } else if (msg.includes("email inválido") || msg.includes("invalid email") || msg.includes("email_address_invalid")) {
         friendly = "✉️ El correo ingresado no es válido. Revisa el formato.";
-      } else if (msg.includes("ya está registrado") || msg.includes("already") || msg.includes("registered") || msg.includes("user_already_exists")) {
+      } else if (msg.includes("ya está registrado") || msg.includes("already registered") || msg.includes("user_already_exists")) {
         friendly = "⚠️ Este correo ya está registrado. Inicia sesión en su lugar.";
-      } else if (msg.includes("contraseña") || msg.includes("password") || msg.includes("6 caracteres")) {
+      } else if (msg.includes("email not confirmed") || msg.includes("no está confirmado")) {
+        friendly = "📩 Tu correo aún no está confirmado. Revisa tu bandeja de entrada.";
+      } else if (msg.includes("6 caracteres") || msg.includes("password should") || msg.includes("weak password")) {
         friendly = "🔒 La contraseña debe tener al menos 6 caracteres.";
       } else if (msg.includes("credenciales") || msg.includes("invalid login")) {
         friendly = "❌ Credenciales inválidas. Verifica tu email y contraseña.";
-      } else if (msg.includes("network") || msg.includes("failed to fetch") || msg.includes("fetch")) {
+      } else if (msg.includes("network") || msg.includes("failed to fetch")) {
         friendly = "📡 Error de conexión. Verifica tu internet e intenta de nuevo.";
       } else if (msg.includes("rate") || msg.includes("too many")) {
         friendly = "⏱️ Demasiados intentos. Espera unos minutos antes de volver a intentar.";
       } else if (!raw) {
-        friendly = "No se pudo crear la cuenta. Intenta nuevamente o contacta soporte.";
+        friendly = "No se pudo completar la operación. Intenta nuevamente o contacta soporte.";
       }
 
+      setErrorMsg(friendly);
       toast.error(friendly, { duration: 6000 });
     } finally {
       setLoading(false);
