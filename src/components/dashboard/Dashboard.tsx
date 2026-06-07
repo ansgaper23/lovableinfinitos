@@ -90,7 +90,6 @@ export const Dashboard = () => {
   const genTrial = useServerFn(generateTrialForNewUser);
 
   const isBasicUser = profile?.role === "user" || !profile?.role;
-  const countdown = useCountdown(assigned?.expires_at ?? null);
 
   useEffect(() => {
     if (!user) return;
