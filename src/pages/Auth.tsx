@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, CheckCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { toast } from "sonner";
@@ -16,6 +16,7 @@ export const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [signupSuccess, setSignupSuccess] = useState(false);
   const navigate = useNavigate();
 
   const ALLOWED_DOMAINS = ["gmail.com", "googlemail.com", "hotmail.com", "outlook.com", "live.com", "hotmail.es", "outlook.es"];
@@ -75,12 +76,13 @@ export const Auth = () => {
           password,
         });
         if (error) throw error;
-        
+
         if (data.session) {
           toast.success("¡Bienvenido! Tu cuenta ha sido creada.");
           navigate({ to: "/dashboard" });
         } else {
           toast.success("¡Cuenta creada con éxito! Revisa tu correo o inicia sesión.");
+          setSignupSuccess(true);
           setIsLogin(true);
         }
       }
@@ -140,6 +142,15 @@ export const Auth = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {isLogin && signupSuccess && (
+            <div className="mb-6 p-4 border border-green-500/30 bg-green-500/10 rounded-none flex items-start gap-3">
+              <CheckCircle className="w-5 h-5 text-green-400 mt-0.5 shrink-0" />
+              <div>
+                <p className="text-sm font-bold text-green-400 uppercase tracking-wider">¡Cuenta creada con éxito!</p>
+                <p className="text-xs text-green-300/80 mt-1">Tu cuenta fue registrada correctamente. Ahora puedes iniciar sesión con tu email y contraseña.</p>
+              </div>
+            </div>
+          )}
           <form onSubmit={handleAuth} className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="email" className="text-xs font-black uppercase tracking-widest text-muted-foreground">Email</Label>
@@ -197,8 +208,8 @@ export const Auth = () => {
           </Button>
         </CardContent>
         <CardFooter className="justify-center pb-10">
-          <button 
-            onClick={() => setIsLogin(!isLogin)}
+        <button
+            onClick={() => { setIsLogin(!isLogin); setSignupSuccess(false); }}
             className="text-xs font-black uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors"
           >
             {isLogin ? "¿No tienes cuenta? Regístrate" : "¿Ya tienes cuenta? Entra aquí"}
