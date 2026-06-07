@@ -225,6 +225,19 @@ export const getAllUsers = createServerFn({ method: "GET" })
       .order("created_at", { ascending: false });
     if (licensesError) throw new Error(licensesError.message);
 
+    const { data: ipsData, error: ipsError } = await supabaseAdmin
+      .from("signup_ips")
+      .select("user_id, ip, created_at")
+      .order("created_at", { ascending: false });
+    if (ipsError) throw new Error(ipsError.message);
+
+    const ipMap = new Map<string, string>();
+    for (const row of ipsData || []) {
+      if (row.user_id && !ipMap.has(row.user_id)) {
+        ipMap.set(row.user_id, row.ip);
+      }
+    }
+
     const creditMap = new Map((creditsData || []).map((c: any) => [c.user_id, c.credits]));
 
     // Per-user: did they request a trial? did they receive an assigned license? + counts
@@ -262,6 +275,7 @@ export const getAllUsers = createServerFn({ method: "GET" })
         licenses_trial: counts.trial,
         licenses_assigned: counts.assigned,
         licenses_paid: counts.paid,
+        signup_ip: ipMap.get(p.id) ?? null,
       };
     });
 

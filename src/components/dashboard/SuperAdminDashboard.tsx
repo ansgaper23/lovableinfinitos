@@ -44,6 +44,7 @@ interface ExtendedProfile extends Omit<Profile, 'reseller_api_token'> {
   licenses_trial?: number;
   licenses_assigned?: number;
   licenses_paid?: number;
+  signup_ip?: string | null;
 }
 
 export const SuperAdminDashboard = () => {
@@ -473,13 +474,14 @@ export const SuperAdminDashboard = () => {
                         <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">Prueba</th>
                         <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">Licencias</th>
                         <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">Créditos</th>
+                        <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">IP</th>
                         <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">Registro</th>
                         <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide text-right">Acciones</th>
                       </tr>
                     </thead>
                     <tbody>
                       {fetchingUsers ? (
-                        <tr><td colSpan={7} className="p-8 text-center text-zinc-500 text-xs">Cargando...</td></tr>
+                        <tr><td colSpan={8} className="p-8 text-center text-zinc-500 text-xs">Cargando...</td></tr>
                       ) : filteredUsers.length > 0 ? (
                         filteredUsers.map((u) => (
                         <UserRow
@@ -494,7 +496,7 @@ export const SuperAdminDashboard = () => {
                           />
                         ))
                       ) : (
-                        <tr><td colSpan={7} className="p-8 text-center text-zinc-500 text-xs">Sin resultados</td></tr>
+                        <tr><td colSpan={8} className="p-8 text-center text-zinc-500 text-xs">Sin resultados</td></tr>
                       )}
                     </tbody>
                   </table>
@@ -979,6 +981,11 @@ const UserRow = (props: UserActionProps) => {
           <span className="tabular-nums">{user.credits ?? 0}</span>
         </div>
       </td>
+      <td className="px-4 py-3">
+        <span className="font-mono text-xs text-zinc-400" title={user.signup_ip || "Sin registro"}>
+          {user.signup_ip || "—"}
+        </span>
+      </td>
       <td className="px-4 py-3 text-xs text-zinc-500">
         {new Date(user.created_at).toLocaleDateString()}
       </td>
@@ -1016,6 +1023,10 @@ const UserCard = (props: UserActionProps) => {
           <span className="text-zinc-200 tabular-nums">{user.credits ?? 0}</span>
           <span>créditos</span>
         </div>
+      </div>
+      <div className="flex items-center justify-between text-xs">
+        <span className="text-zinc-500">IP</span>
+        <span className="font-mono text-zinc-300">{user.signup_ip || "—"}</span>
       </div>
       <div className="text-xs text-zinc-500 text-right">{new Date(user.created_at).toLocaleDateString()}</div>
       <UserActions {...props} />
