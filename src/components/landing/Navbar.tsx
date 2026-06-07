@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { MessageCircle, LayoutDashboard } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Link } from "@tanstack/react-router";
+import logoAsset from "@/assets/logo.png.asset.json";
 
 
 export const Navbar = () => {
