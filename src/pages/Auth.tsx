@@ -22,6 +22,14 @@ export const Auth = () => {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user) {
+        navigate({ to: "/dashboard", replace: true });
+      }
+    });
+  }, [navigate]);
+
   const ALLOWED_DOMAINS = ["gmail.com", "googlemail.com", "hotmail.com", "outlook.com", "live.com", "hotmail.es", "outlook.es"];
   const DISPOSABLE_DOMAINS = new Set([
     "mailinator.com","tempmail.com","temp-mail.org","temp-mail.io","10minutemail.com","guerrillamail.com",
