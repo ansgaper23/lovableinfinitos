@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Zap, Shield, Globe } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 
 export const Hero = () => {
   return (
@@ -35,11 +36,11 @@ export const Hero = () => {
             </a>
           </Button>
           <Button size="lg" className="h-16 px-10 text-xl font-black italic tracking-tighter uppercase w-full sm:w-auto rounded-none bg-primary text-primary-foreground hover:shadow-[0_0_30px_rgba(var(--color-primary),0.4)] transition-all" asChild>
-            <a href="/auth">VER DEMO <Zap className="w-5 h-5 ml-2" /></a>
+            <Link to="/auth">VER DEMO <Zap className="w-5 h-5 ml-2" /></Link>
           </Button>
         </div>
 
-        <div className="hidden grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto pt-8 border-t border-border/50">
+        <div className="hidden md:grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto pt-8 border-t border-border/50">
           <div className="flex flex-col items-center gap-2">
             <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-2">
               <Zap className="w-6 h-6" />

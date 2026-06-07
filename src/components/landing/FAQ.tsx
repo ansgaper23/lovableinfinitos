@@ -4,7 +4,7 @@ export const FAQ = () => {
   const faqs = [
     {
       question: "¿Qué es exactamente Lovable Infinito?",
-      answer: "Es una solución optimizada que permite a desarrolladores y agencias utilizar la plataforma Lovable de manera ilimitada, eliminando las restricciones de créditos del plan oficial por un tiempo determinado (1, 7 o 15 días).",
+      answer: "Es una solución optimizada que permite a desarrolladores y agencias utilizar la plataforma Lovable de manera ilimitada, eliminando las restricciones de créditos del plan oficial por un tiempo determinado (1, 7 o 30 días).",
     },
     {
       question: "¿Cómo recibo el acceso después de pagar?",
