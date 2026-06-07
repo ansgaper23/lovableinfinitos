@@ -23,9 +23,13 @@ import { useAuth, Profile } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { resellerApi, ResellerStatus } from "@/services/resellerApi";
+import type { ResellerStatus } from "@/services/resellerApi";
 import { useServerFn } from "@tanstack/react-start";
 import { setUserActivation, assignLicenseToUser, setUserRole, getAllUsers } from "@/lib/user-actions.functions";
+import {
+  adminGetResellerStatus, adminListLicenses, adminGenerateTrial,
+  adminGenerateLicense, adminResetHwid, adminRevokeLicense,
+} from "@/lib/reseller-admin.functions";
 import { ExtensionUploadCard } from "./ExtensionUploadCard";
 
 interface ExtendedProfile extends Omit<Profile, 'reseller_api_token'> {
@@ -42,13 +46,13 @@ export const SuperAdminDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   
   // Reseller states
-  const [resellerToken, setResellerToken] = useState("");
+  // El token del reseller vive en el servidor (RESELLER_API_KEY); nunca lo exponemos al cliente.
   const [resellerStatus, setResellerStatus] = useState<ResellerStatus | null>(null);
   const [isGeneratingKey, setIsGeneratingKey] = useState(false);
   const [keyType, setKeyType] = useState<"trial" | "days" | "lifetime">("days");
   const [keyDisplayName, setKeyDisplayName] = useState("");
   const [keyDays, setKeyDays] = useState("30");
-  const [isUpdatingToken, setIsUpdatingToken] = useState(false);
+  
   const [licenses, setLicenses] = useState<any[]>([]);
   const [isLoadingLicenses, setIsLoadingLicenses] = useState(false);
   const navigate = useNavigate();
@@ -61,6 +65,12 @@ export const SuperAdminDashboard = () => {
   const assignFn = useServerFn(assignLicenseToUser);
   const roleFn = useServerFn(setUserRole);
   const getUsersFn = useServerFn(getAllUsers);
+  const getStatusFn = useServerFn(adminGetResellerStatus);
+  const listLicensesFn = useServerFn(adminListLicenses);
+  const generateTrialFn = useServerFn(adminGenerateTrial);
+  const generateLicenseFn = useServerFn(adminGenerateLicense);
+  const resetHwidFn = useServerFn(adminResetHwid);
+  const revokeLicenseFn = useServerFn(adminRevokeLicense);
 
   const handleBlockToggle = async (u: ExtendedProfile) => {
     if (u.role === "superadmin") {
@@ -127,12 +137,9 @@ export const SuperAdminDashboard = () => {
     try {
       const merged = await getUsersFn({});
       setUsers(merged);
-
-      const currentProfile = merged?.find((p: any) => p.id === user?.id);
-      if (currentProfile?.reseller_api_token) {
-        setResellerToken(currentProfile.reseller_api_token);
-        fetchResellerStatus(currentProfile.reseller_api_token);
-      }
+      // El token de revendedor vive en el servidor (RESELLER_API_KEY).
+      // Cargamos el estado vía server function.
+      fetchResellerStatus();
     } catch (error: any) {
       toast.error("Error al cargar usuarios: " + error.message);
     } finally {
@@ -170,20 +177,19 @@ export const SuperAdminDashboard = () => {
     }
   };
 
-  const fetchResellerStatus = async (token: string) => {
+  const fetchResellerStatus = async () => {
     try {
-      const status = await resellerApi.getStatus(token);
-      setResellerStatus(status);
+      const status = await getStatusFn({});
+      setResellerStatus(status as ResellerStatus);
     } catch (error) {
-      console.error("Error fetching status:", error);
+      console.error("Error fetching status");
     }
   };
 
   const fetchLicenses = async () => {
-    if (!resellerToken) return;
     setIsLoadingLicenses(true);
     try {
-      const data = await resellerApi.listLicenses(resellerToken);
+      const data = await listLicensesFn({ data: { page: 1, perPage: 50 } });
       setLicenses(data.licenses || []);
     } catch (error: any) {
       toast.error("Error al cargar licencias: " + error.message);
@@ -192,46 +198,33 @@ export const SuperAdminDashboard = () => {
     }
   };
 
-  const updateToken = async () => {
-    if (!user) return;
-    setIsUpdatingToken(true);
-    try {
-      const { error } = await supabase
-        .from("profiles")
-        .update({ reseller_api_token: resellerToken })
-        .eq("id", user.id);
-      
-      if (error) throw error;
-      toast.success("Token actualizado correctamente");
-      fetchResellerStatus(resellerToken);
-    } catch (error: any) {
-      toast.error("Error al actualizar token: " + error.message);
-    } finally {
-      setIsUpdatingToken(false);
-    }
-  };
 
   const handleGenerateKey = async () => {
-    if (!resellerToken) {
-      toast.error("Debes configurar tu API Token primero");
-      return;
-    }
-    
     setIsGeneratingKey(true);
     try {
-      let result;
+      let result: any;
       if (keyType === "trial") {
-        result = await resellerApi.generateTrial(resellerToken, keyDisplayName);
+        result = await generateTrialFn({ data: { displayName: keyDisplayName, minutes: 15 } });
       } else if (keyType === "lifetime") {
-        result = await resellerApi.generateLicense(resellerToken, keyDisplayName, 0, true);
+        result = await generateLicenseFn({ data: { displayName: keyDisplayName, lifetime: true } });
       } else {
-        result = await resellerApi.generateLicense(resellerToken, keyDisplayName, parseInt(keyDays));
+        result = await generateLicenseFn({ data: { displayName: keyDisplayName, days: parseInt(keyDays), lifetime: false } });
       }
-      
+
       if (result.success) {
         toast.success(`Llave generada: ${result.license_key}`);
-        if (user) await resellerApi.saveLicenseLocally(user.id, result, keyDisplayName);
-        fetchResellerStatus(resellerToken);
+        if (user) {
+          await supabase.from("reseller_licenses").insert({
+            user_id: user.id,
+            license_key: result.license_key,
+            display_name: keyDisplayName,
+            type: result.type,
+            expires_at: result.expires_at,
+            duration_seconds: result.duration_seconds,
+            lifetime: result.lifetime || false,
+          });
+        }
+        fetchResellerStatus();
         fetchLicenses();
         setKeyDisplayName("");
       }
@@ -244,7 +237,7 @@ export const SuperAdminDashboard = () => {
 
   const handleResetHwid = async (key: string) => {
     try {
-      await resellerApi.resetHwid(resellerToken, key);
+      await resetHwidFn({ data: { licenseKey: key } });
       toast.success("HWID reseteado");
       fetchLicenses();
     } catch (error: any) {
@@ -254,13 +247,14 @@ export const SuperAdminDashboard = () => {
 
   const handleRevoke = async (key: string) => {
     try {
-      await resellerApi.revokeLicense(resellerToken, key);
+      await revokeLicenseFn({ data: { licenseKey: key } });
       toast.success("Licencia revocada");
       fetchLicenses();
     } catch (error: any) {
       toast.error(error.message);
     }
   };
+
 
 
   if (loading) {
@@ -422,34 +416,23 @@ export const SuperAdminDashboard = () => {
                   <div className="h-1 w-full bg-gradient-to-r from-destructive/0 via-destructive to-destructive/0 opacity-30 group-hover:opacity-100 transition-opacity duration-500" />
                   <CardHeader className="pb-4">
                     <div className="flex items-center gap-2 mb-1">
-                      <Zap className="w-4 h-4 text-destructive" />
-                      <CardTitle className="text-lg font-black italic tracking-tighter uppercase">API Reseller Token</CardTitle>
+                      <ShieldCheck className="w-4 h-4 text-destructive" />
+                      <CardTitle className="text-lg font-black italic tracking-tighter uppercase">API Reseller</CardTitle>
                     </div>
-                    <CardDescription className="text-[10px] uppercase font-black tracking-widest text-muted-foreground">Configura tu token para sincronizar con el proveedor</CardDescription>
+                    <CardDescription className="text-[10px] uppercase font-black tracking-widest text-muted-foreground">
+                      Token gestionado de forma segura en el servidor
+                    </CardDescription>
                   </CardHeader>
-                  <CardContent className="space-y-4 pb-8">
-                    <div className="flex flex-col sm:flex-row gap-4">
-                      <div className="relative flex-1 group/input">
-                        <Key className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within/input:text-destructive transition-colors" />
-                        <Input 
-                          type="password"
-                          placeholder="rsl_your_token_here..." 
-                          value={resellerToken}
-                          onChange={(e) => setResellerToken(e.target.value)}
-                          className="rounded-xl border-white/5 bg-white/5 font-mono text-xs h-13 pl-12 focus:bg-white/[0.08] transition-all" 
-                        />
-                      </div>
-                      <Button 
-                        disabled={isUpdatingToken}
-                        onClick={updateToken}
-                        className="rounded-xl bg-destructive hover:bg-destructive/90 text-white font-black italic uppercase tracking-widest text-[10px] h-13 px-8 shadow-lg shadow-destructive/20 active:scale-95 transition-all"
-                      >
-                        {isUpdatingToken ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : <ShieldCheck className="w-4 h-4 mr-2" />}
-                        Sincronizar Acceso
-                      </Button>
+                  <CardContent className="space-y-3 pb-8">
+                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-green-500/5 border border-green-500/10">
+                      <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0" />
+                      <p className="text-xs text-white/70">
+                        El token nunca se expone al navegador. Todas las operaciones se ejecutan vía funciones de servidor protegidas.
+                      </p>
                     </div>
                   </CardContent>
                 </Card>
+
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <Card className="rounded-2xl border-white/5 bg-[#121214] overflow-hidden group">
@@ -625,7 +608,7 @@ export const SuperAdminDashboard = () => {
                       )}
                       <Button 
                         onClick={handleGenerateKey}
-                        disabled={isGeneratingKey || !resellerToken}
+                        disabled={isGeneratingKey || !keyDisplayName}
                         className="w-full rounded-xl bg-destructive hover:bg-destructive/90 text-white font-black italic uppercase tracking-[0.15em] text-[10px] h-14 shadow-xl shadow-destructive/20 border-t border-white/20 active:scale-[0.98] transition-all"
                       >
                         {isGeneratingKey ? <RefreshCw className="w-4 h-4 animate-spin mr-3" /> : <Key className="w-4 h-4 mr-3" />}
@@ -648,16 +631,14 @@ export const SuperAdminDashboard = () => {
                           variant="ghost" 
                           size="icon" 
                           onClick={fetchLicenses}
-                          disabled={isLoadingLicenses || !resellerToken}
+                          disabled={isLoadingLicenses}
                           className="text-muted-foreground hover:text-white hover:bg-white/5 rounded-xl transition-all"
                         >
                           <RefreshCw className={`w-4 h-4 ${isLoadingLicenses ? 'animate-spin' : ''}`} />
                         </Button>
                       </CardHeader>
                       <CardContent className="p-0 overflow-auto max-h-[500px]">
-                        {!resellerToken ? (
-                          <div className="p-8 text-center text-muted-foreground text-xs uppercase italic">Configura tu token para ver el historial</div>
-                        ) : isLoadingLicenses ? (
+                        {isLoadingLicenses ? (
                           <div className="p-8 text-center text-muted-foreground text-xs uppercase italic">Cargando licencias...</div>
                         ) : licenses.length === 0 ? (
                           <div className="p-8 text-center text-muted-foreground text-xs uppercase italic">No hay licencias generadas</div>
