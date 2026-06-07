@@ -91,6 +91,8 @@ export const SuperAdminDashboard = () => {
       const res = await assignFn({ data: { targetUserId: assignTarget.id, days: assignDays } });
       setAssignedResult({ license_key: res.license_key, expires_at: res.expires_at });
       toast.success(`Licencia de ${assignDays} día${assignDays > 1 ? "s" : ""} asignada`);
+      // refrescar lista de usuarios para reflejar cambios
+      loadUsersWithCredits();
     } catch (e: any) {
       toast.error(e.message || "Error al asignar licencia");
     } finally {
@@ -99,11 +101,15 @@ export const SuperAdminDashboard = () => {
   };
 
   const handleToggleActivation = async (u: ExtendedProfile) => {
-    const isActive = u.role === "reseller" || u.role === "superadmin";
     if (u.role === "superadmin") {
       toast.error("No se puede desactivar a un superadmin");
       return;
     }
+    if (u.role === "blocked") {
+      toast.error("Desbloquea la cuenta primero");
+      return;
+    }
+    const isActive = u.role === "reseller";
     setTogglingUserId(u.id);
     try {
       const res = await activateFn({ data: { targetUserId: u.id, activate: !isActive } });

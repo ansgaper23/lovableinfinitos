@@ -166,6 +166,7 @@ export type Database = {
       }
       consume_credit: { Args: never; Returns: boolean }
       is_superadmin: { Args: { _user_id: string }; Returns: boolean }
+      refund_credit: { Args: never; Returns: number }
       set_user_role: {
         Args: { _role: string; _target: string }
         Returns: string
