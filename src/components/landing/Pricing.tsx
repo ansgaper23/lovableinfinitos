@@ -19,7 +19,7 @@ export const Pricing = () => {
     {
       name: "Plan Pro",
       duration: "7 Días",
-      price: "S/ 52",
+      price: "$13.99",
       description: "La opción preferida por builders y freelancers en Perú.",
       features: [
         "Lovable ilimitado por 7 días",
