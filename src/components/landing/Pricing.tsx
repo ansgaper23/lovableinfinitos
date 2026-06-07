@@ -1,5 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Check, X, ShieldAlert, Rocket, Heart } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 
 export const Pricing = () => {
   const plans = [
@@ -105,13 +106,16 @@ export const Pricing = () => {
                   ))}
                 </ul>
                 
-                <button className={`w-full py-5 rounded-none font-black uppercase tracking-widest transition-all duration-300 transform ${
-                  plan.popular 
-                    ? "bg-primary text-primary-foreground hover:shadow-[0_0_30px_rgba(var(--color-primary),0.4)]" 
-                    : "bg-white/5 text-white hover:bg-white/10 border border-white/10"
-                }`}>
+                <Link
+                  to="/auth"
+                  className={`block w-full py-5 rounded-none font-black uppercase tracking-widest text-center transition-all duration-300 transform ${
+                    plan.popular
+                      ? "bg-primary text-primary-foreground hover:shadow-[0_0_30px_rgba(var(--color-primary),0.4)]"
+                      : "bg-white/5 text-white hover:bg-white/10 border border-white/10"
+                  }`}
+                >
                   Activar Acceso
-                </button>
+                </Link>
               </CardContent>
             </Card>
           ))}
