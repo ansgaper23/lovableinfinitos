@@ -79,19 +79,24 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable Infinito — Créditos Infinitos para IA" },
-      { name: "description", content: "Potencia tu desarrollo con Lovable Infinito. Créditos ilimitados para la plataforma IA más potente, soporte en español y pagos locales en Perú." },
+      { title: "Lovable Gratis — Créditos Lovable Ilimitados | Lovable Infinito" },
+      { name: "description", content: "Usa Lovable gratis con créditos ilimitados. Accede a Lovable AI sin límites, sin consumir tus créditos oficiales. Soporte en español para builders de Latinoamérica y España." },
       { name: "author", content: "Lovable Infinito" },
-      { name: "keywords", content: "lovable, créditos infinitos, inteligencia artificial, perú, desarrollo web, ia builder, lovable ai" },
-      { property: "og:title", content: "Lovable Infinito — Créditos Infinitos para IA" },
-      { property: "og:description", content: "Potencia tu desarrollo con Lovable Infinito. Créditos ilimitados para la plataforma IA más potente, soporte en español y pagos locales en Perú." },
+      { name: "keywords", content: "lovable gratis, creditos lovable, lovable ilimitado, lovable infinito, lovable ai gratis, lovable sin limites, creditos lovable gratis, lovable español, alternativa lovable, lovable barato, builder ia, no code ia" },
+      { name: "language", content: "Spanish" },
+      { name: "geo.region", content: "ES-LATAM" },
+      { property: "og:title", content: "Lovable Gratis — Créditos Lovable Ilimitados | Lovable Infinito" },
+      { property: "og:description", content: "Usa Lovable gratis con créditos ilimitados. Lovable AI sin límites para builders hispanohablantes. Acceso inmediato, soporte 24/7 en español." },
       { property: "og:type", content: "website" },
-      { property: "og:locale", content: "es_PE" },
+      { property: "og:locale", content: "es_ES" },
+      { property: "og:locale:alternate", content: "es_MX" },
+      { property: "og:site_name", content: "Lovable Infinito" },
+      { property: "og:url", content: "https://lovableinfinitos.lovable.app" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@LovableInfinito" },
-      { name: "robots", content: "index, follow" },
-      { name: "twitter:title", content: "Lovable Infinito — Créditos Infinitos para IA" },
-      { name: "twitter:description", content: "Potencia tu desarrollo con Lovable Infinito. Créditos ilimitados para la plataforma IA más potente, soporte en español y pagos locales en Perú." },
+      { name: "robots", content: "index, follow, max-image-preview:large, max-snippet:-1" },
+      { name: "twitter:title", content: "Lovable Gratis — Créditos Lovable Ilimitados" },
+      { name: "twitter:description", content: "Usa Lovable gratis con créditos ilimitados. Sin límites, sin fricción, en español." },
       { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/65bea7a2-93df-465a-97f9-1fcbfcf817ad" },
       { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/65bea7a2-93df-465a-97f9-1fcbfcf817ad" },
     ],
@@ -101,15 +106,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: appCss,
       },
       {
-        rel: "canonical",
-        href: "https://lovable-infinito.com",
-      },
-      {
         rel: "icon",
         href: "/favicon.ico",
       },
+      { rel: "alternate", hrefLang: "es", href: "https://lovableinfinitos.lovable.app" },
+      { rel: "alternate", hrefLang: "x-default", href: "https://lovableinfinitos.lovable.app" },
     ],
   }),
+
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
@@ -121,18 +125,21 @@ function RootShell({ children }: { children: ReactNode }) {
     "@context": "https://schema.org",
     "@type": "WebApplication",
     "name": "Lovable Infinito",
-    "url": "https://lovable-infinito.com",
-    "description": "Créditos infinitos para Lovable. La solución ideal para builders en Perú con pagos locales y soporte en español.",
+    "alternateName": ["Lovable Gratis", "Créditos Lovable Ilimitados"],
+    "url": "https://lovableinfinitos.lovable.app",
+    "description": "Usa Lovable gratis con créditos ilimitados. Plataforma para builders hispanohablantes que necesitan Lovable AI sin límites.",
     "applicationCategory": "DeveloperApplication",
     "operatingSystem": "Web",
+    "inLanguage": "es",
     "author": {
       "@type": "Organization",
-      "name": "Lovable Infinito"
+      "name": "Lovable Infinito",
+      "url": "https://lovableinfinitos.lovable.app"
     },
     "offers": {
       "@type": "Offer",
-      "price": "39.00",
-      "priceCurrency": "PEN"
+      "price": "5.99",
+      "priceCurrency": "USD"
     }
   };
 
