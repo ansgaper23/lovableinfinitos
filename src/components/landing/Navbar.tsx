@@ -15,7 +15,7 @@ export const Navbar = () => {
           <img
             src={logoAsset.url}
             alt="Lovable Infinito Logo"
-            className="h-10 w-auto transform group-hover:scale-105 transition-transform duration-500"
+            className="h-10 w-auto rounded-lg transform group-hover:scale-105 transition-transform duration-500"
           />
         </div>
 
