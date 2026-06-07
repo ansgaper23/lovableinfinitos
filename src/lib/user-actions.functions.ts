@@ -170,6 +170,36 @@ export const assignLicenseToUser = createServerFn({ method: "POST" })
     };
   });
 
+export const deleteUserAccount = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) =>
+    z.object({ targetUserId: z.string().uuid() }).parse(input)
+  )
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    await assertSuperadmin(supabase, userId);
+
+    if (data.targetUserId === userId) {
+      throw new Error("No puedes eliminar tu propia cuenta");
+    }
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const targetId = data.targetUserId;
+
+    await supabaseAdmin.from("profiles").delete().eq("id", targetId);
+    await supabaseAdmin.from("user_credits").delete().eq("user_id", targetId);
+    await supabaseAdmin.from("signup_ips").delete().eq("user_id", targetId);
+    await supabaseAdmin.from("reseller_licenses").delete().eq("user_id", targetId);
+    await supabaseAdmin.from("licenses").delete().eq("created_by", targetId);
+    await supabaseAdmin.from("licenses").update({ used_by: null }).eq("used_by", targetId);
+    await supabaseAdmin.from("audit_logs").delete().eq("actor_id", targetId);
+
+    const { error } = await supabaseAdmin.auth.admin.deleteUser(targetId);
+    if (error) throw new Error(error.message);
+
+    return { success: true };
+  });
+
 export const getAllUsers = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
