@@ -419,34 +419,23 @@ export const SuperAdminDashboard = () => {
                   <div className="h-1 w-full bg-gradient-to-r from-destructive/0 via-destructive to-destructive/0 opacity-30 group-hover:opacity-100 transition-opacity duration-500" />
                   <CardHeader className="pb-4">
                     <div className="flex items-center gap-2 mb-1">
-                      <Zap className="w-4 h-4 text-destructive" />
-                      <CardTitle className="text-lg font-black italic tracking-tighter uppercase">API Reseller Token</CardTitle>
+                      <ShieldCheck className="w-4 h-4 text-destructive" />
+                      <CardTitle className="text-lg font-black italic tracking-tighter uppercase">API Reseller</CardTitle>
                     </div>
-                    <CardDescription className="text-[10px] uppercase font-black tracking-widest text-muted-foreground">Configura tu token para sincronizar con el proveedor</CardDescription>
+                    <CardDescription className="text-[10px] uppercase font-black tracking-widest text-muted-foreground">
+                      Token gestionado de forma segura en el servidor
+                    </CardDescription>
                   </CardHeader>
-                  <CardContent className="space-y-4 pb-8">
-                    <div className="flex flex-col sm:flex-row gap-4">
-                      <div className="relative flex-1 group/input">
-                        <Key className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within/input:text-destructive transition-colors" />
-                        <Input 
-                          type="password"
-                          placeholder="rsl_your_token_here..." 
-                          value={resellerToken}
-                          onChange={(e) => setResellerToken(e.target.value)}
-                          className="rounded-xl border-white/5 bg-white/5 font-mono text-xs h-13 pl-12 focus:bg-white/[0.08] transition-all" 
-                        />
-                      </div>
-                      <Button 
-                        disabled={isUpdatingToken}
-                        onClick={updateToken}
-                        className="rounded-xl bg-destructive hover:bg-destructive/90 text-white font-black italic uppercase tracking-widest text-[10px] h-13 px-8 shadow-lg shadow-destructive/20 active:scale-95 transition-all"
-                      >
-                        {isUpdatingToken ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : <ShieldCheck className="w-4 h-4 mr-2" />}
-                        Sincronizar Acceso
-                      </Button>
+                  <CardContent className="space-y-3 pb-8">
+                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-green-500/5 border border-green-500/10">
+                      <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0" />
+                      <p className="text-xs text-white/70">
+                        El token nunca se expone al navegador. Todas las operaciones se ejecutan vía funciones de servidor protegidas.
+                      </p>
                     </div>
                   </CardContent>
                 </Card>
+
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <Card className="rounded-2xl border-white/5 bg-[#121214] overflow-hidden group">
