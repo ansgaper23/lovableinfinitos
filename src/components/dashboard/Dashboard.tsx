@@ -251,7 +251,7 @@ export const Dashboard = () => {
                     </div>
                     <div className="flex flex-wrap gap-3">
                       <Button
-                        onClick={() => window.open("https://wa.me/?text=Hola,%20quiero%20adquirir%20una%20licencia%20de%20Lovable%20Infinito", "_blank")}
+                        onClick={() => window.open("https://wa.me/51936467898?text=Hola,%20quiero%20adquirir%20una%20licencia%20de%20Lovable%20Infinito", "_blank")}
                         className="rounded-none font-black italic tracking-tighter uppercase gap-2 px-6 h-12"
                       >
                         Adquirir Licencia <ArrowRight className="w-4 h-4" />
