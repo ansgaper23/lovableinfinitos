@@ -22,23 +22,23 @@ export const Navbar = () => {
         <NavigationMenu className="hidden md:flex">
           <NavigationMenuList>
             <NavigationMenuItem>
-              <NavigationMenuLink href="#inicio" className={navigationMenuTriggerStyle()}>
-                Inicio
+              <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+                <Link to="/">Inicio</Link>
               </NavigationMenuLink>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <NavigationMenuLink href="#funcionamiento" className={navigationMenuTriggerStyle()}>
-                Funcionamiento
+              <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+                <Link to="/como-funciona">Cómo Funciona</Link>
               </NavigationMenuLink>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <NavigationMenuLink href="#precios" className={navigationMenuTriggerStyle()}>
-                Precios
+              <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+                <Link to="/precios">Precios</Link>
               </NavigationMenuLink>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <NavigationMenuLink href="#faq" className={navigationMenuTriggerStyle()}>
-                FAQ
+              <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+                <Link to="/faq">FAQ</Link>
               </NavigationMenuLink>
             </NavigationMenuItem>
           </NavigationMenuList>
