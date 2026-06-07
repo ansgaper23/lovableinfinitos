@@ -4,11 +4,15 @@ import { LandingPage } from "@/components/landing/LandingPage";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Lovable Infinito — Créditos infinitos en Soles para Perú" },
-      { name: "description", content: "Construye sin límites con créditos infinitos para Lovable. La solución ideal para builders en Perú con pagos locales y soporte en español." },
-      { property: "og:title", content: "Lovable Infinito — Créditos infinitos en Soles" },
-      { property: "og:description", content: "Construye sin límites con créditos infinitos para Lovable. Planes en Soles exclusivos para Perú." },
-      { property: "og:url", content: "https://lovable-infinito.com" },
+      { title: "Lovable Gratis — Créditos Lovable Ilimitados sin Límites" },
+      { name: "description", content: "Usa Lovable gratis con créditos ilimitados. Accede a Lovable AI sin consumir tus créditos oficiales. Para builders hispanohablantes en Latinoamérica y España." },
+      { property: "og:title", content: "Lovable Gratis — Créditos Lovable Ilimitados" },
+      { property: "og:description", content: "Lovable AI ilimitado, sin fricción, en español. Planes desde $5.99 USD para builders de todo el mundo hispano." },
+      { property: "og:url", content: "https://lovableinfinitos.lovable.app" },
+      { property: "og:type", content: "website" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://lovableinfinitos.lovable.app" },
     ],
   }),
   component: Index,
