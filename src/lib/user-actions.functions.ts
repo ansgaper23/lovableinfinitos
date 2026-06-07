@@ -1,18 +1,40 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { z } from "zod";
 
 const BASE_URL = "https://ynvrijkuampxpsmshftm.supabase.co/functions/v1/reseller-api";
 
+async function assertSuperadmin(supabase: any, userId: string) {
+  const { data: prof, error } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", userId)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  if (prof?.role !== "superadmin") {
+    throw new Error("Acceso denegado: se requiere superadmin");
+  }
+}
+
+const displayNameSchema = z
+  .string()
+  .trim()
+  .min(1)
+  .max(60)
+  .regex(/^[\p{L}\p{N} ._-]+$/u, "Nombre inválido")
+  .optional();
+
 export const generateTrialForNewUser = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { displayName?: string }) => input)
+  .inputValidator((input) =>
+    z.object({ displayName: displayNameSchema }).parse(input)
+  )
   .handler(async ({ data, context }) => {
     const token = process.env.RESELLER_API_KEY;
     if (!token) throw new Error("RESELLER_API_KEY no está configurada");
 
     const { userId, supabase } = context;
 
-    // Check if user already generated a trial
     const { data: existing } = await supabase
       .from("reseller_licenses")
       .select("id")
@@ -52,9 +74,18 @@ export const generateTrialForNewUser = createServerFn({ method: "POST" })
 
 export const setUserActivation = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { targetUserId: string; activate: boolean }) => input)
+  .inputValidator((input) =>
+    z
+      .object({
+        targetUserId: z.string().uuid(),
+        activate: z.boolean(),
+      })
+      .parse(input)
+  )
   .handler(async ({ data, context }) => {
-    const { supabase } = context;
+    const { supabase, userId } = context;
+    await assertSuperadmin(supabase, userId);
+
     const role = data.activate ? "reseller" : "user";
     const { data: result, error } = await supabase.rpc("set_user_role", {
       _target: data.targetUserId,
@@ -66,9 +97,18 @@ export const setUserActivation = createServerFn({ method: "POST" })
 
 export const setUserRole = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { targetUserId: string; role: "user" | "reseller" | "blocked" }) => input)
+  .inputValidator((input) =>
+    z
+      .object({
+        targetUserId: z.string().uuid(),
+        role: z.enum(["user", "reseller", "blocked"]),
+      })
+      .parse(input)
+  )
   .handler(async ({ data, context }) => {
-    const { supabase } = context;
+    const { supabase, userId } = context;
+    await assertSuperadmin(supabase, userId);
+
     const { data: result, error } = await supabase.rpc("set_user_role", {
       _target: data.targetUserId,
       _role: data.role,
@@ -79,22 +119,21 @@ export const setUserRole = createServerFn({ method: "POST" })
 
 export const assignLicenseToUser = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { targetUserId: string; days: number; displayName?: string }) => input)
+  .inputValidator((input) =>
+    z
+      .object({
+        targetUserId: z.string().uuid(),
+        days: z.union([z.literal(1), z.literal(7), z.literal(30), z.literal(60)]),
+        displayName: displayNameSchema,
+      })
+      .parse(input)
+  )
   .handler(async ({ data, context }) => {
     const token = process.env.RESELLER_API_KEY;
     if (!token) throw new Error("RESELLER_API_KEY no está configurada");
 
     const { supabase, userId } = context;
-
-    const { data: prof, error: pErr } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", userId)
-      .maybeSingle();
-    if (pErr) throw new Error(pErr.message);
-    if (prof?.role !== "superadmin") throw new Error("Solo el superadmin puede asignar licencias");
-
-    if (![1, 7, 30, 60].includes(data.days)) throw new Error("Duración inválida");
+    await assertSuperadmin(supabase, userId);
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
@@ -135,14 +174,7 @@ export const getAllUsers = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
-
-    const { data: prof, error: pErr } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", userId)
-      .maybeSingle();
-    if (pErr) throw new Error(pErr.message);
-    if (prof?.role !== "superadmin") throw new Error("Solo el superadmin puede ver todos los usuarios");
+    await assertSuperadmin(supabase, userId);
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
