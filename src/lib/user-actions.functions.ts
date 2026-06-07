@@ -227,9 +227,10 @@ export const getAllUsers = createServerFn({ method: "GET" })
 
     const creditMap = new Map((creditsData || []).map((c: any) => [c.user_id, c.credits]));
 
-    // Per-user: did they request a trial? did they receive an assigned license?
+    // Per-user: did they request a trial? did they receive an assigned license? + counts
     const trialMap = new Map<string, { created_at: string; expires_at: string | null }>();
     const assignedMap = new Map<string, { created_at: string; expires_at: string | null }>();
+    const countMap = new Map<string, { total: number; trial: number; assigned: number; paid: number }>();
     for (const lic of licensesData || []) {
       if (lic.type === "trial" && !trialMap.has(lic.user_id)) {
         trialMap.set(lic.user_id, { created_at: lic.created_at, expires_at: lic.expires_at });
@@ -237,11 +238,18 @@ export const getAllUsers = createServerFn({ method: "GET" })
       if (lic.type === "assigned" && !assignedMap.has(lic.user_id)) {
         assignedMap.set(lic.user_id, { created_at: lic.created_at, expires_at: lic.expires_at });
       }
+      const c = countMap.get(lic.user_id) || { total: 0, trial: 0, assigned: 0, paid: 0 };
+      c.total += 1;
+      if (lic.type === "trial") c.trial += 1;
+      else if (lic.type === "assigned") c.assigned += 1;
+      else c.paid += 1;
+      countMap.set(lic.user_id, c);
     }
 
     const merged = (profilesData || []).map((p: any) => {
       const trial = trialMap.get(p.id);
       const assigned = assignedMap.get(p.id);
+      const counts = countMap.get(p.id) || { total: 0, trial: 0, assigned: 0, paid: 0 };
       return {
         ...p,
         credits: creditMap.get(p.id) ?? 0,
@@ -250,6 +258,10 @@ export const getAllUsers = createServerFn({ method: "GET" })
         trial_expires_at: trial?.expires_at ?? null,
         has_assigned_license: !!assigned,
         assigned_expires_at: assigned?.expires_at ?? null,
+        licenses_total: counts.total,
+        licenses_trial: counts.trial,
+        licenses_assigned: counts.assigned,
+        licenses_paid: counts.paid,
       };
     });
 
