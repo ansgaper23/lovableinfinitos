@@ -25,7 +25,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import type { ResellerStatus } from "@/services/resellerApi";
 import { useServerFn } from "@tanstack/react-start";
-import { setUserActivation, assignLicenseToUser, setUserRole, getAllUsers } from "@/lib/user-actions.functions";
+import { setUserActivation, assignLicenseToUser, setUserRole, getAllUsers, deleteUserAccount } from "@/lib/user-actions.functions";
 import {
   adminGetResellerStatus, adminListLicenses, adminGenerateTrial,
   adminGenerateLicense, adminResetHwid, adminRevokeLicense,
@@ -71,6 +71,25 @@ export const SuperAdminDashboard = () => {
   const generateLicenseFn = useServerFn(adminGenerateLicense);
   const resetHwidFn = useServerFn(adminResetHwid);
   const revokeLicenseFn = useServerFn(adminRevokeLicense);
+  const deleteFn = useServerFn(deleteUserAccount);
+
+  const [deleteTarget, setDeleteTarget] = useState<ExtendedProfile | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDeleteUser = async () => {
+    if (!deleteTarget) return;
+    setIsDeleting(true);
+    try {
+      await deleteFn({ data: { targetUserId: deleteTarget.id } });
+      toast.success("Cuenta eliminada");
+      setUsers((prev) => prev.filter((p) => p.id !== deleteTarget.id));
+      setDeleteTarget(null);
+    } catch (e: any) {
+      toast.error(e.message || "Error al eliminar cuenta");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   const handleBlockToggle = async (u: ExtendedProfile) => {
     if (u.role === "superadmin") {
@@ -452,13 +471,14 @@ export const SuperAdminDashboard = () => {
                         <tr><td colSpan={5} className="p-8 text-center text-zinc-500 text-xs">Cargando...</td></tr>
                       ) : filteredUsers.length > 0 ? (
                         filteredUsers.map((u) => (
-                          <UserRow
+                        <UserRow
                             key={u.id}
                             user={u}
                             onRecharge={() => { setRechargeTarget(u); setRechargeAmount("10"); }}
                             onToggleActivation={() => handleToggleActivation(u)}
                             onAssignLicense={() => { setAssignTarget(u); setAssignDays(7); setAssignedResult(null); }}
                             onBlockToggle={() => handleBlockToggle(u)}
+                            onDelete={() => setDeleteTarget(u)}
                             toggling={togglingUserId === u.id}
                           />
                         ))
@@ -474,13 +494,14 @@ export const SuperAdminDashboard = () => {
                     <div className="p-6 text-center text-xs text-zinc-500">Cargando...</div>
                   ) : filteredUsers.length > 0 ? (
                     filteredUsers.map((u) => (
-                      <UserCard
+                    <UserCard
                         key={u.id}
                         user={u}
                         onRecharge={() => { setRechargeTarget(u); setRechargeAmount("10"); }}
                         onToggleActivation={() => handleToggleActivation(u)}
                         onAssignLicense={() => { setAssignTarget(u); setAssignDays(7); setAssignedResult(null); }}
                         onBlockToggle={() => handleBlockToggle(u)}
+                        onDelete={() => setDeleteTarget(u)}
                         toggling={togglingUserId === u.id}
                       />
                     ))
@@ -747,6 +768,31 @@ export const SuperAdminDashboard = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <Dialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+        <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-100 max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-sm font-semibold flex items-center gap-2">
+              <Trash2 className="w-4 h-4 text-destructive" /> Eliminar cuenta
+            </DialogTitle>
+            <DialogDescription className="text-xs text-zinc-500">
+              {deleteTarget?.email} — Esta acción no se puede deshacer.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-2">
+            <p className="text-xs text-zinc-400">
+              Se borrarán todos los datos del usuario: perfil, créditos, licencias y registros de IP.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setDeleteTarget(null)}>Cancelar</Button>
+            <Button onClick={handleDeleteUser} disabled={isDeleting} className="bg-destructive hover:bg-destructive/90">
+              {isDeleting ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : <Trash2 className="w-4 h-4 mr-2" />}
+              Eliminar definitivamente
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
@@ -780,10 +826,11 @@ type UserActionProps = {
   onToggleActivation: () => void;
   onAssignLicense: () => void;
   onBlockToggle: () => void;
+  onDelete: () => void;
   toggling: boolean;
 };
 
-const UserActions = ({ user, onRecharge, onToggleActivation, onAssignLicense, onBlockToggle, toggling }: UserActionProps) => {
+const UserActions = ({ user, onRecharge, onToggleActivation, onAssignLicense, onBlockToggle, onDelete, toggling }: UserActionProps) => {
   const isReseller = user.role === "reseller";
   const isSuper = user.role === "superadmin";
   const isBlocked = user.role === "blocked";
@@ -818,6 +865,16 @@ const UserActions = ({ user, onRecharge, onToggleActivation, onAssignLicense, on
           }`}
         >
           {toggling ? <RefreshCw className="w-3 h-3 animate-spin" /> : isBlocked ? "Desbloquear" : "Bloquear"}
+        </Button>
+      )}
+      {!isSuper && (
+        <Button
+          onClick={onDelete}
+          size="sm"
+          variant="outline"
+          className="h-8 px-2.5 text-xs border-zinc-700 bg-zinc-950 text-zinc-400 hover:text-destructive"
+        >
+          <Trash2 className="w-3 h-3 mr-1" /> Eliminar
         </Button>
       )}
       <Button onClick={onRecharge} size="sm" className="h-8 px-3 text-xs bg-primary hover:bg-primary/90 text-white">
