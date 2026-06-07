@@ -199,8 +199,8 @@ export const Auth = () => {
           </Button>
         </CardContent>
         <CardFooter className="justify-center pb-10">
-          <button 
-            onClick={() => setIsLogin(!isLogin)}
+        <button
+            onClick={() => { setIsLogin(!isLogin); setSignupSuccess(false); }}
             className="text-xs font-black uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors"
           >
             {isLogin ? "¿No tienes cuenta? Regístrate" : "¿Ya tienes cuenta? Entra aquí"}
