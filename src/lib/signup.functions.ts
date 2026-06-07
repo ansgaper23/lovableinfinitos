@@ -2,7 +2,8 @@ import { createServerFn } from "@tanstack/react-start";
 import { getRequestIP, getRequestHeader } from "@tanstack/react-start/server";
 import { z } from "zod";
 
-const MAX_ACCOUNTS_PER_IP = 2;
+const MAX_ACCOUNTS_PER_IP = 3;
+const TOO_MANY_ACCOUNTS_MESSAGE = "parece que tienes muchas cuentas y ningun plan activo :(";
 
 const SignupSchema = z.object({
   email: z.string().email().max(255),
@@ -14,24 +15,15 @@ export const registerWithIpLimit = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    // Resolve client IP (prefer x-forwarded-for, fallback to request IP)
+    // Resolve real client IP. Proxies/CDNs can rotate their own IP per request,
+    // so the forwarded/client IP must be preferred over the edge IP.
     const xff = getRequestHeader("x-forwarded-for");
     const cfIp = getRequestHeader("cf-connecting-ip");
     const realIp = getRequestHeader("x-real-ip");
-    const fwd = getRequestHeader("forwarded");
     const peer = getRequestIP({ xForwardedFor: true });
 
-    console.log("[signup] headers", { xff, cfIp, realIp, fwd, peer });
-
-    let ip =
-      cfIp ||
-      (xff ? xff.split(",")[0].trim() : null) ||
-      realIp ||
-      peer ||
-      "unknown";
+    let ip = peer || (xff ? xff.split(",")[0].trim() : null) || realIp || cfIp || "unknown";
     ip = ip.toString().slice(0, 64);
-
-    console.log("[signup] resolved ip", ip);
 
     // Count existing signups for this IP
     if (ip !== "unknown") {
@@ -46,9 +38,7 @@ export const registerWithIpLimit = createServerFn({ method: "POST" })
       }
 
       if ((count ?? 0) >= MAX_ACCOUNTS_PER_IP) {
-        throw new Error(
-          "Has alcanzado el límite de cuentas permitidas desde esta red. Contacta soporte si necesitas ayuda.",
-        );
+        throw new Error(TOO_MANY_ACCOUNTS_MESSAGE);
       }
     }
 
