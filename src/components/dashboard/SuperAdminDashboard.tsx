@@ -26,6 +26,7 @@ import { toast } from "sonner";
 import { resellerApi, ResellerStatus } from "@/services/resellerApi";
 import { useServerFn } from "@tanstack/react-start";
 import { setUserActivation, assignLicenseToUser, setUserRole, getAllUsers } from "@/lib/user-actions.functions";
+import { ExtensionUploadCard } from "./ExtensionUploadCard";
 
 interface ExtendedProfile extends Omit<Profile, 'reseller_api_token'> {
   reseller_api_token?: string | null;
@@ -511,6 +512,8 @@ export const SuperAdminDashboard = () => {
                     </CardContent>
                   </Card>
                 </div>
+
+                <ExtensionUploadCard />
               </>
             )}
 
