@@ -36,9 +36,11 @@ export const LandingPage = () => {
         <div className="container mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center gap-12">
             <div className="flex items-center gap-4 group">
-              <div className="w-12 h-12 bg-primary rounded-none flex items-center justify-center transform group-hover:rotate-180 transition-transform duration-700">
-                <span className="text-primary-foreground font-black text-2xl italic">L</span>
-              </div>
+              <img
+                src="/__l5e/assets-v1/c7b1c220-28ef-4fb7-b368-30cca589d56c/logo.png"
+                alt="Lovable Infinito Logo"
+                className="h-12 w-auto rounded-lg transform group-hover:scale-105 transition-transform duration-500"
+              />
               <div>
                 <span className="font-black text-2xl tracking-tighter italic block">LOVABLE INFINITO</span>
                 <span className="text-[10px] font-black tracking-[0.3em] text-primary uppercase">Elite Builder Access</span>
