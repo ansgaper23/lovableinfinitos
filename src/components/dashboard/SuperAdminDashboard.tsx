@@ -40,6 +40,10 @@ interface ExtendedProfile extends Omit<Profile, 'reseller_api_token'> {
   trial_expires_at?: string | null;
   has_assigned_license?: boolean;
   assigned_expires_at?: string | null;
+  licenses_total?: number;
+  licenses_trial?: number;
+  licenses_assigned?: number;
+  licenses_paid?: number;
 }
 
 export const SuperAdminDashboard = () => {
@@ -467,6 +471,7 @@ export const SuperAdminDashboard = () => {
                         <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">Usuario</th>
                         <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">Rol</th>
                         <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">Prueba</th>
+                        <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">Licencias</th>
                         <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">Créditos</th>
                         <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">Registro</th>
                         <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide text-right">Acciones</th>
@@ -474,7 +479,7 @@ export const SuperAdminDashboard = () => {
                     </thead>
                     <tbody>
                       {fetchingUsers ? (
-                        <tr><td colSpan={6} className="p-8 text-center text-zinc-500 text-xs">Cargando...</td></tr>
+                        <tr><td colSpan={7} className="p-8 text-center text-zinc-500 text-xs">Cargando...</td></tr>
                       ) : filteredUsers.length > 0 ? (
                         filteredUsers.map((u) => (
                         <UserRow
@@ -489,7 +494,7 @@ export const SuperAdminDashboard = () => {
                           />
                         ))
                       ) : (
-                        <tr><td colSpan={6} className="p-8 text-center text-zinc-500 text-xs">Sin resultados</td></tr>
+                        <tr><td colSpan={7} className="p-8 text-center text-zinc-500 text-xs">Sin resultados</td></tr>
                       )}
                     </tbody>
                   </table>
@@ -848,6 +853,25 @@ const TrialBadge = ({ user }: { user: ExtendedProfile }) => {
   );
 };
 
+const LicenseCountBadge = ({ user }: { user: ExtendedProfile }) => {
+  const total = user.licenses_total ?? 0;
+  const trial = user.licenses_trial ?? 0;
+  const assigned = user.licenses_assigned ?? 0;
+  const paid = user.licenses_paid ?? 0;
+  const tooltip = `Total: ${total}\nPrueba: ${trial}\nAsignadas: ${assigned}${paid ? `\nGeneradas (pago): ${paid}` : ""}`;
+  return (
+    <div title={tooltip} className="flex items-center gap-1.5 text-sm">
+      <Key className="w-3.5 h-3.5 text-primary" />
+      <span className="tabular-nums text-white">{total}</span>
+      {total > 0 && (
+        <span className="text-[10px] text-zinc-500">
+          ({paid > 0 ? `${paid}p · ` : ""}{assigned}a · {trial}t)
+        </span>
+      )}
+    </div>
+  );
+};
+
 const roleStyles = (role: string) => {
   if (role === "superadmin") return "border-destructive/30 bg-destructive/10 text-destructive";
   if (role === "reseller") return "border-primary/30 bg-primary/10 text-primary";
@@ -947,6 +971,9 @@ const UserRow = (props: UserActionProps) => {
         <TrialBadge user={user} />
       </td>
       <td className="px-4 py-3">
+        <LicenseCountBadge user={user} />
+      </td>
+      <td className="px-4 py-3">
         <div className="flex items-center gap-1.5 text-sm">
           <CreditCard className="w-3.5 h-3.5 text-primary" />
           <span className="tabular-nums">{user.credits ?? 0}</span>
@@ -983,13 +1010,14 @@ const UserCard = (props: UserActionProps) => {
       </div>
       <TrialBadge user={user} />
       <div className="flex items-center justify-between text-xs text-zinc-500">
+        <LicenseCountBadge user={user} />
         <div className="flex items-center gap-1.5">
           <CreditCard className="w-3.5 h-3.5 text-primary" />
           <span className="text-zinc-200 tabular-nums">{user.credits ?? 0}</span>
           <span>créditos</span>
         </div>
-        <span>{new Date(user.created_at).toLocaleDateString()}</span>
       </div>
+      <div className="text-xs text-zinc-500 text-right">{new Date(user.created_at).toLocaleDateString()}</div>
       <UserActions {...props} />
     </div>
   );
