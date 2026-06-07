@@ -494,13 +494,14 @@ export const SuperAdminDashboard = () => {
                     <div className="p-6 text-center text-xs text-zinc-500">Cargando...</div>
                   ) : filteredUsers.length > 0 ? (
                     filteredUsers.map((u) => (
-                      <UserCard
+                    <UserCard
                         key={u.id}
                         user={u}
                         onRecharge={() => { setRechargeTarget(u); setRechargeAmount("10"); }}
                         onToggleActivation={() => handleToggleActivation(u)}
                         onAssignLicense={() => { setAssignTarget(u); setAssignDays(7); setAssignedResult(null); }}
                         onBlockToggle={() => handleBlockToggle(u)}
+                        onDelete={() => setDeleteTarget(u)}
                         toggling={togglingUserId === u.id}
                       />
                     ))
