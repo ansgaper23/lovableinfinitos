@@ -1,3 +1,7 @@
 User-agent: *
 Allow: /
-Sitemap: https://lovable-infinito.com/sitemap.xml
+Disallow: /dashboard
+Disallow: /superadmin
+Disallow: /reseller
+
+Sitemap: https://lovableinfinitos.lovable.app/sitemap.xml
