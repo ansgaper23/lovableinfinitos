@@ -35,6 +35,11 @@ import { ExtensionUploadCard } from "./ExtensionUploadCard";
 interface ExtendedProfile extends Omit<Profile, 'reseller_api_token'> {
   reseller_api_token?: string | null;
   credits?: number;
+  trial_requested?: boolean;
+  trial_requested_at?: string | null;
+  trial_expires_at?: string | null;
+  has_assigned_license?: boolean;
+  assigned_expires_at?: string | null;
 }
 
 export const SuperAdminDashboard = () => {
