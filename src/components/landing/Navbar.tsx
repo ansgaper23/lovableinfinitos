@@ -48,7 +48,7 @@ export const Navbar = () => {
           <AuthButtons />
           <Button className="gap-2" asChild>
             <a
-              href="https://wa.me/51999999999?text=Hola,%20necesito%20soporte%20de%20Lovable%20Infinito"
+              href="https://wa.me/51936467898?text=Hola,%20necesito%20soporte%20de%20Lovable%20Infinito"
               target="_blank"
               rel="noopener noreferrer"
             >
