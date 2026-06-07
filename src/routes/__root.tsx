@@ -91,7 +91,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:locale", content: "es_ES" },
       { property: "og:locale:alternate", content: "es_MX" },
       { property: "og:site_name", content: "Lovable Infinito" },
-      { property: "og:url", content: "https://lovableinfinitos.lovable.app" },
+      { property: "og:url", content: "https://lovablefree.xyz" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@LovableInfinito" },
       { name: "robots", content: "index, follow, max-image-preview:large, max-snippet:-1" },
@@ -109,8 +109,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "icon",
         href: "/favicon.ico",
       },
-      { rel: "alternate", hrefLang: "es", href: "https://lovableinfinitos.lovable.app" },
-      { rel: "alternate", hrefLang: "x-default", href: "https://lovableinfinitos.lovable.app" },
+      { rel: "alternate", hrefLang: "es", href: "https://lovablefree.xyz" },
+      { rel: "alternate", hrefLang: "x-default", href: "https://lovablefree.xyz" },
     ],
   }),
 
@@ -126,7 +126,7 @@ function RootShell({ children }: { children: ReactNode }) {
     "@type": "WebApplication",
     "name": "Lovable Infinito",
     "alternateName": ["Lovable Gratis", "Créditos Lovable Ilimitados"],
-    "url": "https://lovableinfinitos.lovable.app",
+    "url": "https://lovablefree.xyz",
     "description": "Usa Lovable gratis con créditos ilimitados. Plataforma para builders hispanohablantes que necesitan Lovable AI sin límites.",
     "applicationCategory": "DeveloperApplication",
     "operatingSystem": "Web",
@@ -134,7 +134,7 @@ function RootShell({ children }: { children: ReactNode }) {
     "author": {
       "@type": "Organization",
       "name": "Lovable Infinito",
-      "url": "https://lovableinfinitos.lovable.app"
+      "url": "https://lovablefree.xyz"
     },
     "offers": {
       "@type": "Offer",
