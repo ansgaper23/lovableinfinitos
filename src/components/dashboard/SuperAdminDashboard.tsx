@@ -474,6 +474,7 @@ export const SuperAdminDashboard = () => {
                         <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">Prueba</th>
                         <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">Licencias</th>
                         <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">Créditos</th>
+                        <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">IP</th>
                         <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">Registro</th>
                         <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide text-right">Acciones</th>
                       </tr>
