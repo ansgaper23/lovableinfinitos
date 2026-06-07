@@ -3,12 +3,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft, CheckCircle } from "lucide-react";
+import { ArrowLeft, CheckCircle, AlertCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { toast } from "sonner";
 import { useNavigate, Link } from "@tanstack/react-router";
 import { registerWithIpLimit } from "@/lib/signup.functions";
+import { checkEmailExists } from "@/lib/auth-check.functions";
 
 
 
@@ -18,6 +19,7 @@ export const Auth = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [signupSuccess, setSignupSuccess] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const ALLOWED_DOMAINS = ["gmail.com", "googlemail.com", "hotmail.com", "outlook.com", "live.com", "hotmail.es", "outlook.es"];
@@ -45,6 +47,7 @@ export const Auth = () => {
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setErrorMsg(null);
 
     try {
       if (!email || !password) {
@@ -65,7 +68,20 @@ export const Auth = () => {
         });
         if (error) {
           if (error.message === "Invalid login credentials") {
-            throw new Error("Credenciales inválidas. Verifica tu email y contraseña.");
+            // Distinguir: ¿el correo existe o no?
+            try {
+              const { exists } = await checkEmailExists({ data: { email } });
+              if (!exists) {
+                throw new Error("Este correo no está registrado. Crea una cuenta primero.");
+              }
+            } catch (checkErr: any) {
+              if (checkErr?.message?.includes("no está registrado")) throw checkErr;
+              // si falla el check, caemos al mensaje genérico
+            }
+            throw new Error("Contraseña incorrecta. Verifica e intenta de nuevo.");
+          }
+          if (error.message?.toLowerCase().includes("email not confirmed")) {
+            throw new Error("Tu correo aún no está confirmado. Revisa tu bandeja de entrada.");
           }
           throw error;
         }
@@ -109,29 +125,36 @@ export const Auth = () => {
         msg.includes("límite") ||
         msg.includes("limite") ||
         msg.includes("esta red") ||
-        msg.includes("ip")
+        (msg.includes("ip") && !msg.includes("incorrect"))
       ) {
-        friendly = "parece que tienes muchas cuentas y ningun plan activo :(";
+        friendly = "Parece que tienes muchas cuentas y ningún plan activo :(";
+      } else if (msg.includes("no está registrado") || msg.includes("not registered")) {
+        friendly = "✉️ Este correo no está registrado. Crea una cuenta primero.";
+      } else if (msg.includes("contraseña incorrecta")) {
+        friendly = "🔒 Contraseña incorrecta. Verifica e intenta de nuevo.";
       } else if (msg.includes("correos temporales") || msg.includes("desechables") || msg.includes("disposable")) {
         friendly = "✉️ No se permiten correos temporales o desechables. Usa un correo real (Gmail, Hotmail u Outlook).";
-      } else if (msg.includes("gmail") || msg.includes("hotmail") || msg.includes("solo se aceptan")) {
+      } else if (msg.includes("solo se aceptan") || msg.includes("gmail o hotmail")) {
         friendly = "✉️ Solo se aceptan correos de Gmail o Hotmail/Outlook.";
       } else if (msg.includes("email inválido") || msg.includes("invalid email") || msg.includes("email_address_invalid")) {
         friendly = "✉️ El correo ingresado no es válido. Revisa el formato.";
-      } else if (msg.includes("ya está registrado") || msg.includes("already") || msg.includes("registered") || msg.includes("user_already_exists")) {
+      } else if (msg.includes("ya está registrado") || msg.includes("already registered") || msg.includes("user_already_exists")) {
         friendly = "⚠️ Este correo ya está registrado. Inicia sesión en su lugar.";
-      } else if (msg.includes("contraseña") || msg.includes("password") || msg.includes("6 caracteres")) {
+      } else if (msg.includes("email not confirmed") || msg.includes("no está confirmado")) {
+        friendly = "📩 Tu correo aún no está confirmado. Revisa tu bandeja de entrada.";
+      } else if (msg.includes("6 caracteres") || msg.includes("password should") || msg.includes("weak password")) {
         friendly = "🔒 La contraseña debe tener al menos 6 caracteres.";
       } else if (msg.includes("credenciales") || msg.includes("invalid login")) {
         friendly = "❌ Credenciales inválidas. Verifica tu email y contraseña.";
-      } else if (msg.includes("network") || msg.includes("failed to fetch") || msg.includes("fetch")) {
+      } else if (msg.includes("network") || msg.includes("failed to fetch")) {
         friendly = "📡 Error de conexión. Verifica tu internet e intenta de nuevo.";
       } else if (msg.includes("rate") || msg.includes("too many")) {
         friendly = "⏱️ Demasiados intentos. Espera unos minutos antes de volver a intentar.";
       } else if (!raw) {
-        friendly = "No se pudo crear la cuenta. Intenta nuevamente o contacta soporte.";
+        friendly = "No se pudo completar la operación. Intenta nuevamente o contacta soporte.";
       }
 
+      setErrorMsg(friendly);
       toast.error(friendly, { duration: 6000 });
     } finally {
       setLoading(false);
@@ -195,6 +218,15 @@ export const Auth = () => {
               </div>
             </div>
           )}
+          {errorMsg && (
+            <div className="mb-6 p-4 border border-red-500/40 bg-red-500/10 rounded-none flex items-start gap-3" role="alert">
+              <AlertCircle className="w-5 h-5 text-red-400 mt-0.5 shrink-0" />
+              <div className="flex-1">
+                <p className="text-sm font-bold text-red-400 uppercase tracking-wider">Error</p>
+                <p className="text-xs text-red-200/90 mt-1 leading-relaxed">{errorMsg}</p>
+              </div>
+            </div>
+          )}
           <form onSubmit={handleAuth} className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="email" className="text-xs font-black uppercase tracking-widest text-muted-foreground">Email</Label>
@@ -253,7 +285,7 @@ export const Auth = () => {
         </CardContent>
         <CardFooter className="justify-center pb-10">
         <button
-            onClick={() => { setIsLogin(!isLogin); setSignupSuccess(false); }}
+            onClick={() => { setIsLogin(!isLogin); setSignupSuccess(false); setErrorMsg(null); }}
             className="text-xs font-black uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors"
           >
             {isLogin ? "¿No tienes cuenta? Regístrate" : "¿Ya tienes cuenta? Entra aquí"}

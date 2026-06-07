@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { DevToolsGuard } from "@/components/security/DevToolsGuard";
+import { Toaster } from "sonner";
 
 function NotFoundComponent() {
   return (
@@ -162,6 +163,7 @@ function RootComponent() {
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
       <DevToolsGuard />
+      <Toaster theme="dark" position="top-center" richColors closeButton />
     </QueryClientProvider>
   );
 }
