@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { toast } from "sonner";
 import { useNavigate, Link } from "@tanstack/react-router";
+import { registerWithIpLimit } from "@/lib/signup.functions";
 
 
 
@@ -71,19 +72,21 @@ export const Auth = () => {
         toast.success("¡Bienvenido de nuevo!");
         navigate({ to: "/dashboard" });
       } else {
-        const { data, error } = await supabase.auth.signUp({
+        // Server-side signup with IP-based rate limit (max 2 cuentas por IP)
+        await registerWithIpLimit({ data: { email, password } });
+
+        // Auto sign-in after successful creation
+        const { error: signInError } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
-        if (error) throw error;
-
-        if (data.session) {
-          toast.success("¡Bienvenido! Tu cuenta ha sido creada.");
-          navigate({ to: "/dashboard" });
-        } else {
-          toast.success("¡Cuenta creada con éxito! Revisa tu correo o inicia sesión.");
+        if (signInError) {
+          toast.success("¡Cuenta creada! Inicia sesión.");
           setSignupSuccess(true);
           setIsLogin(true);
+        } else {
+          toast.success("¡Bienvenido! Tu cuenta ha sido creada.");
+          navigate({ to: "/dashboard" });
         }
       }
     } catch (error: any) {
