@@ -9,4 +9,28 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://lovablefree.xyz/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://lovablefree.xyz/" />
   </url>
+  <url>
+    <loc>https://lovablefree.xyz/precios</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://lovablefree.xyz/como-funciona</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lovablefree.xyz/faq</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lovablefree.xyz/legal</loc>
+    <lastmod>2026-06-07</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
 </urlset>
