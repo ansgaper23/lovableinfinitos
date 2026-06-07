@@ -256,6 +256,14 @@ export const SuperAdminDashboard = () => {
   };
 
 
+  const filteredUsers = useMemo(() => {
+    const q = searchTerm.toLowerCase();
+    if (!q) return users;
+    return users.filter(u =>
+      u.email?.toLowerCase().includes(q) ||
+      u.role?.toLowerCase().includes(q)
+    );
+  }, [users, searchTerm]);
 
   if (loading) {
     return <div className="min-h-screen bg-background flex items-center justify-center text-white">Cargando...</div>;
@@ -275,14 +283,6 @@ export const SuperAdminDashboard = () => {
     );
   }
 
-  const filteredUsers = useMemo(() => {
-    const q = searchTerm.toLowerCase();
-    if (!q) return users;
-    return users.filter(u =>
-      u.email?.toLowerCase().includes(q) ||
-      u.role?.toLowerCase().includes(q)
-    );
-  }, [users, searchTerm]);
 
   return (
     <div className="flex h-screen bg-[#0A0A0B] text-white overflow-hidden font-sans">
