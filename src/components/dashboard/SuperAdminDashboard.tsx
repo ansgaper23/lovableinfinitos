@@ -481,7 +481,7 @@ export const SuperAdminDashboard = () => {
                     </thead>
                     <tbody>
                       {fetchingUsers ? (
-                        <tr><td colSpan={7} className="p-8 text-center text-zinc-500 text-xs">Cargando...</td></tr>
+                        <tr><td colSpan={8} className="p-8 text-center text-zinc-500 text-xs">Cargando...</td></tr>
                       ) : filteredUsers.length > 0 ? (
                         filteredUsers.map((u) => (
                         <UserRow
