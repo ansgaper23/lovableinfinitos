@@ -179,6 +179,38 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* Accesibilidad: focus visible coherente con la marca */
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Tap targets cómodos en móvil */
+  @media (max-width: 767px) {
+    button, a, [role="button"] {
+      touch-action: manipulation;
+    }
+  }
+
+  /* Respeta usuarios que reducen movimiento */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 
   /* Custom Scrollbar - desktop only */
@@ -192,13 +224,13 @@
     }
 
     ::-webkit-scrollbar-thumb {
-      background: oklch(0.7 0.25 250 / 0.6);
-      border-radius: 0;
-      border: 1px solid oklch(0.7 0.25 250 / 0.1);
+      background: color-mix(in oklab, var(--color-primary) 55%, transparent);
+      border-radius: 8px;
+      border: 1px solid color-mix(in oklab, var(--color-primary) 15%, transparent);
     }
 
     ::-webkit-scrollbar-thumb:hover {
-      background: oklch(0.7 0.25 250 / 0.4);
+      background: var(--color-primary);
     }
   }
 
