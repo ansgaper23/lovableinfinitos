@@ -157,7 +157,7 @@ export const ResellerDashboard = () => {
     } catch (error: any) {
       // Reembolsar crédito si la API falló después de consumirlo
       if (creditConsumed) {
-        const { error: refundErr } = await supabase.rpc("refund_credit");
+        const { error: refundErr } = await (supabase.rpc as any)("refund_credit");
         if (refundErr) {
           console.error("refund_credit failed:", refundErr);
           toast.error("Crédito consumido pero el reembolso falló. Contacta al admin.");
