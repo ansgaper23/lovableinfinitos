@@ -853,6 +853,25 @@ const TrialBadge = ({ user }: { user: ExtendedProfile }) => {
   );
 };
 
+const LicenseCountBadge = ({ user }: { user: ExtendedProfile }) => {
+  const total = user.licenses_total ?? 0;
+  const trial = user.licenses_trial ?? 0;
+  const assigned = user.licenses_assigned ?? 0;
+  const paid = user.licenses_paid ?? 0;
+  const tooltip = `Total: ${total}\nPrueba: ${trial}\nAsignadas: ${assigned}${paid ? `\nGeneradas (pago): ${paid}` : ""}`;
+  return (
+    <div title={tooltip} className="flex items-center gap-1.5 text-sm">
+      <Key className="w-3.5 h-3.5 text-primary" />
+      <span className="tabular-nums text-white">{total}</span>
+      {total > 0 && (
+        <span className="text-[10px] text-zinc-500">
+          ({paid > 0 ? `${paid}p · ` : ""}{assigned}a · {trial}t)
+        </span>
+      )}
+    </div>
+  );
+};
+
 const roleStyles = (role: string) => {
   if (role === "superadmin") return "border-destructive/30 bg-destructive/10 text-destructive";
   if (role === "reseller") return "border-primary/30 bg-primary/10 text-primary";
