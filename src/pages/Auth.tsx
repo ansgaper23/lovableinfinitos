@@ -88,7 +88,6 @@ export const Auth = () => {
         toast.success("¡Bienvenido de nuevo!");
         navigate({ to: "/dashboard" });
       } else {
-      } else {
         // Server-side signup with IP-based rate limit (max 2 cuentas por IP)
         await registerWithIpLimit({ data: { email, password } });
 
