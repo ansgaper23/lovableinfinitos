@@ -46,9 +46,15 @@ export const Navbar = () => {
 
         <div className="flex items-center gap-3">
           <AuthButtons />
-          <Button className="gap-2">
-            <MessageCircle className="w-4 h-4" />
-            Soporte
+          <Button className="gap-2" asChild>
+            <a
+              href="https://wa.me/51999999999?text=Hola,%20necesito%20soporte%20de%20Lovable%20Infinito"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <MessageCircle className="w-4 h-4" />
+              Soporte
+            </a>
           </Button>
         </div>
       </div>

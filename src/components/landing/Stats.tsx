@@ -1,5 +1,4 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { Users, Code, Award, Zap } from "lucide-react";
+import { Users, Award, Zap, Rocket } from "lucide-react";
 
 export const Stats = () => {
   const stats = [
@@ -23,5 +22,3 @@ export const Stats = () => {
     </div>
   );
 };
-
-import { Rocket } from "lucide-react";
