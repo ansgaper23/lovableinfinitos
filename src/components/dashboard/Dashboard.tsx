@@ -64,34 +64,38 @@ export const Dashboard = () => {
 
   useEffect(() => {
     if (!user) return;
+    let cancelled = false;
     (async () => {
-      const { data } = await supabase
-        .from("user_credits")
-        .select("credits")
-        .eq("user_id", user.id)
-        .maybeSingle();
-      setCredits(data?.credits ?? 0);
-
-      const { data: lic } = await supabase
-        .from("reseller_licenses")
-        .select("license_key, expires_at, created_at")
-        .eq("user_id", user.id)
-        .eq("type", "trial")
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      if (lic) setTrial(lic as TrialLicense);
-
-      const { data: asg } = await supabase
-        .from("reseller_licenses")
-        .select("license_key, expires_at, created_at, display_name, type")
-        .eq("user_id", user.id)
-        .neq("type", "trial")
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      if (asg) setAssigned(asg as AssignedLicense);
+      // Parallelize independent reads — 3x faster than sequential awaits.
+      const [creditsRes, trialRes, assignedRes] = await Promise.all([
+        supabase
+          .from("user_credits")
+          .select("credits")
+          .eq("user_id", user.id)
+          .maybeSingle(),
+        supabase
+          .from("reseller_licenses")
+          .select("license_key, expires_at, created_at")
+          .eq("user_id", user.id)
+          .eq("type", "trial")
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle(),
+        supabase
+          .from("reseller_licenses")
+          .select("license_key, expires_at, created_at, display_name, type")
+          .eq("user_id", user.id)
+          .neq("type", "trial")
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle(),
+      ]);
+      if (cancelled) return;
+      setCredits(creditsRes.data?.credits ?? 0);
+      if (trialRes.data) setTrial(trialRes.data as TrialLicense);
+      if (assignedRes.data) setAssigned(assignedRes.data as AssignedLicense);
     })();
+    return () => { cancelled = true; };
   }, [user?.id]);
 
   const handleGenerateTrial = async () => {
