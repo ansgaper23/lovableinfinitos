@@ -17,6 +17,7 @@ export const LandingPage = () => {
       <main>
         <Hero />
         <Stats />
+        <HowItWorks />
         <Pricing />
         <FAQ />
       </main>
