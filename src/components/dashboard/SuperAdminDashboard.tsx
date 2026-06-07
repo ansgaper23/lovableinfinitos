@@ -284,269 +284,177 @@ export const SuperAdminDashboard = () => {
   }
 
 
+  const navItems = [
+    { id: "summary", label: "Resumen", icon: LayoutDashboard },
+    { id: "users", label: "Usuarios", icon: Users },
+    { id: "keys", label: "Licencias", icon: Key },
+    { id: "stats", label: "Estadísticas", icon: BarChart3 },
+    { id: "system", label: "Sistema", icon: Settings },
+  ] as const;
+
+  const activeLabel = navItems.find((n) => n.id === activeTab)?.label ?? "";
+
   return (
-    <div className="flex h-screen bg-[#0A0A0B] text-white overflow-hidden font-sans">
-      
-      
-      {/* Mobile Sidebar Toggle */}
-      <div className="lg:hidden fixed top-14 left-4 z-50">
-        <Button 
-          variant="outline" 
-          size="icon" 
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="bg-[#121214] border-white/5"
-        >
-          {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </Button>
-      </div>
+    <div className="min-h-screen bg-zinc-950 text-zinc-100 flex">
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/60 z-30 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
 
-      {/* Sidebar */}
-      <aside className={`
-        fixed inset-y-0 left-0 z-40 w-72 bg-[#121214] border-r border-white/5 
-        transition-transform duration-300 lg:static lg:translate-x-0
-        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-        flex flex-col pt-10
-      `}>
-        <div className="p-8 flex-1">
-          <div className="flex items-center gap-3 mb-12">
-            <div className="w-12 h-12 bg-gradient-to-br from-destructive to-red-900 rounded-xl flex items-center justify-center shadow-lg shadow-destructive/20 ring-1 ring-white/10">
-              <ShieldCheck className="text-white w-7 h-7" />
+      <aside
+        className={`fixed lg:sticky top-0 left-0 z-40 h-screen w-64 bg-zinc-900 border-r border-zinc-800 flex flex-col transition-transform duration-200 ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        } lg:translate-x-0`}
+      >
+        <div className="h-14 flex items-center justify-between px-5 border-b border-zinc-800">
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-md bg-destructive/15 flex items-center justify-center">
+              <ShieldCheck className="w-4 h-4 text-destructive" />
             </div>
-            <div>
-              <span className="font-black text-xl tracking-tighter italic block leading-none">SUPER<span className="text-destructive">ADMIN</span></span>
-              <span className="text-[10px] uppercase font-black tracking-[0.2em] text-muted-foreground opacity-50">Master Control</span>
-            </div>
+            <span className="text-sm font-semibold tracking-tight">SuperAdmin</span>
           </div>
-
-          <nav className="space-y-1">
-            <AdminNavItem 
-              icon={<LayoutDashboard className="w-4 h-4" />} 
-              label="Resumen General" 
-              active={activeTab === "summary"} 
-              onClick={() => { setActiveTab("summary"); setSidebarOpen(false); }}
-            />
-            <AdminNavItem 
-              icon={<Users className="w-4 h-4" />} 
-              label="Gestión Usuarios" 
-              active={activeTab === "users"} 
-              onClick={() => { setActiveTab("users"); setSidebarOpen(false); }}
-            />
-            <AdminNavItem 
-              icon={<Key className="w-4 h-4" />} 
-              label="Sistema Licencias" 
-              active={activeTab === "keys"} 
-              onClick={() => { setActiveTab("keys"); setSidebarOpen(false); }}
-            />
-            <AdminNavItem 
-              icon={<BarChart3 className="w-4 h-4" />} 
-              label="Estadísticas" 
-              active={activeTab === "stats"}
-              onClick={() => { setActiveTab("stats"); setSidebarOpen(false); }} 
-            />
-            <AdminNavItem 
-              icon={<Settings className="w-4 h-4" />} 
-              label="Configuración" 
-              active={activeTab === "system"}
-              onClick={() => { setActiveTab("system"); setSidebarOpen(false); }} 
-            />
-          </nav>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="lg:hidden h-8 w-8 text-zinc-400"
+            onClick={() => setSidebarOpen(false)}
+          >
+            <X className="w-4 h-4" />
+          </Button>
         </div>
 
-        <div className="p-6 border-t border-white/5 bg-[#0A0A0B]/50">
-          <div className="mb-4 px-4 py-3 rounded-lg bg-destructive/5 border border-destructive/10">
-            <p className="text-[10px] font-black uppercase text-destructive tracking-widest mb-1 text-center">Modo Administrador</p>
-            <p className="text-[11px] text-white/60 text-center leading-tight">Acceso total al núcleo del sistema</p>
-          </div>
-          <Button 
-            variant="ghost" 
-            onClick={async () => { await supabase.auth.signOut(); navigate({ to: "/" }); }} 
-            className="w-full justify-start gap-3 text-muted-foreground hover:text-white hover:bg-white/5 transition-all h-11 px-4 rounded-xl"
+        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+          {navItems.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => {
+                setActiveTab(item.id as typeof activeTab);
+                setSidebarOpen(false);
+              }}
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${
+                activeTab === item.id
+                  ? "bg-zinc-800 text-white"
+                  : "text-zinc-400 hover:text-white hover:bg-zinc-800/60"
+              }`}
+            >
+              <item.icon className="w-4 h-4" />
+              {item.label}
+            </button>
+          ))}
+        </nav>
+
+        <div className="p-3 border-t border-zinc-800">
+          <Button
+            variant="ghost"
+            onClick={async () => {
+              await supabase.auth.signOut();
+              navigate({ to: "/" });
+            }}
+            className="w-full justify-start gap-3 text-zinc-400 hover:text-white hover:bg-zinc-800 h-9 text-sm"
           >
             <LogOut className="w-4 h-4" />
-            <span className="text-xs font-bold uppercase tracking-widest">Cerrar Sesión</span>
+            Cerrar sesión
           </Button>
         </div>
       </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 overflow-y-auto bg-[#0A0A0B] relative pt-10">
-        {/* Background Gradients */}
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-destructive/5 rounded-full blur-[120px] -z-10 opacity-30 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] -z-10 opacity-30 pointer-events-none" />
+      <main className="flex-1 min-w-0 flex flex-col">
+        <header className="sticky top-0 z-20 h-14 bg-zinc-950/80 backdrop-blur border-b border-zinc-800 flex items-center px-4 lg:px-8 gap-3">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="lg:hidden h-9 w-9 text-zinc-400"
+            onClick={() => setSidebarOpen(true)}
+          >
+            <Menu className="w-5 h-5" />
+          </Button>
+          <h1 className="text-base sm:text-lg font-semibold tracking-tight">{activeLabel}</h1>
+          <div className="ml-auto flex items-center gap-2">
+            <Badge variant="outline" className="hidden sm:inline-flex border-zinc-700 bg-zinc-900 text-zinc-400 text-[10px]">
+              {profile?.email}
+            </Badge>
+          </div>
+        </header>
 
-        <div className="max-w-7xl mx-auto p-6 lg:p-10 space-y-10">
-          <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2">
-            <div>
-              <div className="flex items-center gap-3 mb-2">
-                <Badge variant="outline" className="rounded-full border-destructive/20 bg-destructive/5 text-destructive text-[10px] font-black px-3 py-1 uppercase tracking-widest">
-                  Panel Principal
-                </Badge>
-                <div className="h-[1px] w-12 bg-white/10" />
-                <span className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.3em]">v4.0.2 Stable</span>
+        <div className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto space-y-6">
+          {activeTab === "summary" && (
+            <>
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                <StatCard label="Usuarios" value={users.length.toString()} icon={<Users className="w-4 h-4" />} />
+                <StatCard label="Ingresos" value="S/ 0" icon={<DollarSign className="w-4 h-4" />} />
+                <StatCard
+                  label="Créditos API"
+                  value={resellerStatus ? `${resellerStatus.remaining}` : "—"}
+                  hint={resellerStatus ? `de ${resellerStatus.max}` : "Sin token"}
+                  icon={<CreditCard className="w-4 h-4" />}
+                />
+                <StatCard label="Alertas" value="0" hint="Estable" icon={<CheckCircle2 className="w-4 h-4 text-green-500" />} />
               </div>
-              <h1 className="text-4xl lg:text-5xl font-black italic tracking-tighter uppercase leading-none">
-                Panel de <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-white/40">Control</span>
-              </h1>
-            </div>
-            <div className="flex items-center gap-3">
-              <Button variant="outline" className="rounded-xl border-white/5 bg-white/5 hover:bg-white/10 uppercase font-black text-[10px] tracking-widest h-11 px-6 backdrop-blur-md">
-                <Globe className="w-3 h-3 mr-2 opacity-50" />
-                Ver Sitio
-              </Button>
-              <Button className="rounded-xl bg-destructive hover:bg-destructive/90 text-white uppercase font-black text-[10px] tracking-widest h-11 px-6 shadow-xl shadow-destructive/20 border-t border-white/20">
-                <Plus className="w-3 h-3 mr-2" />
-                Acción Rápida
-              </Button>
-            </div>
-          </header>
 
-          <div className="space-y-10">
-            {/* Tabs Content */}
-            {activeTab === "summary" && (
-              <>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                  <AdminStatCard title="Usuarios Totales" value={users.length.toString()} change="Real-time" icon={<Users className="text-destructive" />} />
-                  <AdminStatCard title="Ingresos (S/)" value="S/ 0" change="Sin datos" icon={<DollarSign className="text-destructive" />} />
-                  <AdminStatCard 
-                    title="Créditos API" 
-                    value={resellerStatus ? `${resellerStatus.remaining}/${resellerStatus.max}` : "N/A"} 
-                    change={resellerStatus ? `${resellerStatus.used} usados` : "Sin Token"} 
-                    icon={<CreditCard className="text-destructive" />} 
-                  />
-                  <AdminStatCard title="Alertas Sistema" value="0" subtitle="Todo estable" icon={<CheckCircle2 className="text-green-500" />} />
-                </div>
-
-                <Card className="rounded-2xl border-white/5 bg-[#121214] overflow-hidden group shadow-2xl">
-                  <div className="h-1 w-full bg-gradient-to-r from-destructive/0 via-destructive to-destructive/0 opacity-30 group-hover:opacity-100 transition-opacity duration-500" />
-                  <CardHeader className="pb-4">
-                    <div className="flex items-center gap-2 mb-1">
-                      <ShieldCheck className="w-4 h-4 text-destructive" />
-                      <CardTitle className="text-lg font-black italic tracking-tighter uppercase">API Reseller</CardTitle>
-                    </div>
-                    <CardDescription className="text-[10px] uppercase font-black tracking-widest text-muted-foreground">
-                      Token gestionado de forma segura en el servidor
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-3 pb-8">
-                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-green-500/5 border border-green-500/10">
-                      <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0" />
-                      <p className="text-xs text-white/70">
-                        El token nunca se expone al navegador. Todas las operaciones se ejecutan vía funciones de servidor protegidas.
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <Card className="rounded-2xl border-white/5 bg-[#121214] overflow-hidden group">
-                    <CardHeader className="flex flex-row items-center justify-between pb-6 border-b border-white/5 bg-white/[0.01]">
-                      <div>
-                        <CardTitle className="text-lg font-black italic tracking-tighter uppercase">Configuración Global</CardTitle>
-                        <CardDescription className="text-[10px] uppercase font-black tracking-widest text-muted-foreground">Reglas de negocio y visibilidad</CardDescription>
-                      </div>
-                      <Settings className="w-5 h-5 text-muted-foreground/30 group-hover:rotate-90 transition-transform duration-700" />
-                    </CardHeader>
-                    <CardContent className="p-0">
-                      <div className="divide-y divide-white/5">
-                        <div className="flex items-center justify-between p-6 hover:bg-white/[0.02] transition-colors group/item">
-                          <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center group-hover/item:bg-destructive/10 transition-colors">
-                              <AlertCircle className="w-5 h-5 text-muted-foreground group-hover/item:text-destructive transition-colors" />
-                            </div>
-                            <div>
-                              <p className="text-sm font-bold">Modo Mantenimiento</p>
-                              <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest opacity-60">Bloqueo temporal de acceso</p>
-                            </div>
-                          </div>
-                          <Badge variant="outline" className="border-white/10 bg-white/5 uppercase text-[9px] font-black px-3 py-1 tracking-widest">Inactivo</Badge>
-                        </div>
-                        <div className="flex items-center justify-between p-6 hover:bg-white/[0.02] transition-colors group/item">
-                          <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center group-hover/item:bg-green-500/10 transition-colors">
-                              <Globe className="w-5 h-5 text-muted-foreground group-hover/item:text-green-500 transition-colors" />
-                            </div>
-                            <div>
-                              <p className="text-sm font-bold">Registro Público</p>
-                              <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest opacity-60">Permitir nuevos usuarios</p>
-                            </div>
-                          </div>
-                          <Badge variant="outline" className="border-green-500/20 bg-green-500/10 text-green-500 uppercase text-[9px] font-black px-3 py-1 tracking-widest shadow-[0_0_10px_rgba(34,197,94,0.2)]">Activo</Badge>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="rounded-2xl border-white/5 bg-[#121214] overflow-hidden group flex flex-col">
-                    <CardHeader className="pb-6 border-b border-white/5 bg-white/[0.01]">
-                      <div className="flex items-center gap-2 mb-1">
-                        <Activity className="w-4 h-4 text-destructive" />
-                        <CardTitle className="text-lg font-black italic tracking-tighter uppercase">Barra Informativa</CardTitle>
-                      </div>
-                      <CardDescription className="text-[10px] uppercase font-black tracking-widest text-muted-foreground">Anuncio global con scroll infinito</CardDescription>
-                    </CardHeader>
-                    <CardContent className="flex-1 p-6 space-y-4 flex flex-col justify-center">
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-50">Contenido del Anuncio</label>
-                        <Input 
-                          defaultValue="OFERTA DE LANZAMIENTO: 50% DCTO EN EL PLAN PRO — UNETE AHORA" 
-                          className="rounded-xl border-white/5 bg-white/5 font-black uppercase italic text-[11px] h-13 tracking-tight focus:bg-white/[0.08]" 
-                        />
-                      </div>
-                      <Button className="w-full rounded-xl bg-white/10 hover:bg-white/15 text-white font-black italic uppercase tracking-widest text-[10px] h-13 border border-white/10">
-                        Propagar Cambios
-                      </Button>
-                    </CardContent>
-                  </Card>
-                </div>
-
-                <ExtensionUploadCard />
-              </>
-            )}
-
-            {activeTab === "users" && (
-              <Card className="rounded-2xl border-white/5 bg-[#121214] overflow-hidden shadow-2xl">
-                <CardHeader className="flex flex-row items-center justify-between pb-8 border-b border-white/5 bg-white/[0.01]">
-                  <div>
-                    <div className="flex items-center gap-3 mb-1">
-                      <div className="w-2 h-2 rounded-full bg-destructive animate-pulse" />
-                      <CardTitle className="text-xl font-black italic tracking-tighter uppercase">Usuarios Registrados</CardTitle>
-                    </div>
-                    <CardDescription className="text-[10px] uppercase font-black tracking-widest text-muted-foreground">Gestión total de cuentas y permisos</CardDescription>
-                  </div>
-                  <div className="relative w-72 group">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-destructive transition-colors" />
-                    <Input 
-                      placeholder="Buscar por email o rol..." 
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-12 rounded-xl border-white/5 bg-white/5 text-[11px] h-11 tracking-wide focus:bg-white/[0.08] transition-all" 
-                    />
-                  </div>
+              <Card className="bg-zinc-900 border-zinc-800">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm font-semibold flex items-center gap-2">
+                    <ShieldCheck className="w-4 h-4 text-destructive" /> API Reseller
+                  </CardTitle>
+                  <CardDescription className="text-xs text-zinc-500">
+                    Token gestionado en el servidor
+                  </CardDescription>
                 </CardHeader>
-                <CardContent className="p-0">
-                  <table className="w-full text-left border-collapse">
+                <CardContent>
+                  <div className="flex items-start gap-3 p-3 rounded-md bg-green-500/5 border border-green-500/15">
+                    <CheckCircle2 className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
+                    <p className="text-xs text-zinc-300 leading-relaxed">
+                      El token nunca se expone al navegador. Todas las operaciones se ejecutan vía funciones de servidor protegidas.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <ExtensionUploadCard />
+            </>
+          )}
+
+          {activeTab === "users" && (
+            <Card className="bg-zinc-900 border-zinc-800">
+              <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-4">
+                <div>
+                  <CardTitle className="text-sm font-semibold">Usuarios</CardTitle>
+                  <CardDescription className="text-xs text-zinc-500">
+                    {users.length} registrados
+                  </CardDescription>
+                </div>
+                <div className="relative w-full sm:w-64">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-500" />
+                  <Input
+                    placeholder="Buscar..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-9 h-9 bg-zinc-950 border-zinc-800 text-sm"
+                  />
+                </div>
+              </CardHeader>
+              <CardContent className="p-0">
+                <div className="hidden md:block overflow-x-auto">
+                  <table className="w-full text-left text-sm">
                     <thead>
-                      <tr className="border-b border-white/5 bg-white/[0.02]">
-                        <th className="p-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60">Identidad</th>
-                        <th className="p-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60">Privilegios</th>
-                        <th className="p-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60">Créditos</th>
-                        <th className="p-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60">Registro</th>
-                        <th className="p-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60 text-right">Acciones</th>
+                      <tr className="border-y border-zinc-800 bg-zinc-950/50">
+                        <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">Usuario</th>
+                        <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">Rol</th>
+                        <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">Créditos</th>
+                        <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">Registro</th>
+                        <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide text-right">Acciones</th>
                       </tr>
                     </thead>
                     <tbody>
                       {fetchingUsers ? (
-                        <tr><td colSpan={5} className="p-8 text-center text-muted-foreground italic uppercase text-xs">Cargando usuarios de la base de datos...</td></tr>
+                        <tr><td colSpan={5} className="p-8 text-center text-zinc-500 text-xs">Cargando...</td></tr>
                       ) : filteredUsers.length > 0 ? (
                         filteredUsers.map((u) => (
                           <UserRow
                             key={u.id}
-                            name={u.email?.split('@')[0] || 'Usuario'}
-                            email={u.email || 'N/A'}
-                            role={u.role || 'user'}
-                            credits={u.credits ?? 0}
-                            created={new Date(u.created_at).toLocaleDateString()}
+                            user={u}
                             onRecharge={() => { setRechargeTarget(u); setRechargeAmount("10"); }}
                             onToggleActivation={() => handleToggleActivation(u)}
                             onAssignLicense={() => { setAssignTarget(u); setAssignDays(7); setAssignedResult(null); }}
@@ -555,194 +463,219 @@ export const SuperAdminDashboard = () => {
                           />
                         ))
                       ) : (
-                        <tr><td colSpan={5} className="p-8 text-center text-muted-foreground italic uppercase text-xs">No se encontraron usuarios</td></tr>
+                        <tr><td colSpan={5} className="p-8 text-center text-zinc-500 text-xs">Sin resultados</td></tr>
                       )}
                     </tbody>
                   </table>
+                </div>
+
+                <div className="md:hidden divide-y divide-zinc-800">
+                  {fetchingUsers ? (
+                    <div className="p-6 text-center text-xs text-zinc-500">Cargando...</div>
+                  ) : filteredUsers.length > 0 ? (
+                    filteredUsers.map((u) => (
+                      <UserCard
+                        key={u.id}
+                        user={u}
+                        onRecharge={() => { setRechargeTarget(u); setRechargeAmount("10"); }}
+                        onToggleActivation={() => handleToggleActivation(u)}
+                        onAssignLicense={() => { setAssignTarget(u); setAssignDays(7); setAssignedResult(null); }}
+                        onBlockToggle={() => handleBlockToggle(u)}
+                        toggling={togglingUserId === u.id}
+                      />
+                    ))
+                  ) : (
+                    <div className="p-6 text-center text-xs text-zinc-500">Sin resultados</div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {activeTab === "keys" && (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+              <Card className="bg-zinc-900 border-zinc-800 lg:col-span-1">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm font-semibold flex items-center gap-2">
+                    <Plus className="w-4 h-4 text-destructive" /> Nueva licencia
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-1.5">
+                    <label className="text-xs text-zinc-400">Cliente</label>
+                    <Input
+                      placeholder="Nombre"
+                      value={keyDisplayName}
+                      onChange={(e) => setKeyDisplayName(e.target.value)}
+                      className="h-9 bg-zinc-950 border-zinc-800 text-sm"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs text-zinc-400">Plan</label>
+                    <Select value={keyType} onValueChange={(v: any) => setKeyType(v)}>
+                      <SelectTrigger className="h-9 bg-zinc-950 border-zinc-800 text-sm">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="bg-zinc-900 border-zinc-800">
+                        <SelectItem value="trial">Prueba (15 min)</SelectItem>
+                        <SelectItem value="days">Días</SelectItem>
+                        <SelectItem value="lifetime">Vitalicia</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  {keyType === "days" && (
+                    <div className="space-y-1.5">
+                      <label className="text-xs text-zinc-400">Días</label>
+                      <Input
+                        type="number"
+                        value={keyDays}
+                        onChange={(e) => setKeyDays(e.target.value)}
+                        className="h-9 bg-zinc-950 border-zinc-800 text-sm"
+                      />
+                    </div>
+                  )}
+                  <Button
+                    onClick={handleGenerateKey}
+                    disabled={isGeneratingKey || !keyDisplayName}
+                    className="w-full h-9 bg-destructive hover:bg-destructive/90 text-white text-sm"
+                  >
+                    {isGeneratingKey ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : <Key className="w-4 h-4 mr-2" />}
+                    Generar
+                  </Button>
                 </CardContent>
               </Card>
-            )}
 
-            {activeTab === "keys" && (
-              <div className="space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <Card className="rounded-2xl border-white/5 bg-[#121214] overflow-hidden shadow-2xl p-0">
-                    <div className="bg-white/[0.01] p-6 border-b border-white/5">
-                      <div className="flex items-center gap-3 mb-1">
-                        <div className="p-2 bg-destructive/10 rounded-lg">
-                          <Plus className="w-4 h-4 text-destructive" />
-                        </div>
-                        <h3 className="text-sm font-black italic uppercase tracking-tight">Forjar Nueva Llave</h3>
-                      </div>
-                      <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest opacity-60">Emisión de licencias al instante</p>
-                    </div>
-                    <div className="p-6 space-y-6">
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Identificador Cliente</label>
-                        <Input 
-                          placeholder="p.ej. Juan Pérez" 
-                          value={keyDisplayName}
-                          onChange={(e) => setKeyDisplayName(e.target.value)}
-                          className="rounded-xl border-white/5 bg-white/5 text-xs h-11 focus:bg-white/[0.08]" 
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Plan de Acceso</label>
-                        <Select value={keyType} onValueChange={(v: any) => setKeyType(v)}>
-                          <SelectTrigger className="rounded-xl border-white/5 bg-white/5 text-xs h-11 focus:bg-white/[0.08]">
-                            <SelectValue placeholder="Selecciona el plan" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-[#121214] border-white/10 rounded-xl overflow-hidden shadow-2xl">
-                            <SelectItem value="trial" className="focus:bg-destructive focus:text-white uppercase font-black text-[10px] py-3">⚡ PRUEBA (30 MIN)</SelectItem>
-                            <SelectItem value="days" className="focus:bg-destructive focus:text-white uppercase font-black text-[10px] py-3">📅 DÍAS ACTIVOS</SelectItem>
-                            <SelectItem value="lifetime" className="focus:bg-destructive focus:text-white uppercase font-black text-[10px] py-3">💎 VITALICIA (LIFETIME)</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      {keyType === "days" && (
-                        <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Duración (Días)</label>
-                          <Input 
-                            type="number"
-                            value={keyDays}
-                            onChange={(e) => setKeyDays(e.target.value)}
-                            className="rounded-xl border-white/5 bg-white/5 text-xs h-11 focus:bg-white/[0.08]" 
-                          />
-                        </div>
-                      )}
-                      <Button 
-                        onClick={handleGenerateKey}
-                        disabled={isGeneratingKey || !keyDisplayName}
-                        className="w-full rounded-xl bg-destructive hover:bg-destructive/90 text-white font-black italic uppercase tracking-[0.15em] text-[10px] h-14 shadow-xl shadow-destructive/20 border-t border-white/20 active:scale-[0.98] transition-all"
-                      >
-                        {isGeneratingKey ? <RefreshCw className="w-4 h-4 animate-spin mr-3" /> : <Key className="w-4 h-4 mr-3" />}
-                        GENERAR ACCESO MAESTRO
-                      </Button>
-                    </div>
-                  </Card>
-
-                  <div className="md:col-span-2">
-                    <Card className="rounded-2xl border-white/5 bg-[#121214] overflow-hidden shadow-2xl h-full flex flex-col">
-                      <CardHeader className="flex flex-row items-center justify-between border-b border-white/5 bg-white/[0.01] py-6">
-                        <div>
-                          <div className="flex items-center gap-2 mb-1">
-                            <Activity className="w-4 h-4 text-destructive" />
-                            <CardTitle className="text-xl font-black italic tracking-tighter uppercase">Historial Maestro</CardTitle>
-                          </div>
-                          <CardDescription className="text-[10px] uppercase font-black tracking-widest text-muted-foreground">Registro de llaves emitidas por el sistema</CardDescription>
-                        </div>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          onClick={fetchLicenses}
-                          disabled={isLoadingLicenses}
-                          className="text-muted-foreground hover:text-white hover:bg-white/5 rounded-xl transition-all"
-                        >
-                          <RefreshCw className={`w-4 h-4 ${isLoadingLicenses ? 'animate-spin' : ''}`} />
-                        </Button>
-                      </CardHeader>
-                      <CardContent className="p-0 overflow-auto max-h-[500px]">
-                        {isLoadingLicenses ? (
-                          <div className="p-8 text-center text-muted-foreground text-xs uppercase italic">Cargando licencias...</div>
-                        ) : licenses.length === 0 ? (
-                          <div className="p-8 text-center text-muted-foreground text-xs uppercase italic">No hay licencias generadas</div>
-                        ) : (
-                          <table className="w-full text-left border-collapse">
-                            <thead>
-                              <tr className="border-b border-white/5 bg-white/[0.02]">
-                                <th className="p-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60">Llave</th>
-                                <th className="p-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60">Cliente</th>
-                                <th className="p-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60 text-center">Estado</th>
-                                <th className="p-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60">Vencimiento</th>
-                                <th className="p-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60 text-right">Control</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {licenses.map((lic) => (
-                                <tr key={lic.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-all duration-300 group/row">
-                                  <td className="p-5">
-                                    <div className="flex items-center gap-3">
-                                      <div className="w-8 h-8 rounded-lg bg-destructive/5 flex items-center justify-center border border-destructive/10">
-                                        <Key className="w-3 h-3 text-destructive" />
-                                      </div>
-                                      <span className="font-mono text-[10px] text-destructive font-black tracking-wider bg-destructive/5 px-2 py-1 rounded border border-destructive/10">{lic.license_key}</span>
-                                    </div>
-                                  </td>
-                                  <td className="p-5">
-                                    <span className="text-xs font-bold uppercase tracking-tight text-white/80">{lic.display_name || "S/N"}</span>
-                                  </td>
-                                  <td className="p-5 text-center">
-                                    <Badge variant="outline" className={`rounded-lg uppercase text-[8px] font-black tracking-[0.1em] px-2 py-0.5 border-white/5 ${
-                                      lic.status === 'active' ? 'bg-green-500/10 text-green-500 border-green-500/20' : 
-                                      lic.status === 'trial' ? 'bg-blue-500/10 text-blue-500 border-blue-500/20' : 'bg-destructive/10 text-destructive border-destructive/20'
-                                    }`}>
-                                      {lic.status}
-                                    </Badge>
-                                  </td>
-                                  <td className="p-5">
-                                    <div className="flex items-center gap-2">
-                                      <Clock className="w-3 h-3 text-muted-foreground opacity-30" />
-                                      <span className="text-[10px] uppercase font-black text-muted-foreground opacity-60">
-                                        {lic.lifetime ? "VITALICIA" : lic.expires_at ? new Date(lic.expires_at).toLocaleDateString() : "N/A"}
-                                      </span>
-                                    </div>
-                                  </td>
-                                  <td className="p-5">
-                                    <div className="flex justify-end gap-2 opacity-0 group-hover/row:opacity-100 transition-opacity duration-300">
-                                      <Button 
-                                        variant="ghost" 
-                                        size="icon" 
-                                        onClick={() => handleResetHwid(lic.license_key)}
-                                        className="h-9 w-9 rounded-xl text-muted-foreground hover:text-white hover:bg-white/5"
-                                        title="Reset HWID"
-                                      >
-                                        <RefreshCw className="w-3.5 h-3.5" />
-                                      </Button>
-                                      <Button 
-                                        variant="ghost" 
-                                        size="icon" 
-                                        onClick={() => handleRevoke(lic.license_key)}
-                                        className="h-9 w-9 rounded-xl text-destructive hover:text-white hover:bg-destructive shadow-lg hover:shadow-destructive/20"
-                                        title="Revocar"
-                                      >
-                                        <XCircle className="w-3.5 h-3.5" />
-                                      </Button>
-                                    </div>
-                                  </td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        )}
-                      </CardContent>
-                    </Card>
+              <Card className="bg-zinc-900 border-zinc-800 lg:col-span-2">
+                <CardHeader className="flex flex-row items-center justify-between pb-3">
+                  <div>
+                    <CardTitle className="text-sm font-semibold">Historial</CardTitle>
+                    <CardDescription className="text-xs text-zinc-500">Licencias emitidas</CardDescription>
                   </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={fetchLicenses}
+                    disabled={isLoadingLicenses}
+                    className="h-8 w-8 text-zinc-400 hover:text-white"
+                  >
+                    <RefreshCw className={`w-4 h-4 ${isLoadingLicenses ? "animate-spin" : ""}`} />
+                  </Button>
+                </CardHeader>
+                <CardContent className="p-0">
+                  {isLoadingLicenses ? (
+                    <div className="p-6 text-center text-xs text-zinc-500">Cargando...</div>
+                  ) : licenses.length === 0 ? (
+                    <div className="p-6 text-center text-xs text-zinc-500">Sin licencias</div>
+                  ) : (
+                    <div className="divide-y divide-zinc-800 max-h-[500px] overflow-y-auto">
+                      {licenses.map((lic) => (
+                        <div key={lic.id} className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-3 text-sm hover:bg-zinc-950/50">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <Key className="w-3 h-3 text-destructive shrink-0" />
+                              <span className="font-mono text-xs text-zinc-200 truncate">{lic.license_key}</span>
+                            </div>
+                            <div className="flex items-center gap-2 text-xs text-zinc-500">
+                              <span className="truncate">{lic.display_name || "S/N"}</span>
+                              <span>·</span>
+                              <span>{lic.lifetime ? "Vitalicia" : lic.expires_at ? new Date(lic.expires_at).toLocaleDateString() : "N/A"}</span>
+                            </div>
+                          </div>
+                          <Badge variant="outline" className={`text-[10px] shrink-0 ${
+                            lic.status === "active" ? "border-green-500/30 bg-green-500/10 text-green-400" :
+                            lic.status === "trial" ? "border-blue-500/30 bg-blue-500/10 text-blue-400" :
+                            "border-destructive/30 bg-destructive/10 text-destructive"
+                          }`}>{lic.status}</Badge>
+                          <div className="flex gap-1 shrink-0">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleResetHwid(lic.license_key)}
+                              className="h-8 w-8 text-zinc-400 hover:text-white"
+                              title="Reset HWID"
+                            >
+                              <RefreshCw className="w-3.5 h-3.5" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleRevoke(lic.license_key)}
+                              className="h-8 w-8 text-zinc-400 hover:text-destructive"
+                              title="Revocar"
+                            >
+                              <XCircle className="w-3.5 h-3.5" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {activeTab === "stats" && (
+            <Card className="bg-zinc-900 border-zinc-800">
+              <CardHeader>
+                <CardTitle className="text-sm font-semibold">Estadísticas</CardTitle>
+                <CardDescription className="text-xs text-zinc-500">Próximamente</CardDescription>
+              </CardHeader>
+            </Card>
+          )}
+
+          {activeTab === "system" && (
+            <Card className="bg-zinc-900 border-zinc-800">
+              <CardHeader>
+                <CardTitle className="text-sm font-semibold">Sistema</CardTitle>
+                <CardDescription className="text-xs text-zinc-500">Configuración global</CardDescription>
+              </CardHeader>
+              <CardContent className="divide-y divide-zinc-800 pt-0">
+                <div className="flex items-center justify-between py-3">
+                  <div className="flex items-center gap-3">
+                    <AlertCircle className="w-4 h-4 text-zinc-400" />
+                    <div>
+                      <p className="text-sm">Modo mantenimiento</p>
+                      <p className="text-xs text-zinc-500">Bloqueo temporal</p>
+                    </div>
+                  </div>
+                  <Badge variant="outline" className="border-zinc-700 text-zinc-400 text-[10px]">Inactivo</Badge>
                 </div>
-              </div>
-            )}
-          </div>
+                <div className="flex items-center justify-between py-3">
+                  <div className="flex items-center gap-3">
+                    <Globe className="w-4 h-4 text-zinc-400" />
+                    <div>
+                      <p className="text-sm">Registro público</p>
+                      <p className="text-xs text-zinc-500">Permitir nuevos usuarios</p>
+                    </div>
+                  </div>
+                  <Badge variant="outline" className="border-green-500/30 bg-green-500/10 text-green-400 text-[10px]">Activo</Badge>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </main>
 
       <Dialog open={!!rechargeTarget} onOpenChange={(open) => !open && setRechargeTarget(null)}>
-        <DialogContent className="bg-[#121214] border-white/10 text-white">
+        <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-100 max-w-md">
           <DialogHeader>
-            <DialogTitle className="font-black italic uppercase tracking-tight">Recargar Créditos</DialogTitle>
-            <DialogDescription className="text-muted-foreground text-xs uppercase tracking-widest font-black">
+            <DialogTitle className="text-sm font-semibold">Recargar créditos</DialogTitle>
+            <DialogDescription className="text-xs text-zinc-500">
               {rechargeTarget?.email} · Actual: {rechargeTarget?.credits ?? 0}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-3 py-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Cantidad a sumar (use negativo para restar)</label>
+            <label className="text-xs text-zinc-400">Cantidad (use negativo para restar)</label>
             <Input
               type="number"
               value={rechargeAmount}
               onChange={(e) => setRechargeAmount(e.target.value)}
-              className="rounded-xl border-white/10 bg-white/5 h-12"
+              className="h-10 bg-zinc-950 border-zinc-800"
             />
             <div className="flex gap-2 flex-wrap">
-              {[5, 10, 25, 50, 100].map(n => (
-                <Button key={n} size="sm" variant="outline" onClick={() => setRechargeAmount(String(n))} className="rounded-lg border-white/10 bg-white/5 h-8 text-xs">
+              {[5, 10, 25, 50, 100].map((n) => (
+                <Button key={n} size="sm" variant="outline" onClick={() => setRechargeAmount(String(n))} className="h-8 text-xs border-zinc-700 bg-zinc-950">
                   +{n}
                 </Button>
               ))}
@@ -750,7 +683,7 @@ export const SuperAdminDashboard = () => {
           </div>
           <DialogFooter>
             <Button variant="ghost" onClick={() => setRechargeTarget(null)}>Cancelar</Button>
-            <Button onClick={handleRecharge} disabled={isRecharging} className="bg-primary hover:bg-primary/90 font-black uppercase italic tracking-widest text-[10px]">
+            <Button onClick={handleRecharge} disabled={isRecharging} className="bg-primary hover:bg-primary/90">
               {isRecharging ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : <Plus className="w-4 h-4 mr-2" />}
               Aplicar
             </Button>
@@ -758,66 +691,56 @@ export const SuperAdminDashboard = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Assign License Dialog */}
       <Dialog open={!!assignTarget} onOpenChange={(o) => { if (!o) { setAssignTarget(null); setAssignedResult(null); } }}>
-        <DialogContent className="bg-[#121214] border-white/10 rounded-2xl max-w-md">
+        <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-100 max-w-md">
           <DialogHeader>
-            <DialogTitle className="font-black italic uppercase tracking-tight flex items-center gap-2">
-              <Key className="w-4 h-4 text-destructive" /> Asignar Licencia
+            <DialogTitle className="text-sm font-semibold flex items-center gap-2">
+              <Key className="w-4 h-4 text-destructive" /> Asignar licencia
             </DialogTitle>
-            <DialogDescription className="text-muted-foreground text-xs uppercase tracking-widest font-black">
-              {assignTarget?.email}
-            </DialogDescription>
+            <DialogDescription className="text-xs text-zinc-500">{assignTarget?.email}</DialogDescription>
           </DialogHeader>
-
           {!assignedResult ? (
             <div className="space-y-4 py-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Duración</label>
+              <label className="text-xs text-zinc-400">Duración</label>
               <div className="grid grid-cols-4 gap-2">
                 {[1, 7, 30, 60].map((d) => (
                   <button
                     key={d}
                     onClick={() => setAssignDays(d as 1 | 7 | 30 | 60)}
-                    className={`rounded-xl border h-16 flex flex-col items-center justify-center transition-all ${
+                    className={`rounded-md border h-14 flex flex-col items-center justify-center transition-colors ${
                       assignDays === d
                         ? "border-destructive bg-destructive/15 text-white"
-                        : "border-white/10 bg-white/5 text-muted-foreground hover:border-white/20"
+                        : "border-zinc-800 bg-zinc-950 text-zinc-400 hover:border-zinc-700"
                     }`}
                   >
-                    <span className="text-xl font-black italic tracking-tighter">{d}</span>
-                    <span className="text-[9px] font-black uppercase tracking-widest opacity-70">{d === 1 ? "día" : "días"}</span>
+                    <span className="text-lg font-semibold">{d}</span>
+                    <span className="text-[10px] text-zinc-500">{d === 1 ? "día" : "días"}</span>
                   </button>
                 ))}
               </div>
-              <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest">
-                Se generará una licencia de {assignDays} {assignDays === 1 ? "día" : "días"} y se asignará a este usuario.
-              </p>
             </div>
           ) : (
             <div className="space-y-3 py-2">
-              <p className="text-[10px] font-black uppercase tracking-widest text-green-500">Licencia asignada</p>
-              <code className="block w-full font-mono text-xs text-white break-all bg-black/40 px-3 py-3 border border-white/10 rounded-lg">
+              <p className="text-xs text-green-500 font-medium">Licencia asignada</p>
+              <code className="block w-full font-mono text-xs break-all bg-zinc-950 px-3 py-2.5 border border-zinc-800 rounded-md">
                 {assignedResult.license_key}
               </code>
               {assignedResult.expires_at && (
-                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                  Expira: {new Date(assignedResult.expires_at).toLocaleString()}
-                </p>
+                <p className="text-xs text-zinc-500">Expira: {new Date(assignedResult.expires_at).toLocaleString()}</p>
               )}
             </div>
           )}
-
           <DialogFooter>
             {!assignedResult ? (
               <>
                 <Button variant="ghost" onClick={() => setAssignTarget(null)}>Cancelar</Button>
-                <Button onClick={handleAssignLicense} disabled={isAssigning} className="bg-destructive hover:bg-destructive/90 font-black uppercase italic tracking-widest text-[10px]">
+                <Button onClick={handleAssignLicense} disabled={isAssigning} className="bg-destructive hover:bg-destructive/90">
                   {isAssigning ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : <Key className="w-4 h-4 mr-2" />}
-                  Asignar {assignDays}{assignDays === 1 ? "d" : "d"}
+                  Asignar
                 </Button>
               </>
             ) : (
-              <Button onClick={() => { setAssignTarget(null); setAssignedResult(null); }} className="bg-primary hover:bg-primary/90 font-black uppercase italic tracking-widest text-[10px]">
+              <Button onClick={() => { setAssignTarget(null); setAssignedResult(null); }} className="bg-primary hover:bg-primary/90">
                 Cerrar
               </Button>
             )}
@@ -828,133 +751,147 @@ export const SuperAdminDashboard = () => {
   );
 };
 
-const AdminNavItem = ({ 
-  icon, 
-  label, 
-  active = false, 
-  onClick 
-}: { 
-  icon: React.ReactNode, 
-  label: string, 
-  active?: boolean,
-  onClick: () => void
-}) => (
-  <button 
-    onClick={onClick}
-    className={`w-full flex items-center gap-4 px-6 py-4 transition-all duration-300 relative group overflow-hidden ${
-      active 
-        ? 'text-white' 
-        : 'text-muted-foreground hover:text-white'
-    }`}
-  >
-    {active && (
-      <div className="absolute inset-0 bg-destructive/10 border-r-4 border-destructive" />
-    )}
-    <div className={`relative z-10 p-2 rounded-lg transition-colors ${active ? 'bg-destructive text-white shadow-lg shadow-destructive/20' : 'bg-white/5 group-hover:bg-white/10'}`}>
-      {icon}
-    </div>
-    <span className="relative z-10 font-bold uppercase tracking-[0.15em] text-[11px] italic">
-      {label}
-    </span>
-  </button>
-);
-
-const AdminStatCard = ({ title, value, change, icon, subtitle }: { title: string, value: string, change?: string, icon: React.ReactNode, subtitle?: string }) => (
-  <Card className="relative overflow-hidden group bg-[#121214] border-white/5 hover:border-destructive/20 transition-all duration-500 rounded-2xl">
-    <div className="absolute top-0 left-0 w-1 h-full bg-destructive/20 group-hover:bg-destructive transition-all" />
-    <CardContent className="p-6">
-      <div className="flex justify-between items-start">
-        <div className="p-3 bg-destructive/10 rounded-xl text-destructive group-hover:scale-110 transition-transform duration-500">
-          {icon}
-        </div>
-        {change && (
-          <Badge variant="outline" className="border-green-500/20 bg-green-500/5 text-green-500 text-[9px] font-black uppercase tracking-widest px-2 py-0">
-            {change}
-          </Badge>
-        )}
+const StatCard = ({ label, value, hint, icon }: { label: string; value: string; hint?: string; icon: React.ReactNode }) => (
+  <Card className="bg-zinc-900 border-zinc-800">
+    <CardContent className="p-4">
+      <div className="flex items-center justify-between mb-3 text-zinc-400">
+        <span className="text-xs">{label}</span>
+        {icon}
       </div>
-      <div className="mt-6">
-        <p className="text-[10px] font-black tracking-[0.2em] text-muted-foreground uppercase mb-2">{title}</p>
-        <div className="flex items-baseline gap-2">
-          <h3 className="text-3xl font-black italic tracking-tighter text-white">{value}</h3>
-          {subtitle && <span className="text-[10px] text-muted-foreground uppercase font-medium">{subtitle}</span>}
-        </div>
-      </div>
+      <div className="text-xl sm:text-2xl font-semibold text-white tabular-nums">{value}</div>
+      {hint && <div className="text-[11px] text-zinc-500 mt-0.5">{hint}</div>}
     </CardContent>
   </Card>
 );
 
-const UserRow = ({ name, email, role, credits, created, onRecharge, onToggleActivation, onAssignLicense, onBlockToggle, toggling }: { name: string, email: string, role: string, credits: number, created: string, onRecharge: () => void, onToggleActivation: () => void, onAssignLicense: () => void, onBlockToggle: () => void, toggling: boolean }) => {
-  const isReseller = role === 'reseller';
-  const isSuper = role === 'superadmin';
-  const isBlocked = role === 'blocked';
-  const roleLabel = role === 'user' ? 'pendiente' : role === 'blocked' ? 'bloqueado' : role;
-  const roleBadge = isSuper
-    ? 'bg-destructive/10 text-destructive border-destructive/20'
-    : isReseller
-      ? 'bg-primary/10 text-primary border-primary/20'
-      : isBlocked
-        ? 'bg-red-500/10 text-red-400 border-red-500/20'
-        : 'bg-amber-500/10 text-amber-400 border-amber-500/20';
+const roleStyles = (role: string) => {
+  if (role === "superadmin") return "border-destructive/30 bg-destructive/10 text-destructive";
+  if (role === "reseller") return "border-primary/30 bg-primary/10 text-primary";
+  if (role === "blocked") return "border-red-500/30 bg-red-500/10 text-red-400";
+  return "border-amber-500/30 bg-amber-500/10 text-amber-400";
+};
+
+const roleLabelOf = (role: string) =>
+  role === "user" ? "pendiente" : role === "blocked" ? "bloqueado" : role;
+
+type UserActionProps = {
+  user: ExtendedProfile;
+  onRecharge: () => void;
+  onToggleActivation: () => void;
+  onAssignLicense: () => void;
+  onBlockToggle: () => void;
+  toggling: boolean;
+};
+
+const UserActions = ({ user, onRecharge, onToggleActivation, onAssignLicense, onBlockToggle, toggling }: UserActionProps) => {
+  const isReseller = user.role === "reseller";
+  const isSuper = user.role === "superadmin";
+  const isBlocked = user.role === "blocked";
   return (
-  <tr className="border-b border-white/5 hover:bg-white/[0.02] transition-all duration-300 group">
-    <td className="p-5">
-      <div className="flex items-center gap-3">
-        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-white/10 to-white/5 flex items-center justify-center font-black text-xs border border-white/10 group-hover:border-destructive/30 transition-colors">
-          {name.charAt(0).toUpperCase()}
-        </div>
-        <div>
-          <p className="font-bold text-sm text-white group-hover:text-destructive transition-colors">{name}</p>
-          <p className="text-[10px] text-muted-foreground uppercase font-black tracking-wider opacity-60">{email}</p>
-        </div>
-      </div>
-    </td>
-    <td className="p-5">
-      <Badge variant="outline" className={`rounded-lg border-white/10 uppercase text-[9px] font-black px-2.5 py-0.5 tracking-widest ${roleBadge}`}>{roleLabel}</Badge>
-    </td>
-    <td className="p-5">
-      <div className="flex items-center gap-2">
-        <CreditCard className="w-3.5 h-3.5 text-primary" />
-        <span className="text-sm font-black text-white tabular-nums">{credits}</span>
-      </div>
-    </td>
-    <td className="p-5 text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-50">{created}</td>
-    <td className="p-5 text-right">
-      <div className="flex justify-end gap-2 flex-wrap">
-        {!isSuper && !isBlocked && (
-          <Button
-            onClick={onToggleActivation}
-            disabled={toggling}
-            size="sm"
-            className={`rounded-lg font-black italic uppercase tracking-widest text-[10px] h-9 px-3 ${
-              isReseller
-                ? 'bg-amber-500/15 hover:bg-amber-500/25 text-amber-400 border border-amber-500/30'
-                : 'bg-green-500/15 hover:bg-green-500/25 text-green-400 border border-green-500/30'
-            }`}
-          >
-            {toggling ? <RefreshCw className="w-3 h-3 animate-spin" /> : (isReseller ? 'Quitar Reseller' : 'Hacer Reseller')}
-          </Button>
-        )}
-        {!isSuper && !isReseller && !isBlocked && (
-          <Button onClick={onAssignLicense} size="sm" className="rounded-lg bg-destructive/15 hover:bg-destructive/25 text-destructive border border-destructive/30 font-black italic uppercase tracking-widest text-[10px] h-9 px-3">
-            <Key className="w-3 h-3 mr-1" /> Asignar
-          </Button>
-        )}
-        {!isSuper && (
-          <Button onClick={onBlockToggle} disabled={toggling} size="sm" className={`rounded-lg font-black italic uppercase tracking-widest text-[10px] h-9 px-3 ${
-            isBlocked
-              ? 'bg-green-500/15 hover:bg-green-500/25 text-green-400 border border-green-500/30'
-              : 'bg-red-500/15 hover:bg-red-500/25 text-red-400 border border-red-500/30'
-          }`}>
-            {toggling ? <RefreshCw className="w-3 h-3 animate-spin" /> : (isBlocked ? 'Desbloquear' : 'Bloquear')}
-          </Button>
-        )}
-        <Button onClick={onRecharge} size="sm" className="rounded-lg bg-primary hover:bg-primary/90 text-white font-black italic uppercase tracking-widest text-[10px] h-9 px-4">
-          <Plus className="w-3 h-3 mr-1" /> Recargar
+    <div className="flex flex-wrap justify-end gap-1.5">
+      {!isSuper && !isBlocked && (
+        <Button
+          onClick={onToggleActivation}
+          disabled={toggling}
+          size="sm"
+          variant="outline"
+          className={`h-8 px-2.5 text-xs border-zinc-700 bg-zinc-950 ${
+            isReseller ? "text-amber-400 hover:text-amber-300" : "text-green-400 hover:text-green-300"
+          }`}
+        >
+          {toggling ? <RefreshCw className="w-3 h-3 animate-spin" /> : isReseller ? "Quitar reseller" : "Hacer reseller"}
         </Button>
-      </div>
-    </td>
-  </tr>
+      )}
+      {!isSuper && !isReseller && !isBlocked && (
+        <Button onClick={onAssignLicense} size="sm" variant="outline" className="h-8 px-2.5 text-xs border-zinc-700 bg-zinc-950 text-destructive hover:text-destructive">
+          <Key className="w-3 h-3 mr-1" /> Asignar
+        </Button>
+      )}
+      {!isSuper && (
+        <Button
+          onClick={onBlockToggle}
+          disabled={toggling}
+          size="sm"
+          variant="outline"
+          className={`h-8 px-2.5 text-xs border-zinc-700 bg-zinc-950 ${
+            isBlocked ? "text-green-400" : "text-red-400"
+          }`}
+        >
+          {toggling ? <RefreshCw className="w-3 h-3 animate-spin" /> : isBlocked ? "Desbloquear" : "Bloquear"}
+        </Button>
+      )}
+      <Button onClick={onRecharge} size="sm" className="h-8 px-3 text-xs bg-primary hover:bg-primary/90 text-white">
+        <Plus className="w-3 h-3 mr-1" /> Recargar
+      </Button>
+    </div>
   );
 };
 
+const UserRow = (props: UserActionProps) => {
+  const { user } = props;
+  const name = user.email?.split("@")[0] || "Usuario";
+  return (
+    <tr className="border-b border-zinc-800 hover:bg-zinc-950/50">
+      <td className="px-4 py-3">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-xs font-medium">
+            {name.charAt(0).toUpperCase()}
+          </div>
+          <div className="min-w-0">
+            <p className="text-sm text-white truncate">{name}</p>
+            <p className="text-xs text-zinc-500 truncate">{user.email}</p>
+          </div>
+        </div>
+      </td>
+      <td className="px-4 py-3">
+        <Badge variant="outline" className={`text-[10px] ${roleStyles(user.role || "user")}`}>
+          {roleLabelOf(user.role || "user")}
+        </Badge>
+      </td>
+      <td className="px-4 py-3">
+        <div className="flex items-center gap-1.5 text-sm">
+          <CreditCard className="w-3.5 h-3.5 text-primary" />
+          <span className="tabular-nums">{user.credits ?? 0}</span>
+        </div>
+      </td>
+      <td className="px-4 py-3 text-xs text-zinc-500">
+        {new Date(user.created_at).toLocaleDateString()}
+      </td>
+      <td className="px-4 py-3 text-right">
+        <UserActions {...props} />
+      </td>
+    </tr>
+  );
+};
+
+const UserCard = (props: UserActionProps) => {
+  const { user } = props;
+  const name = user.email?.split("@")[0] || "Usuario";
+  return (
+    <div className="p-4 space-y-3">
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-9 h-9 rounded-full bg-zinc-800 flex items-center justify-center text-sm font-medium shrink-0">
+            {name.charAt(0).toUpperCase()}
+          </div>
+          <div className="min-w-0">
+            <p className="text-sm text-white truncate">{name}</p>
+            <p className="text-xs text-zinc-500 truncate">{user.email}</p>
+          </div>
+        </div>
+        <Badge variant="outline" className={`text-[10px] shrink-0 ${roleStyles(user.role || "user")}`}>
+          {roleLabelOf(user.role || "user")}
+        </Badge>
+      </div>
+      <div className="flex items-center justify-between text-xs text-zinc-500">
+        <div className="flex items-center gap-1.5">
+          <CreditCard className="w-3.5 h-3.5 text-primary" />
+          <span className="text-zinc-200 tabular-nums">{user.credits ?? 0}</span>
+          <span>créditos</span>
+        </div>
+        <span>{new Date(user.created_at).toLocaleDateString()}</span>
+      </div>
+      <UserActions {...props} />
+    </div>
+  );
+};
