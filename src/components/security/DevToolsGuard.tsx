@@ -17,7 +17,7 @@ export const DevToolsGuard = () => {
     if (import.meta.env.DEV) return;
 
     const blockKeys = (e: KeyboardEvent) => {
-      const k = e.key.toLowerCase();
+      const k = (e.key ?? "").toLowerCase();
       if (
         e.key === "F12" ||
         (e.ctrlKey && e.shiftKey && (k === "i" || k === "j" || k === "c")) ||
