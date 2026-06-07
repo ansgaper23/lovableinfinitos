@@ -198,9 +198,6 @@ export const SuperAdminDashboard = () => {
     }
   };
 
-  const updateToken = async () => {
-    toast.info("El token del proveedor se gestiona de forma segura en el servidor.");
-  };
 
   const handleGenerateKey = async () => {
     setIsGeneratingKey(true);
