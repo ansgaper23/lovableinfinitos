@@ -799,10 +799,11 @@ type UserActionProps = {
   onToggleActivation: () => void;
   onAssignLicense: () => void;
   onBlockToggle: () => void;
+  onDelete: () => void;
   toggling: boolean;
 };
 
-const UserActions = ({ user, onRecharge, onToggleActivation, onAssignLicense, onBlockToggle, toggling }: UserActionProps) => {
+const UserActions = ({ user, onRecharge, onToggleActivation, onAssignLicense, onBlockToggle, onDelete, toggling }: UserActionProps) => {
   const isReseller = user.role === "reseller";
   const isSuper = user.role === "superadmin";
   const isBlocked = user.role === "blocked";
@@ -837,6 +838,16 @@ const UserActions = ({ user, onRecharge, onToggleActivation, onAssignLicense, on
           }`}
         >
           {toggling ? <RefreshCw className="w-3 h-3 animate-spin" /> : isBlocked ? "Desbloquear" : "Bloquear"}
+        </Button>
+      )}
+      {!isSuper && (
+        <Button
+          onClick={onDelete}
+          size="sm"
+          variant="outline"
+          className="h-8 px-2.5 text-xs border-zinc-700 bg-zinc-950 text-zinc-400 hover:text-destructive"
+        >
+          <Trash2 className="w-3 h-3 mr-1" /> Eliminar
         </Button>
       )}
       <Button onClick={onRecharge} size="sm" className="h-8 px-3 text-xs bg-primary hover:bg-primary/90 text-white">
