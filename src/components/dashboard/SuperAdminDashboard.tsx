@@ -768,6 +768,31 @@ export const SuperAdminDashboard = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <Dialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+        <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-100 max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-sm font-semibold flex items-center gap-2">
+              <Trash2 className="w-4 h-4 text-destructive" /> Eliminar cuenta
+            </DialogTitle>
+            <DialogDescription className="text-xs text-zinc-500">
+              {deleteTarget?.email} — Esta acción no se puede deshacer.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-2">
+            <p className="text-xs text-zinc-400">
+              Se borrarán todos los datos del usuario: perfil, créditos, licencias y registros de IP.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setDeleteTarget(null)}>Cancelar</Button>
+            <Button onClick={handleDeleteUser} disabled={isDeleting} className="bg-destructive hover:bg-destructive/90">
+              {isDeleting ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : <Trash2 className="w-4 h-4 mr-2" />}
+              Eliminar definitivamente
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
