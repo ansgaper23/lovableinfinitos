@@ -44,6 +44,7 @@ interface ExtendedProfile extends Omit<Profile, 'reseller_api_token'> {
   licenses_trial?: number;
   licenses_assigned?: number;
   licenses_paid?: number;
+  signup_ip?: string | null;
 }
 
 export const SuperAdminDashboard = () => {
