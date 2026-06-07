@@ -18,6 +18,28 @@ export const Auth = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  const ALLOWED_DOMAINS = ["gmail.com", "googlemail.com", "hotmail.com", "outlook.com", "live.com", "hotmail.es", "outlook.es"];
+  const DISPOSABLE_DOMAINS = new Set([
+    "mailinator.com","tempmail.com","temp-mail.org","temp-mail.io","10minutemail.com","guerrillamail.com",
+    "yopmail.com","trashmail.com","throwawaymail.com","fakeinbox.com","getnada.com","nada.email",
+    "maildrop.cc","sharklasers.com","dispostable.com","mintemail.com","mohmal.com","tempinbox.com",
+    "tempmailo.com","tmpmail.org","tmpmail.net","emailondeck.com","mailnesia.com","tempr.email",
+    "moakt.com","mailpoof.com","spambox.us","mail-temp.com","tempmail.plus","luxusmail.org",
+    "inboxbear.com","mailcatch.com","wegwerfemail.de","20minutemail.com","mailtemp.info"
+  ]);
+
+  const validateSignupEmail = (raw: string) => {
+    const e = raw.trim().toLowerCase();
+    const domain = e.split("@")[1];
+    if (!domain) throw new Error("Email inválido.");
+    if (DISPOSABLE_DOMAINS.has(domain)) {
+      throw new Error("No se permiten correos temporales o desechables.");
+    }
+    if (!ALLOWED_DOMAINS.includes(domain)) {
+      throw new Error("Solo se aceptan correos de Gmail o Hotmail/Outlook.");
+    }
+  };
+
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -27,8 +49,11 @@ export const Auth = () => {
         throw new Error("Por favor, completa todos los campos.");
       }
 
-      if (!isLogin && password.length < 6) {
-        throw new Error("La contraseña debe tener al menos 6 caracteres.");
+      if (!isLogin) {
+        validateSignupEmail(email);
+        if (password.length < 6) {
+          throw new Error("La contraseña debe tener al menos 6 caracteres.");
+        }
       }
 
       if (isLogin) {
