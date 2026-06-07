@@ -103,8 +103,8 @@ export const Auth = () => {
 
       let friendly = raw || "No se pudo completar la operación. Intenta nuevamente.";
 
-      if (msg.includes("límite") || msg.includes("limite") || msg.includes("esta red") || msg.includes("ip")) {
-        friendly = "🚫 Has alcanzado el límite de cuentas permitidas desde esta red (máx. 2). Si necesitas más, contacta soporte.";
+      if (msg.includes("muchas cuentas") || msg.includes("ningun plan activo") || msg.includes("límite") || msg.includes("limite") || msg.includes("esta red") || msg.includes("ip")) {
+        friendly = "parece que tienes muchas cuentas y ningun plan activo :(";
       } else if (msg.includes("correos temporales") || msg.includes("desechables") || msg.includes("disposable")) {
         friendly = "✉️ No se permiten correos temporales o desechables. Usa un correo real (Gmail, Hotmail u Outlook).";
       } else if (msg.includes("gmail") || msg.includes("hotmail") || msg.includes("solo se aceptan")) {
