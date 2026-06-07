@@ -91,7 +91,41 @@ export const Auth = () => {
       }
     } catch (error: any) {
       console.error("Auth error:", error);
-      toast.error(error.message || "Ocurrió un error");
+      // Extraer mensaje real desde distintos formatos (serverFn, supabase, Error)
+      const raw =
+        error?.message ||
+        error?.body?.message ||
+        error?.data?.message ||
+        error?.error?.message ||
+        (typeof error === "string" ? error : "") ||
+        "";
+      const msg = raw.toLowerCase();
+
+      let friendly = raw || "No se pudo completar la operación. Intenta nuevamente.";
+
+      if (msg.includes("límite") || msg.includes("limite") || msg.includes("esta red") || msg.includes("ip")) {
+        friendly = "🚫 Has alcanzado el límite de cuentas permitidas desde esta red (máx. 2). Si necesitas más, contacta soporte.";
+      } else if (msg.includes("correos temporales") || msg.includes("desechables") || msg.includes("disposable")) {
+        friendly = "✉️ No se permiten correos temporales o desechables. Usa un correo real (Gmail, Hotmail u Outlook).";
+      } else if (msg.includes("gmail") || msg.includes("hotmail") || msg.includes("solo se aceptan")) {
+        friendly = "✉️ Solo se aceptan correos de Gmail o Hotmail/Outlook.";
+      } else if (msg.includes("email inválido") || msg.includes("invalid email") || msg.includes("email_address_invalid")) {
+        friendly = "✉️ El correo ingresado no es válido. Revisa el formato.";
+      } else if (msg.includes("ya está registrado") || msg.includes("already") || msg.includes("registered") || msg.includes("user_already_exists")) {
+        friendly = "⚠️ Este correo ya está registrado. Inicia sesión en su lugar.";
+      } else if (msg.includes("contraseña") || msg.includes("password") || msg.includes("6 caracteres")) {
+        friendly = "🔒 La contraseña debe tener al menos 6 caracteres.";
+      } else if (msg.includes("credenciales") || msg.includes("invalid login")) {
+        friendly = "❌ Credenciales inválidas. Verifica tu email y contraseña.";
+      } else if (msg.includes("network") || msg.includes("failed to fetch") || msg.includes("fetch")) {
+        friendly = "📡 Error de conexión. Verifica tu internet e intenta de nuevo.";
+      } else if (msg.includes("rate") || msg.includes("too many")) {
+        friendly = "⏱️ Demasiados intentos. Espera unos minutos antes de volver a intentar.";
+      } else if (!raw) {
+        friendly = "No se pudo crear la cuenta. Intenta nuevamente o contacta soporte.";
+      }
+
+      toast.error(friendly, { duration: 6000 });
     } finally {
       setLoading(false);
     }
