@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Check, X, ShieldAlert, Rocket, Heart } from "lucide-react";
+import { Check, X, ShieldAlert, Rocket, Heart, TrendingUp, Zap, DollarSign, Users } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
 export const Pricing = () => {
