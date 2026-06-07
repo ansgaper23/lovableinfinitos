@@ -35,6 +35,11 @@ import { ExtensionUploadCard } from "./ExtensionUploadCard";
 interface ExtendedProfile extends Omit<Profile, 'reseller_api_token'> {
   reseller_api_token?: string | null;
   credits?: number;
+  trial_requested?: boolean;
+  trial_requested_at?: string | null;
+  trial_expires_at?: string | null;
+  has_assigned_license?: boolean;
+  assigned_expires_at?: string | null;
 }
 
 export const SuperAdminDashboard = () => {
@@ -461,6 +466,7 @@ export const SuperAdminDashboard = () => {
                       <tr className="border-y border-zinc-800 bg-zinc-950/50">
                         <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">Usuario</th>
                         <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">Rol</th>
+                        <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">Prueba</th>
                         <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">Créditos</th>
                         <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">Registro</th>
                         <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide text-right">Acciones</th>
@@ -468,7 +474,7 @@ export const SuperAdminDashboard = () => {
                     </thead>
                     <tbody>
                       {fetchingUsers ? (
-                        <tr><td colSpan={5} className="p-8 text-center text-zinc-500 text-xs">Cargando...</td></tr>
+                        <tr><td colSpan={6} className="p-8 text-center text-zinc-500 text-xs">Cargando...</td></tr>
                       ) : filteredUsers.length > 0 ? (
                         filteredUsers.map((u) => (
                         <UserRow
@@ -483,7 +489,7 @@ export const SuperAdminDashboard = () => {
                           />
                         ))
                       ) : (
-                        <tr><td colSpan={5} className="p-8 text-center text-zinc-500 text-xs">Sin resultados</td></tr>
+                        <tr><td colSpan={6} className="p-8 text-center text-zinc-500 text-xs">Sin resultados</td></tr>
                       )}
                     </tbody>
                   </table>
@@ -810,6 +816,38 @@ const StatCard = ({ label, value, hint, icon }: { label: string; value: string; 
   </Card>
 );
 
+const TrialBadge = ({ user }: { user: ExtendedProfile }) => {
+  if (!user.trial_requested) {
+    return (
+      <Badge variant="outline" className="text-[10px] border-zinc-700 bg-zinc-950 text-zinc-500">
+        No solicitada
+      </Badge>
+    );
+  }
+  const requested = user.trial_requested_at
+    ? new Date(user.trial_requested_at).toLocaleString(undefined, {
+        day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit",
+      })
+    : null;
+  const expiresAt = user.trial_expires_at ? new Date(user.trial_expires_at).getTime() : null;
+  const expired = expiresAt !== null && expiresAt < Date.now();
+  return (
+    <Badge
+      variant="outline"
+      title={requested ? `Solicitada: ${requested}` : "Solicitada"}
+      className={`text-[10px] gap-1 ${
+        expired
+          ? "border-zinc-700 bg-zinc-950 text-zinc-400"
+          : "border-blue-500/30 bg-blue-500/10 text-blue-400"
+      }`}
+    >
+      <Clock className="w-3 h-3" />
+      {expired ? "Prueba expirada" : "Prueba activa"}
+      {requested && <span className="text-zinc-500 font-normal">· {requested}</span>}
+    </Badge>
+  );
+};
+
 const roleStyles = (role: string) => {
   if (role === "superadmin") return "border-destructive/30 bg-destructive/10 text-destructive";
   if (role === "reseller") return "border-primary/30 bg-primary/10 text-primary";
@@ -906,6 +944,9 @@ const UserRow = (props: UserActionProps) => {
         </Badge>
       </td>
       <td className="px-4 py-3">
+        <TrialBadge user={user} />
+      </td>
+      <td className="px-4 py-3">
         <div className="flex items-center gap-1.5 text-sm">
           <CreditCard className="w-3.5 h-3.5 text-primary" />
           <span className="tabular-nums">{user.credits ?? 0}</span>
@@ -940,6 +981,7 @@ const UserCard = (props: UserActionProps) => {
           {roleLabelOf(user.role || "user")}
         </Badge>
       </div>
+      <TrialBadge user={user} />
       <div className="flex items-center justify-between text-xs text-zinc-500">
         <div className="flex items-center gap-1.5">
           <CreditCard className="w-3.5 h-3.5 text-primary" />
