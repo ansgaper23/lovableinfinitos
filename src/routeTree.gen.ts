@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SuperadminRouteImport } from './routes/superadmin'
 import { Route as ResellerRouteImport } from './routes/reseller'
 import { Route as PreciosRouteImport } from './routes/precios'
+import { Route as FaqRouteImport } from './routes/faq'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
@@ -29,6 +30,11 @@ const ResellerRoute = ResellerRouteImport.update({
 const PreciosRoute = PreciosRouteImport.update({
   id: '/precios',
   path: '/precios',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -51,6 +57,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
+  '/faq': typeof FaqRoute
   '/precios': typeof PreciosRoute
   '/reseller': typeof ResellerRoute
   '/superadmin': typeof SuperadminRoute
@@ -59,6 +66,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
+  '/faq': typeof FaqRoute
   '/precios': typeof PreciosRoute
   '/reseller': typeof ResellerRoute
   '/superadmin': typeof SuperadminRoute
@@ -68,6 +76,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
+  '/faq': typeof FaqRoute
   '/precios': typeof PreciosRoute
   '/reseller': typeof ResellerRoute
   '/superadmin': typeof SuperadminRoute
@@ -78,16 +87,25 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/dashboard'
+    | '/faq'
     | '/precios'
     | '/reseller'
     | '/superadmin'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/dashboard' | '/precios' | '/reseller' | '/superadmin'
+  to:
+    | '/'
+    | '/auth'
+    | '/dashboard'
+    | '/faq'
+    | '/precios'
+    | '/reseller'
+    | '/superadmin'
   id:
     | '__root__'
     | '/'
     | '/auth'
     | '/dashboard'
+    | '/faq'
     | '/precios'
     | '/reseller'
     | '/superadmin'
@@ -97,6 +115,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
   DashboardRoute: typeof DashboardRoute
+  FaqRoute: typeof FaqRoute
   PreciosRoute: typeof PreciosRoute
   ResellerRoute: typeof ResellerRoute
   SuperadminRoute: typeof SuperadminRoute
@@ -123,6 +142,13 @@ declare module '@tanstack/react-router' {
       path: '/precios'
       fullPath: '/precios'
       preLoaderRoute: typeof PreciosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -153,6 +179,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
   DashboardRoute: DashboardRoute,
+  FaqRoute: FaqRoute,
   PreciosRoute: PreciosRoute,
   ResellerRoute: ResellerRoute,
   SuperadminRoute: SuperadminRoute,
