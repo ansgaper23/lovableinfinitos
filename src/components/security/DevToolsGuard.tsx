@@ -2,22 +2,19 @@ import { useEffect, useState } from "react";
 import { ShieldAlert } from "lucide-react";
 
 /**
- * Disuasión anti-DevTools:
- * - Bloquea F12, Ctrl+Shift+I/J/C, Ctrl+U, click derecho.
- * - Detecta DevTools abiertas (diferencia outer/inner + timing del debugger).
- * - Cuando se detectan, dispara `debugger` en bucle y muestra overlay bloqueante.
+ * Disuasión anti-DevTools (versión suave):
+ * - Bloquea atajos comunes (F12, Ctrl+Shift+I/J/C, Ctrl+U) y click derecho.
+ * - NO usa detección por tamaño de ventana ni `debugger` en bucle (causaba
+ *   falsos positivos en producción y dejaba la web inaccesible).
  *
- * Nota: esto es disuasión, no seguridad real. Cualquier dato sensible debe
- * vivir en el servidor (ya lo está: RESELLER_API_KEY).
+ * Nota: cualquier dato sensible vive en el servidor (RESELLER_API_KEY).
  */
 export const DevToolsGuard = () => {
   const [blocked, setBlocked] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-
-    const isDev = import.meta.env.DEV;
-    if (isDev) return; // no molestar durante desarrollo
+    if (import.meta.env.DEV) return;
 
     const blockKeys = (e: KeyboardEvent) => {
       const k = e.key.toLowerCase();
@@ -36,62 +33,9 @@ export const DevToolsGuard = () => {
     window.addEventListener("keydown", blockKeys);
     window.addEventListener("contextmenu", blockMenu);
 
-    const THRESHOLD = 160;
-    let triggered = false;
-
-    const trigger = () => {
-      triggered = true;
-      setBlocked(true);
-    };
-
-    // 1) Detección por tamaño de ventana
-    const sizeCheck = () => {
-      const widthGap = window.outerWidth - window.innerWidth;
-      const heightGap = window.outerHeight - window.innerHeight;
-      if (widthGap > THRESHOLD || heightGap > THRESHOLD) trigger();
-    };
-
-    // 2) Detección por timing del debugger
-    const debugCheck = () => {
-      const start = performance.now();
-      // eslint-disable-next-line no-debugger
-      debugger;
-      const elapsed = performance.now() - start;
-      if (elapsed > 100) trigger();
-    };
-
-    // 3) Detección por toString trap (consola intenta serializar)
-    const trap: any = {};
-    Object.defineProperty(trap, "id", {
-      get() {
-        trigger();
-        return "";
-      },
-    });
-    const consoleCheck = () => {
-      try {
-        console.log(trap);
-        console.clear();
-      } catch {
-        /* ignore */
-      }
-    };
-
-    const interval = window.setInterval(() => {
-      sizeCheck();
-      debugCheck();
-      consoleCheck();
-      if (triggered) {
-        // mantener el debugger activo
-        // eslint-disable-next-line no-debugger
-        debugger;
-      }
-    }, 1000);
-
     return () => {
       window.removeEventListener("keydown", blockKeys);
       window.removeEventListener("contextmenu", blockMenu);
-      window.clearInterval(interval);
     };
   }, []);
 
@@ -107,10 +51,8 @@ export const DevToolsGuard = () => {
           Acceso restringido
         </h1>
         <p className="text-sm text-muted-foreground leading-relaxed">
-          Hemos detectado las herramientas de desarrollador abiertas. Por motivos
-          de seguridad, debes <span className="text-destructive font-bold">cerrar la consola</span> para
-          continuar usando la plataforma. Si insistes, tu cuenta será bloqueada
-          automáticamente.
+          Por motivos de seguridad, debes <span className="text-destructive font-bold">cerrar la consola</span> para
+          continuar usando la plataforma.
         </p>
         <button
           onClick={() => window.location.reload()}
