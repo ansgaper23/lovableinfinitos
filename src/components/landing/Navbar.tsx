@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { MessageCircle, LayoutDashboard } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Link } from "@tanstack/react-router";
+import logoAsset from "@/assets/logo.png.asset.json";
 
 
 export const Navbar = () => {
@@ -11,10 +12,11 @@ export const Navbar = () => {
     <header className="fixed top-10 left-0 right-0 z-50 bg-background/40 backdrop-blur-xl border-b border-white/5">
       <div className="container mx-auto px-4 h-20 flex items-center justify-between">
         <div className="flex items-center gap-3 group cursor-pointer">
-          <div className="w-10 h-10 bg-primary rounded-none flex items-center justify-center transform group-hover:rotate-90 transition-transform duration-500 shadow-[0_0_20px_rgba(var(--color-primary),0.3)]">
-            <span className="text-primary-foreground font-black text-2xl italic">L</span>
-          </div>
-          <span className="font-black text-2xl tracking-tighter italic hidden sm:inline-block group-hover:text-primary transition-colors">LOVABLE <span className="text-primary text-glow">INFINITO</span></span>
+          <img
+            src={logoAsset.url}
+            alt="Lovable Infinito Logo"
+            className="h-10 w-auto transform group-hover:scale-105 transition-transform duration-500"
+          />
         </div>
 
         <NavigationMenu className="hidden md:flex">
