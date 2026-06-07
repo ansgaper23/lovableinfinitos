@@ -52,7 +52,7 @@ export const SuperAdminDashboard = () => {
   const [keyType, setKeyType] = useState<"trial" | "days" | "lifetime">("days");
   const [keyDisplayName, setKeyDisplayName] = useState("");
   const [keyDays, setKeyDays] = useState("30");
-  const [isUpdatingToken, setIsUpdatingToken] = useState(false);
+  
   const [licenses, setLicenses] = useState<any[]>([]);
   const [isLoadingLicenses, setIsLoadingLicenses] = useState(false);
   const navigate = useNavigate();
