@@ -275,10 +275,14 @@ export const SuperAdminDashboard = () => {
     );
   }
 
-  const filteredUsers = users.filter(u => 
-    u.email?.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    u.role?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredUsers = useMemo(() => {
+    const q = searchTerm.toLowerCase();
+    if (!q) return users;
+    return users.filter(u =>
+      u.email?.toLowerCase().includes(q) ||
+      u.role?.toLowerCase().includes(q)
+    );
+  }, [users, searchTerm]);
 
   return (
     <div className="flex h-screen bg-[#0A0A0B] text-white overflow-hidden font-sans">
