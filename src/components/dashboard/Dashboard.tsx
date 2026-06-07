@@ -406,7 +406,7 @@ export const Dashboard = () => {
                   <>
                     <p className="text-sm text-muted-foreground">
                       Puedes acceder al panel, pero no podrás generar licencias hasta que el
-                      <span className="text-primary font-bold"> superadmin active tu cuenta</span>. Una vez activada,
+                      <span className="text-primary font-bold"> administrador active tu cuenta</span>. Una vez activada,
                       tendrás acceso completo para emitir y gestionar tus licencias.
                     </p>
                     <div className="flex flex-wrap items-center gap-3">
