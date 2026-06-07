@@ -134,6 +134,27 @@ export type Database = {
         }
         Relationships: []
       }
+      signup_ips: {
+        Row: {
+          created_at: string
+          id: string
+          ip: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ip: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ip?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       user_credits: {
         Row: {
           credits: number
