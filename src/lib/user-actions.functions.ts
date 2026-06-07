@@ -275,6 +275,7 @@ export const getAllUsers = createServerFn({ method: "GET" })
         licenses_trial: counts.trial,
         licenses_assigned: counts.assigned,
         licenses_paid: counts.paid,
+        signup_ip: ipMap.get(p.id) ?? null,
       };
     });
 
