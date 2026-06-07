@@ -25,7 +25,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import type { ResellerStatus } from "@/services/resellerApi";
 import { useServerFn } from "@tanstack/react-start";
-import { setUserActivation, assignLicenseToUser, setUserRole, getAllUsers } from "@/lib/user-actions.functions";
+import { setUserActivation, assignLicenseToUser, setUserRole, getAllUsers, deleteUserAccount } from "@/lib/user-actions.functions";
 import {
   adminGetResellerStatus, adminListLicenses, adminGenerateTrial,
   adminGenerateLicense, adminResetHwid, adminRevokeLicense,
