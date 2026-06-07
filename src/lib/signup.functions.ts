@@ -22,12 +22,7 @@ export const registerWithIpLimit = createServerFn({ method: "POST" })
     const realIp = getRequestHeader("x-real-ip");
     const peer = getRequestIP({ xForwardedFor: true });
 
-    let ip =
-      peer ||
-      (xff ? xff.split(",")[0].trim() : null) ||
-      realIp ||
-      cfIp ||
-      "unknown";
+    let ip = peer || (xff ? xff.split(",")[0].trim() : null) || realIp || cfIp || "unknown";
     ip = ip.toString().slice(0, 64);
 
     // Count existing signups for this IP
