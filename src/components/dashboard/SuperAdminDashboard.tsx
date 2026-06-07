@@ -40,6 +40,10 @@ interface ExtendedProfile extends Omit<Profile, 'reseller_api_token'> {
   trial_expires_at?: string | null;
   has_assigned_license?: boolean;
   assigned_expires_at?: string | null;
+  licenses_total?: number;
+  licenses_trial?: number;
+  licenses_assigned?: number;
+  licenses_paid?: number;
 }
 
 export const SuperAdminDashboard = () => {
