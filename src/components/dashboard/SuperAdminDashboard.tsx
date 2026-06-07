@@ -949,6 +949,7 @@ const UserCard = (props: UserActionProps) => {
           {roleLabelOf(user.role || "user")}
         </Badge>
       </div>
+      <TrialBadge user={user} />
       <div className="flex items-center justify-between text-xs text-zinc-500">
         <div className="flex items-center gap-1.5">
           <CreditCard className="w-3.5 h-3.5 text-primary" />
