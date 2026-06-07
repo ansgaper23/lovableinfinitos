@@ -6,7 +6,7 @@ export const Pricing = () => {
     {
       name: "Plan Básico",
       duration: "1 Día",
-      price: "S/ 22",
+      price: "$5.99",
       description: "Ideal para probar el servicio o finalizar un pequeño proyecto.",
       features: [
         "Lovable ilimitado por 1 día",
