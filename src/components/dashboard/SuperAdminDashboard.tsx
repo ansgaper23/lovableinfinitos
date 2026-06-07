@@ -23,9 +23,13 @@ import { useAuth, Profile } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { resellerApi, ResellerStatus } from "@/services/resellerApi";
+import type { ResellerStatus } from "@/services/resellerApi";
 import { useServerFn } from "@tanstack/react-start";
 import { setUserActivation, assignLicenseToUser, setUserRole, getAllUsers } from "@/lib/user-actions.functions";
+import {
+  adminGetResellerStatus, adminListLicenses, adminGenerateTrial,
+  adminGenerateLicense, adminResetHwid, adminRevokeLicense,
+} from "@/lib/reseller-admin.functions";
 import { ExtensionUploadCard } from "./ExtensionUploadCard";
 
 interface ExtendedProfile extends Omit<Profile, 'reseller_api_token'> {
