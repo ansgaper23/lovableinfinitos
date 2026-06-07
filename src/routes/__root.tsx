@@ -163,6 +163,7 @@ function RootComponent() {
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
       <DevToolsGuard />
+      <Toaster theme="dark" position="top-center" richColors closeButton />
     </QueryClientProvider>
   );
 }
