@@ -35,6 +35,8 @@ export const Pricing = () => {
       name: "Plan Premium",
       duration: "30 Días",
       price: "$18.99",
+      oldPrice: "$35.00",
+      badge: "Oferta por tiempo limitado",
       description: "Para agencias y desarrolladores de alto rendimiento.",
       features: [
         "Lovable ilimitado por 30 días",
@@ -87,10 +89,18 @@ export const Pricing = () => {
                     <h3 className="text-2xl font-black italic tracking-tighter text-white">{plan.name}</h3>
                     <p className="text-xs text-primary font-bold uppercase tracking-widest mt-1">{plan.duration}</p>
                   </div>
+                  {plan.badge && (
+                    <span className="px-3 py-1 bg-destructive/20 border border-destructive/30 text-destructive text-[10px] font-black uppercase tracking-tight rounded-full">
+                      {plan.badge}
+                    </span>
+                  )}
                 </div>
                 
-                <div className="mb-10">
+                <div className="mb-10 flex items-baseline gap-3">
                   <span className="text-5xl font-black tracking-tighter text-white">{plan.price}</span>
+                  {plan.oldPrice && (
+                    <span className="text-lg text-muted-foreground line-through decoration-destructive decoration-2">{plan.oldPrice}</span>
+                  )}
                 </div>
                 
                 <p className="text-sm text-muted-foreground mb-8 h-12 leading-relaxed">{plan.description}</p>
