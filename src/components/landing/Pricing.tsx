@@ -186,7 +186,7 @@ export const Pricing = () => {
               </h3>
               
               <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-                ¿Cansado de intercambiar horas por dinero? Conviértete en revendedor, genera tus propias licencias ilimitadas y cobra lo que <span className="text-foreground font-semibold">tú decidas</span>. Nosotros te damos el panel, tú te quedas con la ganancia.
+                ¿Cansado de intercambiar horas por dinero? Conviértete en revendedor, genera licencias ilimitadas y cobra lo que <span className="text-foreground font-semibold">tú decidas</span>. Una inversión mínima que se recupera con tus primeras ventas. Tú pones el precio, tú te quedas con la ganancia.
               </p>
               
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10 max-w-3xl mx-auto text-left">
@@ -228,7 +228,7 @@ export const Pricing = () => {
               </Link>
               
               <p className="mt-6 text-xs text-muted-foreground uppercase tracking-widest">
-                Sin inversión inicial • Soporte incluido • Empieza hoy
+                Inversión mínima • Recupera con tus primeras ventas • Soporte incluido
               </p>
             </div>
           </div>
