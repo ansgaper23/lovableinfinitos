@@ -219,8 +219,39 @@ export const getAllUsers = createServerFn({ method: "GET" })
       .select("user_id, credits");
     if (creditsError) throw new Error(creditsError.message);
 
+    const { data: licensesData, error: licensesError } = await supabaseAdmin
+      .from("reseller_licenses")
+      .select("user_id, type, created_at, expires_at")
+      .order("created_at", { ascending: false });
+    if (licensesError) throw new Error(licensesError.message);
+
     const creditMap = new Map((creditsData || []).map((c: any) => [c.user_id, c.credits]));
-    const merged = (profilesData || []).map((p: any) => ({ ...p, credits: creditMap.get(p.id) ?? 0 }));
+
+    // Per-user: did they request a trial? did they receive an assigned license?
+    const trialMap = new Map<string, { created_at: string; expires_at: string | null }>();
+    const assignedMap = new Map<string, { created_at: string; expires_at: string | null }>();
+    for (const lic of licensesData || []) {
+      if (lic.type === "trial" && !trialMap.has(lic.user_id)) {
+        trialMap.set(lic.user_id, { created_at: lic.created_at, expires_at: lic.expires_at });
+      }
+      if (lic.type === "assigned" && !assignedMap.has(lic.user_id)) {
+        assignedMap.set(lic.user_id, { created_at: lic.created_at, expires_at: lic.expires_at });
+      }
+    }
+
+    const merged = (profilesData || []).map((p: any) => {
+      const trial = trialMap.get(p.id);
+      const assigned = assignedMap.get(p.id);
+      return {
+        ...p,
+        credits: creditMap.get(p.id) ?? 0,
+        trial_requested: !!trial,
+        trial_requested_at: trial?.created_at ?? null,
+        trial_expires_at: trial?.expires_at ?? null,
+        has_assigned_license: !!assigned,
+        assigned_expires_at: assigned?.expires_at ?? null,
+      };
+    });
 
     return merged as any[];
   });
