@@ -35,6 +35,8 @@ export const Pricing = () => {
       name: "Plan Premium",
       duration: "30 Días",
       price: "$18.99",
+      oldPrice: "$35.00",
+      badge: "Oferta por tiempo limitado",
       description: "Para agencias y desarrolladores de alto rendimiento.",
       features: [
         "Lovable ilimitado por 30 días",
