@@ -47,6 +47,7 @@ export const Auth = () => {
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setErrorMsg(null);
 
     try {
       if (!email || !password) {
@@ -67,12 +68,26 @@ export const Auth = () => {
         });
         if (error) {
           if (error.message === "Invalid login credentials") {
-            throw new Error("Credenciales inválidas. Verifica tu email y contraseña.");
+            // Distinguir: ¿el correo existe o no?
+            try {
+              const { exists } = await checkEmailExists({ data: { email } });
+              if (!exists) {
+                throw new Error("Este correo no está registrado. Crea una cuenta primero.");
+              }
+            } catch (checkErr: any) {
+              if (checkErr?.message?.includes("no está registrado")) throw checkErr;
+              // si falla el check, caemos al mensaje genérico
+            }
+            throw new Error("Contraseña incorrecta. Verifica e intenta de nuevo.");
+          }
+          if (error.message?.toLowerCase().includes("email not confirmed")) {
+            throw new Error("Tu correo aún no está confirmado. Revisa tu bandeja de entrada.");
           }
           throw error;
         }
         toast.success("¡Bienvenido de nuevo!");
         navigate({ to: "/dashboard" });
+      } else {
       } else {
         // Server-side signup with IP-based rate limit (max 2 cuentas por IP)
         await registerWithIpLimit({ data: { email, password } });
