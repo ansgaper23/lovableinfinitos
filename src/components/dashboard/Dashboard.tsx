@@ -48,6 +48,36 @@ function useCountdown(expiresAt: string | null) {
   };
 }
 
+/**
+ * Isolated countdown UI — its 1Hz state update only re-renders this small
+ * component instead of the entire Dashboard tree.
+ */
+function LicenseStatusBadge({ expiresAt }: { expiresAt: string | null }) {
+  const countdown = useCountdown(expiresAt);
+  const isLifetime = !expiresAt;
+  const isExpired = !isLifetime && !!countdown?.expired;
+  const statusLabel = isLifetime ? "VITALICIA" : isExpired ? "EXPIRADA" : "ACTIVA";
+  const statusClasses = isExpired
+    ? "border-destructive/40 bg-destructive/10 text-destructive"
+    : "border-green-500/30 bg-green-500/10 text-green-400";
+  const timeText = isLifetime
+    ? "Sin vencimiento"
+    : isExpired
+      ? `Expiró: ${new Date(expiresAt as string).toLocaleString()}`
+      : `Tiempo restante: ${countdown?.label ?? "—"}`;
+  return (
+    <>
+      <Badge variant="outline" className={`rounded-none text-[10px] font-black uppercase tracking-widest px-3 py-1 ${statusClasses}`}>
+        {statusLabel}
+      </Badge>
+      <p className="text-[10px] font-black tracking-widest text-muted-foreground uppercase flex items-center gap-2">
+        <Clock className="w-3 h-3" />
+        {timeText}
+      </p>
+    </>
+  );
+}
+
 export const Dashboard = () => {
   const { user, profile, loading } = useAuth(true);
   const [credits, setCredits] = useState<number | null>(null);
@@ -60,38 +90,41 @@ export const Dashboard = () => {
   const genTrial = useServerFn(generateTrialForNewUser);
 
   const isBasicUser = profile?.role === "user" || !profile?.role;
-  const countdown = useCountdown(assigned?.expires_at ?? null);
 
   useEffect(() => {
     if (!user) return;
+    let cancelled = false;
     (async () => {
-      const { data } = await supabase
-        .from("user_credits")
-        .select("credits")
-        .eq("user_id", user.id)
-        .maybeSingle();
-      setCredits(data?.credits ?? 0);
-
-      const { data: lic } = await supabase
-        .from("reseller_licenses")
-        .select("license_key, expires_at, created_at")
-        .eq("user_id", user.id)
-        .eq("type", "trial")
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      if (lic) setTrial(lic as TrialLicense);
-
-      const { data: asg } = await supabase
-        .from("reseller_licenses")
-        .select("license_key, expires_at, created_at, display_name, type")
-        .eq("user_id", user.id)
-        .neq("type", "trial")
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      if (asg) setAssigned(asg as AssignedLicense);
+      // Parallelize independent reads — 3x faster than sequential awaits.
+      const [creditsRes, trialRes, assignedRes] = await Promise.all([
+        supabase
+          .from("user_credits")
+          .select("credits")
+          .eq("user_id", user.id)
+          .maybeSingle(),
+        supabase
+          .from("reseller_licenses")
+          .select("license_key, expires_at, created_at")
+          .eq("user_id", user.id)
+          .eq("type", "trial")
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle(),
+        supabase
+          .from("reseller_licenses")
+          .select("license_key, expires_at, created_at, display_name, type")
+          .eq("user_id", user.id)
+          .neq("type", "trial")
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle(),
+      ]);
+      if (cancelled) return;
+      setCredits(creditsRes.data?.credits ?? 0);
+      if (trialRes.data) setTrial(trialRes.data as TrialLicense);
+      if (assignedRes.data) setAssigned(assignedRes.data as AssignedLicense);
     })();
+    return () => { cancelled = true; };
   }, [user?.id]);
 
   const handleGenerateTrial = async () => {
@@ -269,30 +302,7 @@ export const Dashboard = () => {
                   <div className="space-y-4">
                     <div className="p-6 border border-primary/30 bg-primary/5">
                       <div className="flex items-center justify-between flex-wrap gap-3 mb-4">
-                        {(() => {
-                          const isLifetime = !assigned.expires_at;
-                          const isExpired = !isLifetime && !!countdown?.expired;
-                          const statusLabel = isLifetime ? "VITALICIA" : isExpired ? "EXPIRADA" : "ACTIVA";
-                          const statusClasses = isExpired
-                            ? "border-destructive/40 bg-destructive/10 text-destructive"
-                            : "border-green-500/30 bg-green-500/10 text-green-400";
-                          const timeText = isLifetime
-                            ? "Sin vencimiento"
-                            : isExpired
-                              ? `Expiró: ${new Date(assigned.expires_at as string).toLocaleString()}`
-                              : `Tiempo restante: ${countdown?.label ?? "—"}`;
-                          return (
-                            <>
-                              <Badge variant="outline" className={`rounded-none text-[10px] font-black uppercase tracking-widest px-3 py-1 ${statusClasses}`}>
-                                {statusLabel}
-                              </Badge>
-                              <p className="text-[10px] font-black tracking-widest text-muted-foreground uppercase flex items-center gap-2">
-                                <Clock className="w-3 h-3" />
-                                {timeText}
-                              </p>
-                            </>
-                          );
-                        })()}
+                        <LicenseStatusBadge expiresAt={assigned.expires_at ?? null} />
                       </div>
                       <p className="text-[10px] font-black tracking-widest text-primary uppercase mb-3">Tu llave de acceso</p>
                       <div className="flex items-center gap-3 flex-wrap">
