@@ -496,7 +496,7 @@ export const SuperAdminDashboard = () => {
                           />
                         ))
                       ) : (
-                        <tr><td colSpan={7} className="p-8 text-center text-zinc-500 text-xs">Sin resultados</td></tr>
+                        <tr><td colSpan={8} className="p-8 text-center text-zinc-500 text-xs">Sin resultados</td></tr>
                       )}
                     </tbody>
                   </table>
