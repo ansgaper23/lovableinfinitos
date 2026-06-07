@@ -97,8 +97,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "robots", content: "index, follow, max-image-preview:large, max-snippet:-1" },
       { name: "twitter:title", content: "Lovable Gratis — Créditos Lovable Ilimitados | Lovable Infinito" },
       { name: "twitter:description", content: "Usa Lovable gratis con créditos ilimitados. Accede a Lovable AI sin límites, sin consumir tus créditos oficiales. Soporte en español para builders de Latinoamérica y España." },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/9095f738-b7b4-4783-8954-2280bf6eebd7" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/9095f738-b7b4-4783-8954-2280bf6eebd7" },
+      { property: "og:image", content: "https://lovablefree.xyz/og-image.jpg" },
+      { name: "twitter:image", content: "https://lovablefree.xyz/og-image.jpg" },
     ],
     links: [
       {
