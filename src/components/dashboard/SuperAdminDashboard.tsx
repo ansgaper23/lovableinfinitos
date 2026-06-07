@@ -634,7 +634,7 @@ export const SuperAdminDashboard = () => {
                           variant="ghost" 
                           size="icon" 
                           onClick={fetchLicenses}
-                          disabled={isLoadingLicenses || !resellerToken}
+                          disabled={isLoadingLicenses}
                           className="text-muted-foreground hover:text-white hover:bg-white/5 rounded-xl transition-all"
                         >
                           <RefreshCw className={`w-4 h-4 ${isLoadingLicenses ? 'animate-spin' : ''}`} />
