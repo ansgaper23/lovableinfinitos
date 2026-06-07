@@ -8,11 +8,11 @@ export const Route = createFileRoute("/auth")({
       { name: "description", content: "Inicia sesión o crea tu cuenta en Lovable Infinito y desbloquea créditos Lovable ilimitados al instante." },
       { property: "og:title", content: "Acceso — Lovable Infinito" },
       { property: "og:description", content: "Accede a tu panel de Lovable Infinito y disfruta de créditos Lovable ilimitados." },
-      { property: "og:url", content: "https://lovableinfinitos.lovable.app/auth" },
+      { property: "og:url", content: "https://lovablefree.xyz/auth" },
       { name: "robots", content: "noindex, follow" },
     ],
     links: [
-      { rel: "canonical", href: "https://lovableinfinitos.lovable.app/auth" },
+      { rel: "canonical", href: "https://lovablefree.xyz/auth" },
     ],
   }),
   component: Auth,

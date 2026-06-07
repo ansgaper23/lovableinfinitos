@@ -11,7 +11,11 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SuperadminRouteImport } from './routes/superadmin'
 import { Route as ResellerRouteImport } from './routes/reseller'
+import { Route as PreciosRouteImport } from './routes/precios'
+import { Route as LegalRouteImport } from './routes/legal'
+import { Route as FaqRouteImport } from './routes/faq'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as ComoFuncionaRouteImport } from './routes/como-funciona'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 
@@ -25,9 +29,29 @@ const ResellerRoute = ResellerRouteImport.update({
   path: '/reseller',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PreciosRoute = PreciosRouteImport.update({
+  id: '/precios',
+  path: '/precios',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegalRoute = LegalRouteImport.update({
+  id: '/legal',
+  path: '/legal',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ComoFuncionaRoute = ComoFuncionaRouteImport.update({
+  id: '/como-funciona',
+  path: '/como-funciona',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -44,14 +68,22 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/como-funciona': typeof ComoFuncionaRoute
   '/dashboard': typeof DashboardRoute
+  '/faq': typeof FaqRoute
+  '/legal': typeof LegalRoute
+  '/precios': typeof PreciosRoute
   '/reseller': typeof ResellerRoute
   '/superadmin': typeof SuperadminRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/como-funciona': typeof ComoFuncionaRoute
   '/dashboard': typeof DashboardRoute
+  '/faq': typeof FaqRoute
+  '/legal': typeof LegalRoute
+  '/precios': typeof PreciosRoute
   '/reseller': typeof ResellerRoute
   '/superadmin': typeof SuperadminRoute
 }
@@ -59,22 +91,58 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/como-funciona': typeof ComoFuncionaRoute
   '/dashboard': typeof DashboardRoute
+  '/faq': typeof FaqRoute
+  '/legal': typeof LegalRoute
+  '/precios': typeof PreciosRoute
   '/reseller': typeof ResellerRoute
   '/superadmin': typeof SuperadminRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/dashboard' | '/reseller' | '/superadmin'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/como-funciona'
+    | '/dashboard'
+    | '/faq'
+    | '/legal'
+    | '/precios'
+    | '/reseller'
+    | '/superadmin'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/dashboard' | '/reseller' | '/superadmin'
-  id: '__root__' | '/' | '/auth' | '/dashboard' | '/reseller' | '/superadmin'
+  to:
+    | '/'
+    | '/auth'
+    | '/como-funciona'
+    | '/dashboard'
+    | '/faq'
+    | '/legal'
+    | '/precios'
+    | '/reseller'
+    | '/superadmin'
+  id:
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/como-funciona'
+    | '/dashboard'
+    | '/faq'
+    | '/legal'
+    | '/precios'
+    | '/reseller'
+    | '/superadmin'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
+  ComoFuncionaRoute: typeof ComoFuncionaRoute
   DashboardRoute: typeof DashboardRoute
+  FaqRoute: typeof FaqRoute
+  LegalRoute: typeof LegalRoute
+  PreciosRoute: typeof PreciosRoute
   ResellerRoute: typeof ResellerRoute
   SuperadminRoute: typeof SuperadminRoute
 }
@@ -95,11 +163,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResellerRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/precios': {
+      id: '/precios'
+      path: '/precios'
+      fullPath: '/precios'
+      preLoaderRoute: typeof PreciosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legal': {
+      id: '/legal'
+      path: '/legal'
+      fullPath: '/legal'
+      preLoaderRoute: typeof LegalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/como-funciona': {
+      id: '/como-funciona'
+      path: '/como-funciona'
+      fullPath: '/como-funciona'
+      preLoaderRoute: typeof ComoFuncionaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -122,7 +218,11 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
+  ComoFuncionaRoute: ComoFuncionaRoute,
   DashboardRoute: DashboardRoute,
+  FaqRoute: FaqRoute,
+  LegalRoute: LegalRoute,
+  PreciosRoute: PreciosRoute,
   ResellerRoute: ResellerRoute,
   SuperadminRoute: SuperadminRoute,
 }
