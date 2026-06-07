@@ -6,6 +6,7 @@ export const Route = createFileRoute("/dashboard")({
     meta: [
       { title: "Dashboard — Lovable Infinito" },
       { name: "description", content: "Gestiona tu acceso ilimitado a Lovable." },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: Dashboard,

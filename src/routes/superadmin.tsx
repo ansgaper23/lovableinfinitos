@@ -6,6 +6,7 @@ export const Route = createFileRoute("/superadmin")({
     meta: [
       { title: "Control Maestro — SuperAdmin" },
       { name: "description", content: "Panel de administración centralizada de Lovable Infinito." },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: SuperAdminDashboard,
