@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { 
   LayoutDashboard, Users, BarChart3, ShieldAlert, Settings, 
   LogOut, Search, MoreVertical, CheckCircle2, XCircle, 
