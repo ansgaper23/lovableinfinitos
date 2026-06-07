@@ -6,7 +6,7 @@ export const Pricing = () => {
     {
       name: "Plan Básico",
       duration: "1 Día",
-      price: "S/ 22",
+      price: "$5.99",
       description: "Ideal para probar el servicio o finalizar un pequeño proyecto.",
       features: [
         "Lovable ilimitado por 1 día",
@@ -19,7 +19,7 @@ export const Pricing = () => {
     {
       name: "Plan Pro",
       duration: "7 Días",
-      price: "S/ 52",
+      price: "$13.99",
       description: "La opción preferida por builders y freelancers en Perú.",
       features: [
         "Lovable ilimitado por 7 días",
@@ -33,7 +33,7 @@ export const Pricing = () => {
     {
       name: "Plan Premium",
       duration: "30 Días",
-      price: "S/ 69",
+      price: "$18.99",
       description: "Para agencias y desarrolladores de alto rendimiento.",
       features: [
         "Lovable ilimitado por 30 días",
@@ -60,7 +60,7 @@ export const Pricing = () => {
           </p>
           <div className="inline-block mt-8 py-2 px-6 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-md">
             <p className="text-sm font-bold text-primary tracking-widest uppercase">
-              Precios en Soles (S/) • Pago Seguro
+              Precios en Dólares (USD) • Pago Seguro
             </p>
           </div>
         </div>
@@ -151,7 +151,7 @@ export const Pricing = () => {
                   </li>
                   <li className="flex items-center gap-3">
                     <Check className="w-5 h-5 text-primary shrink-0" />
-                    <span className="font-medium text-foreground">Optimizado para Perú: Precios accesibles en Soles.</span>
+                    <span className="font-medium text-foreground">Precios Globales: Accesibles en dólares (USD).</span>
                   </li>
                   <li className="flex items-center gap-3">
                     <Check className="w-5 h-5 text-primary shrink-0" />
