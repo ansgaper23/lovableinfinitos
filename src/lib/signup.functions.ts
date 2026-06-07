@@ -18,13 +18,20 @@ export const registerWithIpLimit = createServerFn({ method: "POST" })
     const xff = getRequestHeader("x-forwarded-for");
     const cfIp = getRequestHeader("cf-connecting-ip");
     const realIp = getRequestHeader("x-real-ip");
+    const fwd = getRequestHeader("forwarded");
+    const peer = getRequestIP({ xForwardedFor: true });
+
+    console.log("[signup] headers", { xff, cfIp, realIp, fwd, peer });
+
     let ip =
       cfIp ||
       (xff ? xff.split(",")[0].trim() : null) ||
       realIp ||
-      getRequestIP({ xForwardedFor: true }) ||
+      peer ||
       "unknown";
     ip = ip.toString().slice(0, 64);
+
+    console.log("[signup] resolved ip", ip);
 
     // Count existing signups for this IP
     if (ip !== "unknown") {
