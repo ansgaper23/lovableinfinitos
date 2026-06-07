@@ -38,10 +38,9 @@ serve(async (req) => {
       data = JSON.parse(text);
     } catch (e) {
       console.error("Invalid JSON response from provider:", text);
-      return new Response(JSON.stringify({ 
-        success: false, 
-        message: "El servidor del proveedor no devolvió un JSON válido.",
-        rawResponse: text.substring(0, 200)
+      return new Response(JSON.stringify({
+        success: false,
+        message: "Error al comunicarse con el proveedor. Contacta soporte.",
       }), {
         status: 502,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -53,13 +52,10 @@ serve(async (req) => {
     });
 
   } catch (error) {
-    console.error("Connection Error:", error.message);
-    
-    // Si falla el DNS de painel.all-star.digital, intentamos con la IP si la conocemos
-    // Por ahora informamos detalladamente al usuario
-    return new Response(JSON.stringify({ 
-      success: false, 
-      message: `Error de conexión con el proveedor: ${error.message}. Por favor contacta al soporte técnico del panel.`,
+    console.error("Connection Error:", error);
+    return new Response(JSON.stringify({
+      success: false,
+      message: "Error al comunicarse con el proveedor. Contacta soporte.",
     }), {
       status: 502,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
