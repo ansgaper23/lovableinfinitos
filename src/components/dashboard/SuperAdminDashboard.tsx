@@ -611,7 +611,7 @@ export const SuperAdminDashboard = () => {
                       )}
                       <Button 
                         onClick={handleGenerateKey}
-                        disabled={isGeneratingKey || !resellerToken}
+                        disabled={isGeneratingKey || !keyDisplayName}
                         className="w-full rounded-xl bg-destructive hover:bg-destructive/90 text-white font-black italic uppercase tracking-[0.15em] text-[10px] h-14 shadow-xl shadow-destructive/20 border-t border-white/20 active:scale-[0.98] transition-all"
                       >
                         {isGeneratingKey ? <RefreshCw className="w-4 h-4 animate-spin mr-3" /> : <Key className="w-4 h-4 mr-3" />}
