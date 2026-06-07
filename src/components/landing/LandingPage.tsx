@@ -1,6 +1,7 @@
 import { Navbar } from "@/components/landing/Navbar";
 import { AnnouncementBar } from "@/components/landing/AnnouncementBar";
 import { Hero } from "@/components/landing/Hero";
+import { HowItWorks } from "@/components/landing/HowItWorks";
 import { Pricing } from "@/components/landing/Pricing";
 import { FAQ } from "@/components/landing/FAQ";
 import { Stats } from "@/components/landing/Stats";
@@ -16,6 +17,7 @@ export const LandingPage = () => {
       <main>
         <Hero />
         <Stats />
+        <HowItWorks />
         <Pricing />
         <FAQ />
       </main>
