@@ -641,9 +641,7 @@ export const SuperAdminDashboard = () => {
                         </Button>
                       </CardHeader>
                       <CardContent className="p-0 overflow-auto max-h-[500px]">
-                        {!resellerToken ? (
-                          <div className="p-8 text-center text-muted-foreground text-xs uppercase italic">Configura tu token para ver el historial</div>
-                        ) : isLoadingLicenses ? (
+                        {isLoadingLicenses ? (
                           <div className="p-8 text-center text-muted-foreground text-xs uppercase italic">Cargando licencias...</div>
                         ) : licenses.length === 0 ? (
                           <div className="p-8 text-center text-muted-foreground text-xs uppercase italic">No hay licencias generadas</div>
