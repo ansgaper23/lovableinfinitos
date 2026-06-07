@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { User, Session } from "@supabase/supabase-js";
 import { useNavigate } from "@tanstack/react-router";
@@ -19,60 +19,82 @@ export const useAuth = (requireAuth = false) => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  const fetchProfile = async (userId: string) => {
+  // Stash navigate in a ref so the effect doesn't re-subscribe when it changes.
+  const navigateRef = useRef(navigate);
+  navigateRef.current = navigate;
+  const lastUserIdRef = useRef<string | null>(null);
+
+  const fetchProfile = useCallback(async (userId: string) => {
     try {
       const { data, error } = await supabase
         .from("profiles")
         .select("*")
         .eq("id", userId)
         .maybeSingle();
-
       if (error) throw error;
       setProfile(data as Profile | null);
     } catch (error) {
       console.error("Error fetching profile:", error);
       setProfile(null);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    const checkAuth = async () => {
+    let cancelled = false;
+
+    const init = async () => {
       const { data: { session } } = await supabase.auth.getSession();
+      if (cancelled) return;
       setSession(session);
       setUser(session?.user ?? null);
-      
+      lastUserIdRef.current = session?.user?.id ?? null;
+
       if (session?.user) {
         await fetchProfile(session.user.id);
       }
-      
+      if (cancelled) return;
       setLoading(false);
-      
+
       if (requireAuth && !session) {
-        navigate({ to: "/auth" });
+        navigateRef.current({ to: "/auth" });
       }
     };
 
-    checkAuth();
+    init();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      // Ignore noisy events: TOKEN_REFRESHED fires ~hourly + on tab focus,
+      // INITIAL_SESSION fires on every mount. They don't change identity.
+      if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") {
+        return;
+      }
+
       setSession(session);
       setUser(session?.user ?? null);
-      
-      if (session?.user) {
+
+      const newUserId = session?.user?.id ?? null;
+      // Only refetch the profile when the user identity actually changed.
+      if (newUserId !== lastUserIdRef.current) {
+        lastUserIdRef.current = newUserId;
+        if (session?.user) {
+          fetchProfile(session.user.id);
+        } else {
+          setProfile(null);
+        }
+      } else if (event === "USER_UPDATED" && session?.user) {
         fetchProfile(session.user.id);
-      } else {
-        setProfile(null);
       }
-      
-      setLoading(false);
 
       if (requireAuth && !session) {
-        navigate({ to: "/auth" });
+        navigateRef.current({ to: "/auth" });
       }
     });
 
-    return () => subscription.unsubscribe();
-  }, [requireAuth, navigate]);
+    return () => {
+      cancelled = true;
+      subscription.unsubscribe();
+    };
+  }, [requireAuth, fetchProfile]);
 
   return { user, session, profile, loading };
 };
