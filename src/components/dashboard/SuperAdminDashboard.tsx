@@ -46,7 +46,7 @@ export const SuperAdminDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   
   // Reseller states
-  const [resellerToken, setResellerToken] = useState("");
+  // El token del reseller vive en el servidor (RESELLER_API_KEY); nunca lo exponemos al cliente.
   const [resellerStatus, setResellerStatus] = useState<ResellerStatus | null>(null);
   const [isGeneratingKey, setIsGeneratingKey] = useState(false);
   const [keyType, setKeyType] = useState<"trial" | "days" | "lifetime">("days");
