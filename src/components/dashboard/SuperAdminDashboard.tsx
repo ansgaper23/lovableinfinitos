@@ -71,6 +71,25 @@ export const SuperAdminDashboard = () => {
   const generateLicenseFn = useServerFn(adminGenerateLicense);
   const resetHwidFn = useServerFn(adminResetHwid);
   const revokeLicenseFn = useServerFn(adminRevokeLicense);
+  const deleteFn = useServerFn(deleteUserAccount);
+
+  const [deleteTarget, setDeleteTarget] = useState<ExtendedProfile | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDeleteUser = async () => {
+    if (!deleteTarget) return;
+    setIsDeleting(true);
+    try {
+      await deleteFn({ data: { targetUserId: deleteTarget.id } });
+      toast.success("Cuenta eliminada");
+      setUsers((prev) => prev.filter((p) => p.id !== deleteTarget.id));
+      setDeleteTarget(null);
+    } catch (e: any) {
+      toast.error(e.message || "Error al eliminar cuenta");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   const handleBlockToggle = async (u: ExtendedProfile) => {
     if (u.role === "superadmin") {
