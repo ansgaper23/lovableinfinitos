@@ -816,6 +816,38 @@ const StatCard = ({ label, value, hint, icon }: { label: string; value: string; 
   </Card>
 );
 
+const TrialBadge = ({ user }: { user: ExtendedProfile }) => {
+  if (!user.trial_requested) {
+    return (
+      <Badge variant="outline" className="text-[10px] border-zinc-700 bg-zinc-950 text-zinc-500">
+        No solicitada
+      </Badge>
+    );
+  }
+  const requested = user.trial_requested_at
+    ? new Date(user.trial_requested_at).toLocaleString(undefined, {
+        day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit",
+      })
+    : null;
+  const expiresAt = user.trial_expires_at ? new Date(user.trial_expires_at).getTime() : null;
+  const expired = expiresAt !== null && expiresAt < Date.now();
+  return (
+    <Badge
+      variant="outline"
+      title={requested ? `Solicitada: ${requested}` : "Solicitada"}
+      className={`text-[10px] gap-1 ${
+        expired
+          ? "border-zinc-700 bg-zinc-950 text-zinc-400"
+          : "border-blue-500/30 bg-blue-500/10 text-blue-400"
+      }`}
+    >
+      <Clock className="w-3 h-3" />
+      {expired ? "Prueba expirada" : "Prueba activa"}
+      {requested && <span className="text-zinc-500 font-normal">· {requested}</span>}
+    </Badge>
+  );
+};
+
 const roleStyles = (role: string) => {
   if (role === "superadmin") return "border-destructive/30 bg-destructive/10 text-destructive";
   if (role === "reseller") return "border-primary/30 bg-primary/10 text-primary";
