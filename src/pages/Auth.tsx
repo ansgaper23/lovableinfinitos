@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { toast } from "sonner";
 import { useNavigate, Link } from "@tanstack/react-router";
-import { registerWithIpLimit } from "@/lib/signup.functions";
+import { registerWithIpLimit, resendSignupOtp } from "@/lib/signup.functions";
 import { checkEmailExists } from "@/lib/auth-check.functions";
 
 
@@ -20,7 +20,16 @@ export const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [signupSuccess, setSignupSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [otpStep, setOtpStep] = useState(false);
+  const [otpCode, setOtpCode] = useState("");
+  const [resendCooldown, setResendCooldown] = useState(0);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+    const t = setTimeout(() => setResendCooldown((s) => s - 1), 1000);
+    return () => clearTimeout(t);
+  }, [resendCooldown]);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
