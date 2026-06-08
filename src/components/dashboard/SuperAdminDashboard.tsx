@@ -390,24 +390,24 @@ export const SuperAdminDashboard = () => {
       </aside>
 
       <main className="flex-1 min-w-0 flex flex-col">
-        <header className="sticky top-0 z-20 h-14 bg-zinc-950/80 backdrop-blur border-b border-zinc-800 flex items-center px-4 lg:px-8 gap-3">
+        <header className="sticky top-0 z-20 h-14 bg-zinc-950/80 backdrop-blur border-b border-zinc-800 flex items-center px-3 sm:px-4 lg:px-8 gap-2 sm:gap-3">
           <Button
             variant="ghost"
             size="icon"
-            className="lg:hidden h-9 w-9 text-zinc-400"
+            className="lg:hidden h-9 w-9 text-zinc-400 shrink-0"
             onClick={() => setSidebarOpen(true)}
           >
             <Menu className="w-5 h-5" />
           </Button>
-          <h1 className="text-base sm:text-lg font-semibold tracking-tight">{activeLabel}</h1>
-          <div className="ml-auto flex items-center gap-2">
-            <Badge variant="outline" className="hidden sm:inline-flex border-zinc-700 bg-zinc-900 text-zinc-400 text-[10px]">
+          <h1 className="text-sm sm:text-lg font-semibold tracking-tight truncate min-w-0">{activeLabel}</h1>
+          <div className="ml-auto flex items-center gap-2 min-w-0">
+            <Badge variant="outline" className="hidden lg:inline-flex border-zinc-700 bg-zinc-900 text-zinc-400 text-[10px] max-w-[220px] truncate">
               {profile?.email}
             </Badge>
           </div>
         </header>
 
-        <div className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto space-y-6">
+        <div className="flex-1 p-3 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto space-y-4 sm:space-y-6 min-w-0">
           {activeTab === "summary" && (
             <>
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
