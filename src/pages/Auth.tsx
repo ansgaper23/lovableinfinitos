@@ -3,15 +3,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft, CheckCircle, AlertCircle } from "lucide-react";
+import { ArrowLeft, CheckCircle, AlertCircle, Mail } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { toast } from "sonner";
 import { useNavigate, Link } from "@tanstack/react-router";
-import { registerWithIpLimit, resendSignupOtp } from "@/lib/signup.functions";
+import { registerWithIpLimit } from "@/lib/signup.functions";
 import { checkEmailExists } from "@/lib/auth-check.functions";
-
-
 
 export const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -20,16 +18,7 @@ export const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [signupSuccess, setSignupSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [otpStep, setOtpStep] = useState(false);
-  const [otpCode, setOtpCode] = useState("");
-  const [resendCooldown, setResendCooldown] = useState(0);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (resendCooldown <= 0) return;
-    const t = setTimeout(() => setResendCooldown((s) => s - 1), 1000);
-    return () => clearTimeout(t);
-  }, [resendCooldown]);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -85,7 +74,6 @@ export const Auth = () => {
         });
         if (error) {
           if (error.message === "Invalid login credentials") {
-            // Distinguir: ¿el correo existe o no?
             try {
               const { exists } = await checkEmailExists({ data: { email } });
               if (!exists) {
@@ -93,7 +81,6 @@ export const Auth = () => {
               }
             } catch (checkErr: any) {
               if (checkErr?.message?.includes("no está registrado")) throw checkErr;
-              // si falla el check, caemos al mensaje genérico
             }
             throw new Error("Contraseña incorrecta. Verifica e intenta de nuevo.");
           }
@@ -105,15 +92,14 @@ export const Auth = () => {
         toast.success("¡Bienvenido de nuevo!");
         navigate({ to: "/dashboard" });
       } else {
-        // Server-side signup with IP-based rate limit + OTP email
         await registerWithIpLimit({ data: { email, password } });
-        toast.success("Te enviamos un código de 6 dígitos a tu correo.");
-        setOtpStep(true);
-        setResendCooldown(45);
+        setSignupSuccess(true);
+        setIsLogin(true);
+        setPassword("");
+        toast.success("Registro exitoso. Revisa tu correo para verificar tu cuenta.");
       }
     } catch (error: any) {
       console.error("Auth error:", error);
-      // Extraer mensaje real desde distintos formatos (serverFn, supabase, Error)
       const raw =
         error?.message ||
         error?.body?.message ||
@@ -184,57 +170,6 @@ export const Auth = () => {
     }
   };
 
-  const handleVerifyOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrorMsg(null);
-    if (otpCode.trim().length < 6) {
-      setErrorMsg("Ingresa el código de 6 dígitos que recibiste por correo.");
-      return;
-    }
-    setLoading(true);
-    try {
-      const { error } = await supabase.auth.verifyOtp({
-        email,
-        token: otpCode.trim(),
-        type: "signup",
-      });
-      if (error) {
-        const m = error.message?.toLowerCase() ?? "";
-        if (m.includes("expired")) throw new Error("El código expiró. Solicita uno nuevo.");
-        if (m.includes("invalid") || m.includes("token")) throw new Error("Código incorrecto. Verifícalo e intenta de nuevo.");
-        throw error;
-      }
-      toast.success("¡Correo verificado! Bienvenido.");
-      navigate({ to: "/dashboard" });
-    } catch (err: any) {
-      const msg = err?.message || "No se pudo verificar el código.";
-      setErrorMsg(msg);
-      toast.error(msg);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleResendOtp = async () => {
-    if (resendCooldown > 0) return;
-    setLoading(true);
-    setErrorMsg(null);
-    try {
-      await resendSignupOtp({ data: { email } });
-      toast.success("Nuevo código enviado a tu correo.");
-      setResendCooldown(45);
-    } catch (err: any) {
-      const msg = err?.message || "No se pudo reenviar el código.";
-      setErrorMsg(msg);
-      toast.error(msg);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-
-
-
   return (
     <div className="min-h-screen bg-background text-foreground dark font-sans flex items-center justify-center p-4 bg-[radial-gradient(circle_at_center,var(--color-primary),transparent_80%)] bg-opacity-[0.05]">
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-20">
@@ -258,19 +193,21 @@ export const Auth = () => {
             </div>
           </div>
           <CardTitle className="text-3xl font-black italic tracking-tighter uppercase">
-            {otpStep ? "Verifica tu correo" : isLogin ? "Iniciar Sesión" : "Crear Cuenta"}
+            {isLogin ? "Iniciar Sesión" : "Crear Cuenta"}
           </CardTitle>
           <CardDescription className="text-muted-foreground uppercase tracking-widest text-[10px] font-black mt-2">
-            {otpStep ? "Ingresa el código de 6 dígitos" : "Lovable Infinito — Elite Access"}
+            Lovable Infinito — Elite Access
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {isLogin && !otpStep && signupSuccess && (
+          {signupSuccess && (
             <div className="mb-6 p-4 border border-green-500/30 bg-green-500/10 rounded-none flex items-start gap-3">
-              <CheckCircle className="w-5 h-5 text-green-400 mt-0.5 shrink-0" />
+              <Mail className="w-5 h-5 text-green-400 mt-0.5 shrink-0" />
               <div>
-                <p className="text-sm font-bold text-green-400 uppercase tracking-wider">¡Cuenta creada con éxito!</p>
-                <p className="text-xs text-green-300/80 mt-1">Tu cuenta fue registrada correctamente. Ahora puedes iniciar sesión con tu email y contraseña.</p>
+                <p className="text-sm font-bold text-green-400 uppercase tracking-wider">¡Revisa tu correo!</p>
+                <p className="text-xs text-green-300/80 mt-1">
+                  Te enviamos un email de verificación. Haz clic en el link que te enviamos para activar tu cuenta. Luego podrás iniciar sesión.
+                </p>
               </div>
             </div>
           )}
@@ -284,122 +221,69 @@ export const Auth = () => {
             </div>
           )}
 
-          {otpStep ? (
-            <form onSubmit={handleVerifyOtp} className="space-y-6">
-              <div className="p-4 border border-primary/30 bg-primary/10 rounded-none">
-                <p className="text-xs text-foreground/80 leading-relaxed">
-                  Enviamos un código de 6 dígitos a <span className="font-bold text-primary">{email}</span>. Revisa tu bandeja de entrada (y spam) y pégalo abajo.
-                </p>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="otp" className="text-xs font-black uppercase tracking-widest text-muted-foreground">Código de verificación</Label>
-                <Input
-                  id="otp"
-                  type="text"
-                  inputMode="numeric"
-                  autoComplete="one-time-code"
-                  maxLength={6}
-                  placeholder="000000"
-                  value={otpCode}
-                  onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                  required
-                  className="rounded-none border-white/10 bg-white/5 focus:border-primary transition-colors h-14 text-center text-2xl tracking-[0.5em] font-black"
-                />
-              </div>
-              <Button
-                type="submit"
-                disabled={loading || otpCode.length < 6}
-                className="w-full h-14 rounded-none font-black italic tracking-tighter uppercase text-lg"
-              >
-                {loading ? "Verificando..." : "Verificar y entrar"}
-              </Button>
-              <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest">
-                <button
-                  type="button"
-                  onClick={() => { setOtpStep(false); setOtpCode(""); setErrorMsg(null); }}
-                  className="text-muted-foreground hover:text-primary transition-colors"
-                >
-                  ← Cambiar correo
-                </button>
-                <button
-                  type="button"
-                  onClick={handleResendOtp}
-                  disabled={resendCooldown > 0 || loading}
-                  className="text-muted-foreground hover:text-primary transition-colors disabled:opacity-40"
-                >
-                  {resendCooldown > 0 ? `Reenviar (${resendCooldown}s)` : "Reenviar código"}
-                </button>
-              </div>
-            </form>
-          ) : (
-            <>
-              <form onSubmit={handleAuth} className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-xs font-black uppercase tracking-widest text-muted-foreground">Email</Label>
-                  <Input 
-                    id="email" 
-                    type="email" 
-                    placeholder="tu@email.com" 
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    className="rounded-none border-white/10 bg-white/5 focus:border-primary transition-colors h-12"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="password" className="text-xs font-black uppercase tracking-widest text-muted-foreground">Contraseña</Label>
-                  <Input 
-                    id="password" 
-                    type="password" 
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    className="rounded-none border-white/10 bg-white/5 focus:border-primary transition-colors h-12"
-                  />
-                </div>
-                <Button 
-                  type="submit" 
-                  disabled={loading}
-                  className="w-full h-14 rounded-none font-black italic tracking-tighter uppercase text-lg shadow-[0_0_20px_rgba(var(--color-primary),0.3)] hover:shadow-[0_0_40px_rgba(var(--color-primary),0.5)] transition-all"
-                >
-                  {loading ? "Procesando..." : isLogin ? "Entrar al Panel" : "Registrarme Ahora"}
-                </Button>
-              </form>
+          <form onSubmit={handleAuth} className="space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-xs font-black uppercase tracking-widest text-muted-foreground">Email</Label>
+              <Input 
+                id="email" 
+                type="email" 
+                placeholder="tu@email.com" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="rounded-none border-white/10 bg-white/5 focus:border-primary transition-colors h-12"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="password" className="text-xs font-black uppercase tracking-widest text-muted-foreground">Contraseña</Label>
+              <Input 
+                id="password" 
+                type="password" 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="rounded-none border-white/10 bg-white/5 focus:border-primary transition-colors h-12"
+              />
+            </div>
+            <Button 
+              type="submit" 
+              disabled={loading}
+              className="w-full h-14 rounded-none font-black italic tracking-tighter uppercase text-lg shadow-[0_0_20px_rgba(var(--color-primary),0.3)] hover:shadow-[0_0_40px_rgba(var(--color-primary),0.5)] transition-all"
+            >
+              {loading ? "Procesando..." : isLogin ? "Entrar al Panel" : "Registrarme Ahora"}
+            </Button>
+          </form>
 
-              <div className="relative my-8">
-                <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t border-white/5"></span>
-                </div>
-                <div className="relative flex justify-center text-[10px] uppercase font-black tracking-widest">
-                  <span className="bg-background/50 backdrop-blur-md px-4 text-muted-foreground">O continúa con</span>
-                </div>
-              </div>
+          <div className="relative my-8">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t border-white/5"></span>
+            </div>
+            <div className="relative flex justify-center text-[10px] uppercase font-black tracking-widest">
+              <span className="bg-background/50 backdrop-blur-md px-4 text-muted-foreground">O continúa con</span>
+            </div>
+          </div>
 
-              <Button 
-                variant="outline" 
-                onClick={handleGoogleLogin}
-                className="w-full h-12 rounded-none border-white/10 bg-white/5 hover:bg-white/10 font-bold uppercase tracking-widest text-xs gap-3"
-              >
-                <svg className="w-4 h-4" viewBox="0 0 24 24">
-                  <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                  <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                  <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
-                  <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
-                </svg>
-                Google
-              </Button>
-            </>
-          )}
+          <Button 
+            variant="outline" 
+            onClick={handleGoogleLogin}
+            className="w-full h-12 rounded-none border-white/10 bg-white/5 hover:bg-white/10 font-bold uppercase tracking-widest text-xs gap-3"
+          >
+            <svg className="w-4 h-4" viewBox="0 0 24 24">
+              <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+              <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+              <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+              <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+            </svg>
+            Google
+          </Button>
         </CardContent>
         <CardFooter className="justify-center pb-10">
-          {!otpStep && (
-            <button
-              onClick={() => { setIsLogin(!isLogin); setSignupSuccess(false); setErrorMsg(null); }}
-              className="text-xs font-black uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors"
-            >
-              {isLogin ? "¿No tienes cuenta? Regístrate" : "¿Ya tienes cuenta? Entra aquí"}
-            </button>
-          )}
+          <button
+            onClick={() => { setIsLogin(!isLogin); setSignupSuccess(false); setErrorMsg(null); }}
+            className="text-xs font-black uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors"
+          >
+            {isLogin ? "¿No tienes cuenta? Regístrate" : "¿Ya tienes cuenta? Entra aquí"}
+          </button>
         </CardFooter>
       </Card>
     </div>
