@@ -603,42 +603,44 @@ export const SuperAdminDashboard = () => {
                   ) : (
                     <div className="divide-y divide-zinc-800 max-h-[500px] overflow-y-auto">
                       {licenses.map((lic) => (
-                        <div key={lic.id} className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-3 text-sm hover:bg-zinc-950/50">
+                        <div key={lic.id} className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 text-sm hover:bg-zinc-950/50">
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-1">
                               <Key className="w-3 h-3 text-destructive shrink-0" />
-                              <span className="font-mono text-xs text-zinc-200 truncate">{lic.license_key}</span>
+                              <span className="font-mono text-[11px] sm:text-xs text-zinc-200 truncate">{lic.license_key}</span>
                             </div>
-                            <div className="flex items-center gap-2 text-xs text-zinc-500">
+                            <div className="flex items-center gap-2 text-[11px] sm:text-xs text-zinc-500 min-w-0">
                               <span className="truncate">{lic.display_name || "S/N"}</span>
                               <span>·</span>
-                              <span>{lic.lifetime ? "Vitalicia" : lic.expires_at ? new Date(lic.expires_at).toLocaleDateString() : "N/A"}</span>
+                              <span className="shrink-0">{lic.lifetime ? "Vitalicia" : lic.expires_at ? new Date(lic.expires_at).toLocaleDateString() : "N/A"}</span>
                             </div>
                           </div>
-                          <Badge variant="outline" className={`text-[10px] shrink-0 ${
-                            lic.status === "active" ? "border-green-500/30 bg-green-500/10 text-green-400" :
-                            lic.status === "trial" ? "border-blue-500/30 bg-blue-500/10 text-blue-400" :
-                            "border-destructive/30 bg-destructive/10 text-destructive"
-                          }`}>{lic.status}</Badge>
-                          <div className="flex gap-1 shrink-0">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => handleResetHwid(lic.license_key)}
-                              className="h-8 w-8 text-zinc-400 hover:text-white"
-                              title="Reset HWID"
-                            >
-                              <RefreshCw className="w-3.5 h-3.5" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => handleRevoke(lic.license_key)}
-                              className="h-8 w-8 text-zinc-400 hover:text-destructive"
-                              title="Revocar"
-                            >
-                              <XCircle className="w-3.5 h-3.5" />
-                            </Button>
+                          <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-3">
+                            <Badge variant="outline" className={`text-[10px] shrink-0 ${
+                              lic.status === "active" ? "border-green-500/30 bg-green-500/10 text-green-400" :
+                              lic.status === "trial" ? "border-blue-500/30 bg-blue-500/10 text-blue-400" :
+                              "border-destructive/30 bg-destructive/10 text-destructive"
+                            }`}>{lic.status}</Badge>
+                            <div className="flex gap-1 shrink-0">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleResetHwid(lic.license_key)}
+                                className="h-8 w-8 text-zinc-400 hover:text-white"
+                                title="Reset HWID"
+                              >
+                                <RefreshCw className="w-3.5 h-3.5" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleRevoke(lic.license_key)}
+                                className="h-8 w-8 text-zinc-400 hover:text-destructive"
+                                title="Revocar"
+                              >
+                                <XCircle className="w-3.5 h-3.5" />
+                              </Button>
+                            </div>
                           </div>
                         </div>
                       ))}
