@@ -899,14 +899,14 @@ const UserActions = ({ user, onRecharge, onToggleActivation, onAssignLicense, on
   const isSuper = user.role === "superadmin";
   const isBlocked = user.role === "blocked";
   return (
-    <div className="flex flex-wrap justify-end gap-1.5">
+    <div className="grid grid-cols-2 sm:flex sm:flex-wrap sm:justify-end gap-1.5 w-full">
       {!isSuper && !isBlocked && (
         <Button
           onClick={onToggleActivation}
           disabled={toggling}
           size="sm"
           variant="outline"
-          className={`h-8 px-2.5 text-xs border-zinc-700 bg-zinc-950 ${
+          className={`h-8 px-2 text-[11px] sm:text-xs border-zinc-700 bg-zinc-950 ${
             isReseller ? "text-amber-400 hover:text-amber-300" : "text-green-400 hover:text-green-300"
           }`}
         >
@@ -914,7 +914,7 @@ const UserActions = ({ user, onRecharge, onToggleActivation, onAssignLicense, on
         </Button>
       )}
       {!isSuper && !isReseller && !isBlocked && (
-        <Button onClick={onAssignLicense} size="sm" variant="outline" className="h-8 px-2.5 text-xs border-zinc-700 bg-zinc-950 text-destructive hover:text-destructive">
+        <Button onClick={onAssignLicense} size="sm" variant="outline" className="h-8 px-2 text-[11px] sm:text-xs border-zinc-700 bg-zinc-950 text-destructive hover:text-destructive">
           <Key className="w-3 h-3 mr-1" /> Asignar
         </Button>
       )}
@@ -924,7 +924,7 @@ const UserActions = ({ user, onRecharge, onToggleActivation, onAssignLicense, on
           disabled={toggling}
           size="sm"
           variant="outline"
-          className={`h-8 px-2.5 text-xs border-zinc-700 bg-zinc-950 ${
+          className={`h-8 px-2 text-[11px] sm:text-xs border-zinc-700 bg-zinc-950 ${
             isBlocked ? "text-green-400" : "text-red-400"
           }`}
         >
@@ -936,12 +936,12 @@ const UserActions = ({ user, onRecharge, onToggleActivation, onAssignLicense, on
           onClick={onDelete}
           size="sm"
           variant="outline"
-          className="h-8 px-2.5 text-xs border-zinc-700 bg-zinc-950 text-zinc-400 hover:text-destructive"
+          className="h-8 px-2 text-[11px] sm:text-xs border-zinc-700 bg-zinc-950 text-zinc-400 hover:text-destructive"
         >
           <Trash2 className="w-3 h-3 mr-1" /> Eliminar
         </Button>
       )}
-      <Button onClick={onRecharge} size="sm" className="h-8 px-3 text-xs bg-primary hover:bg-primary/90 text-white">
+      <Button onClick={onRecharge} size="sm" className="h-8 px-2 sm:px-3 text-[11px] sm:text-xs bg-primary hover:bg-primary/90 text-white">
         <Plus className="w-3 h-3 mr-1" /> Recargar
       </Button>
     </div>
