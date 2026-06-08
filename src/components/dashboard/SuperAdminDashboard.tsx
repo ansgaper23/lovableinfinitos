@@ -390,24 +390,24 @@ export const SuperAdminDashboard = () => {
       </aside>
 
       <main className="flex-1 min-w-0 flex flex-col">
-        <header className="sticky top-0 z-20 h-14 bg-zinc-950/80 backdrop-blur border-b border-zinc-800 flex items-center px-4 lg:px-8 gap-3">
+        <header className="sticky top-0 z-20 h-14 bg-zinc-950/80 backdrop-blur border-b border-zinc-800 flex items-center px-3 sm:px-4 lg:px-8 gap-2 sm:gap-3">
           <Button
             variant="ghost"
             size="icon"
-            className="lg:hidden h-9 w-9 text-zinc-400"
+            className="lg:hidden h-9 w-9 text-zinc-400 shrink-0"
             onClick={() => setSidebarOpen(true)}
           >
             <Menu className="w-5 h-5" />
           </Button>
-          <h1 className="text-base sm:text-lg font-semibold tracking-tight">{activeLabel}</h1>
-          <div className="ml-auto flex items-center gap-2">
-            <Badge variant="outline" className="hidden sm:inline-flex border-zinc-700 bg-zinc-900 text-zinc-400 text-[10px]">
+          <h1 className="text-sm sm:text-lg font-semibold tracking-tight truncate min-w-0">{activeLabel}</h1>
+          <div className="ml-auto flex items-center gap-2 min-w-0">
+            <Badge variant="outline" className="hidden lg:inline-flex border-zinc-700 bg-zinc-900 text-zinc-400 text-[10px] max-w-[220px] truncate">
               {profile?.email}
             </Badge>
           </div>
         </header>
 
-        <div className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto space-y-6">
+        <div className="flex-1 p-3 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto space-y-4 sm:space-y-6 min-w-0">
           {activeTab === "summary" && (
             <>
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
@@ -603,42 +603,44 @@ export const SuperAdminDashboard = () => {
                   ) : (
                     <div className="divide-y divide-zinc-800 max-h-[500px] overflow-y-auto">
                       {licenses.map((lic) => (
-                        <div key={lic.id} className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-3 text-sm hover:bg-zinc-950/50">
+                        <div key={lic.id} className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 text-sm hover:bg-zinc-950/50">
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-1">
                               <Key className="w-3 h-3 text-destructive shrink-0" />
-                              <span className="font-mono text-xs text-zinc-200 truncate">{lic.license_key}</span>
+                              <span className="font-mono text-[11px] sm:text-xs text-zinc-200 truncate">{lic.license_key}</span>
                             </div>
-                            <div className="flex items-center gap-2 text-xs text-zinc-500">
+                            <div className="flex items-center gap-2 text-[11px] sm:text-xs text-zinc-500 min-w-0">
                               <span className="truncate">{lic.display_name || "S/N"}</span>
                               <span>·</span>
-                              <span>{lic.lifetime ? "Vitalicia" : lic.expires_at ? new Date(lic.expires_at).toLocaleDateString() : "N/A"}</span>
+                              <span className="shrink-0">{lic.lifetime ? "Vitalicia" : lic.expires_at ? new Date(lic.expires_at).toLocaleDateString() : "N/A"}</span>
                             </div>
                           </div>
-                          <Badge variant="outline" className={`text-[10px] shrink-0 ${
-                            lic.status === "active" ? "border-green-500/30 bg-green-500/10 text-green-400" :
-                            lic.status === "trial" ? "border-blue-500/30 bg-blue-500/10 text-blue-400" :
-                            "border-destructive/30 bg-destructive/10 text-destructive"
-                          }`}>{lic.status}</Badge>
-                          <div className="flex gap-1 shrink-0">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => handleResetHwid(lic.license_key)}
-                              className="h-8 w-8 text-zinc-400 hover:text-white"
-                              title="Reset HWID"
-                            >
-                              <RefreshCw className="w-3.5 h-3.5" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => handleRevoke(lic.license_key)}
-                              className="h-8 w-8 text-zinc-400 hover:text-destructive"
-                              title="Revocar"
-                            >
-                              <XCircle className="w-3.5 h-3.5" />
-                            </Button>
+                          <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-3">
+                            <Badge variant="outline" className={`text-[10px] shrink-0 ${
+                              lic.status === "active" ? "border-green-500/30 bg-green-500/10 text-green-400" :
+                              lic.status === "trial" ? "border-blue-500/30 bg-blue-500/10 text-blue-400" :
+                              "border-destructive/30 bg-destructive/10 text-destructive"
+                            }`}>{lic.status}</Badge>
+                            <div className="flex gap-1 shrink-0">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleResetHwid(lic.license_key)}
+                                className="h-8 w-8 text-zinc-400 hover:text-white"
+                                title="Reset HWID"
+                              >
+                                <RefreshCw className="w-3.5 h-3.5" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleRevoke(lic.license_key)}
+                                className="h-8 w-8 text-zinc-400 hover:text-destructive"
+                                title="Revocar"
+                              >
+                                <XCircle className="w-3.5 h-3.5" />
+                              </Button>
+                            </div>
                           </div>
                         </div>
                       ))}
@@ -692,7 +694,7 @@ export const SuperAdminDashboard = () => {
       </main>
 
       <Dialog open={!!rechargeTarget} onOpenChange={(open) => !open && setRechargeTarget(null)}>
-        <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-100 max-w-md">
+        <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-100 max-w-md w-[calc(100vw-1.5rem)] sm:w-full">
           <DialogHeader>
             <DialogTitle className="text-sm font-semibold">Recargar créditos</DialogTitle>
             <DialogDescription className="text-xs text-zinc-500">
@@ -726,7 +728,7 @@ export const SuperAdminDashboard = () => {
       </Dialog>
 
       <Dialog open={!!assignTarget} onOpenChange={(o) => { if (!o) { setAssignTarget(null); setAssignedResult(null); } }}>
-        <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-100 max-w-md">
+        <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-100 max-w-md w-[calc(100vw-1.5rem)] sm:w-full">
           <DialogHeader>
             <DialogTitle className="text-sm font-semibold flex items-center gap-2">
               <Key className="w-4 h-4 text-destructive" /> Asignar licencia
@@ -783,7 +785,7 @@ export const SuperAdminDashboard = () => {
       </Dialog>
 
       <Dialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
-        <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-100 max-w-md">
+        <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-100 max-w-md w-[calc(100vw-1.5rem)] sm:w-full">
           <DialogHeader>
             <DialogTitle className="text-sm font-semibold flex items-center gap-2">
               <Trash2 className="w-4 h-4 text-destructive" /> Eliminar cuenta
@@ -812,13 +814,13 @@ export const SuperAdminDashboard = () => {
 
 const StatCard = ({ label, value, hint, icon }: { label: string; value: string; hint?: string; icon: React.ReactNode }) => (
   <Card className="bg-zinc-900 border-zinc-800">
-    <CardContent className="p-4">
-      <div className="flex items-center justify-between mb-3 text-zinc-400">
-        <span className="text-xs">{label}</span>
-        {icon}
+    <CardContent className="p-3 sm:p-4">
+      <div className="flex items-center justify-between mb-2 sm:mb-3 text-zinc-400">
+        <span className="text-[11px] sm:text-xs truncate">{label}</span>
+        <span className="shrink-0">{icon}</span>
       </div>
-      <div className="text-xl sm:text-2xl font-semibold text-white tabular-nums">{value}</div>
-      {hint && <div className="text-[11px] text-zinc-500 mt-0.5">{hint}</div>}
+      <div className="text-lg sm:text-2xl font-semibold text-white tabular-nums truncate">{value}</div>
+      {hint && <div className="text-[10px] sm:text-[11px] text-zinc-500 mt-0.5 truncate">{hint}</div>}
     </CardContent>
   </Card>
 );
@@ -899,14 +901,14 @@ const UserActions = ({ user, onRecharge, onToggleActivation, onAssignLicense, on
   const isSuper = user.role === "superadmin";
   const isBlocked = user.role === "blocked";
   return (
-    <div className="flex flex-wrap justify-end gap-1.5">
+    <div className="grid grid-cols-2 sm:flex sm:flex-wrap sm:justify-end gap-1.5 w-full">
       {!isSuper && !isBlocked && (
         <Button
           onClick={onToggleActivation}
           disabled={toggling}
           size="sm"
           variant="outline"
-          className={`h-8 px-2.5 text-xs border-zinc-700 bg-zinc-950 ${
+          className={`h-8 px-2 text-[11px] sm:text-xs border-zinc-700 bg-zinc-950 ${
             isReseller ? "text-amber-400 hover:text-amber-300" : "text-green-400 hover:text-green-300"
           }`}
         >
@@ -914,7 +916,7 @@ const UserActions = ({ user, onRecharge, onToggleActivation, onAssignLicense, on
         </Button>
       )}
       {!isSuper && !isReseller && !isBlocked && (
-        <Button onClick={onAssignLicense} size="sm" variant="outline" className="h-8 px-2.5 text-xs border-zinc-700 bg-zinc-950 text-destructive hover:text-destructive">
+        <Button onClick={onAssignLicense} size="sm" variant="outline" className="h-8 px-2 text-[11px] sm:text-xs border-zinc-700 bg-zinc-950 text-destructive hover:text-destructive">
           <Key className="w-3 h-3 mr-1" /> Asignar
         </Button>
       )}
@@ -924,7 +926,7 @@ const UserActions = ({ user, onRecharge, onToggleActivation, onAssignLicense, on
           disabled={toggling}
           size="sm"
           variant="outline"
-          className={`h-8 px-2.5 text-xs border-zinc-700 bg-zinc-950 ${
+          className={`h-8 px-2 text-[11px] sm:text-xs border-zinc-700 bg-zinc-950 ${
             isBlocked ? "text-green-400" : "text-red-400"
           }`}
         >
@@ -936,12 +938,12 @@ const UserActions = ({ user, onRecharge, onToggleActivation, onAssignLicense, on
           onClick={onDelete}
           size="sm"
           variant="outline"
-          className="h-8 px-2.5 text-xs border-zinc-700 bg-zinc-950 text-zinc-400 hover:text-destructive"
+          className="h-8 px-2 text-[11px] sm:text-xs border-zinc-700 bg-zinc-950 text-zinc-400 hover:text-destructive"
         >
           <Trash2 className="w-3 h-3 mr-1" /> Eliminar
         </Button>
       )}
-      <Button onClick={onRecharge} size="sm" className="h-8 px-3 text-xs bg-primary hover:bg-primary/90 text-white">
+      <Button onClick={onRecharge} size="sm" className="h-8 px-2 sm:px-3 text-[11px] sm:text-xs bg-primary hover:bg-primary/90 text-white">
         <Plus className="w-3 h-3 mr-1" /> Recargar
       </Button>
     </div>
