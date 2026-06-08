@@ -184,6 +184,56 @@ export const Auth = () => {
     }
   };
 
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorMsg(null);
+    if (otpCode.trim().length < 6) {
+      setErrorMsg("Ingresa el código de 6 dígitos que recibiste por correo.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.verifyOtp({
+        email,
+        token: otpCode.trim(),
+        type: "signup",
+      });
+      if (error) {
+        const m = error.message?.toLowerCase() ?? "";
+        if (m.includes("expired")) throw new Error("El código expiró. Solicita uno nuevo.");
+        if (m.includes("invalid") || m.includes("token")) throw new Error("Código incorrecto. Verifícalo e intenta de nuevo.");
+        throw error;
+      }
+      toast.success("¡Correo verificado! Bienvenido.");
+      navigate({ to: "/dashboard" });
+    } catch (err: any) {
+      const msg = err?.message || "No se pudo verificar el código.";
+      setErrorMsg(msg);
+      toast.error(msg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    if (resendCooldown > 0) return;
+    setLoading(true);
+    setErrorMsg(null);
+    try {
+      await resendSignupOtp({ data: { email } });
+      toast.success("Nuevo código enviado a tu correo.");
+      setResendCooldown(45);
+    } catch (err: any) {
+      const msg = err?.message || "No se pudo reenviar el código.";
+      setErrorMsg(msg);
+      toast.error(msg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+
 
   return (
     <div className="min-h-screen bg-background text-foreground dark font-sans flex items-center justify-center p-4 bg-[radial-gradient(circle_at_center,var(--color-primary),transparent_80%)] bg-opacity-[0.05]">
