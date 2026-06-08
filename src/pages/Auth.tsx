@@ -105,22 +105,11 @@ export const Auth = () => {
         toast.success("¡Bienvenido de nuevo!");
         navigate({ to: "/dashboard" });
       } else {
-        // Server-side signup with IP-based rate limit (max 2 cuentas por IP)
+        // Server-side signup with IP-based rate limit + OTP email
         await registerWithIpLimit({ data: { email, password } });
-
-        // Auto sign-in after successful creation
-        const { error: signInError } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-        if (signInError) {
-          toast.success("¡Cuenta creada! Inicia sesión.");
-          setSignupSuccess(true);
-          setIsLogin(true);
-        } else {
-          toast.success("¡Bienvenido! Tu cuenta ha sido creada.");
-          navigate({ to: "/dashboard" });
-        }
+        toast.success("Te enviamos un código de 6 dígitos a tu correo.");
+        setOtpStep(true);
+        setResendCooldown(45);
       }
     } catch (error: any) {
       console.error("Auth error:", error);
