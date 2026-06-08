@@ -812,13 +812,13 @@ export const SuperAdminDashboard = () => {
 
 const StatCard = ({ label, value, hint, icon }: { label: string; value: string; hint?: string; icon: React.ReactNode }) => (
   <Card className="bg-zinc-900 border-zinc-800">
-    <CardContent className="p-4">
-      <div className="flex items-center justify-between mb-3 text-zinc-400">
-        <span className="text-xs">{label}</span>
-        {icon}
+    <CardContent className="p-3 sm:p-4">
+      <div className="flex items-center justify-between mb-2 sm:mb-3 text-zinc-400">
+        <span className="text-[11px] sm:text-xs truncate">{label}</span>
+        <span className="shrink-0">{icon}</span>
       </div>
-      <div className="text-xl sm:text-2xl font-semibold text-white tabular-nums">{value}</div>
-      {hint && <div className="text-[11px] text-zinc-500 mt-0.5">{hint}</div>}
+      <div className="text-lg sm:text-2xl font-semibold text-white tabular-nums truncate">{value}</div>
+      {hint && <div className="text-[10px] sm:text-[11px] text-zinc-500 mt-0.5 truncate">{hint}</div>}
     </CardContent>
   </Card>
 );
