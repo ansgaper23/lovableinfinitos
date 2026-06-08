@@ -694,7 +694,7 @@ export const SuperAdminDashboard = () => {
       </main>
 
       <Dialog open={!!rechargeTarget} onOpenChange={(open) => !open && setRechargeTarget(null)}>
-        <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-100 max-w-md">
+        <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-100 max-w-md w-[calc(100vw-1.5rem)] sm:w-full">
           <DialogHeader>
             <DialogTitle className="text-sm font-semibold">Recargar créditos</DialogTitle>
             <DialogDescription className="text-xs text-zinc-500">
@@ -728,7 +728,7 @@ export const SuperAdminDashboard = () => {
       </Dialog>
 
       <Dialog open={!!assignTarget} onOpenChange={(o) => { if (!o) { setAssignTarget(null); setAssignedResult(null); } }}>
-        <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-100 max-w-md">
+        <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-100 max-w-md w-[calc(100vw-1.5rem)] sm:w-full">
           <DialogHeader>
             <DialogTitle className="text-sm font-semibold flex items-center gap-2">
               <Key className="w-4 h-4 text-destructive" /> Asignar licencia
@@ -785,7 +785,7 @@ export const SuperAdminDashboard = () => {
       </Dialog>
 
       <Dialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
-        <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-100 max-w-md">
+        <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-100 max-w-md w-[calc(100vw-1.5rem)] sm:w-full">
           <DialogHeader>
             <DialogTitle className="text-sm font-semibold flex items-center gap-2">
               <Trash2 className="w-4 h-4 text-destructive" /> Eliminar cuenta
