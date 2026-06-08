@@ -15,13 +15,19 @@ import {
   Download,
   Layers,
   Bell,
+  Package,
+  Loader2,
+  Chrome,
+  Monitor,
+  Flame,
+  Crown,
+  Star,
 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
-import { ExtensionDownloadCard } from "./ExtensionDownloadCard";
 
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "@tanstack/react-router";
@@ -29,18 +35,14 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { generateTrialForNewUser } from "@/lib/user-actions.functions";
 
-interface TrialLicense {
-  license_key: string;
-  expires_at: string | null;
-  created_at: string;
-}
-
-interface AssignedLicense {
+interface LicenseRow {
+  id: string;
   license_key: string;
   expires_at: string | null;
   created_at: string;
   display_name: string | null;
   type: string;
+  lifetime: boolean | null;
 }
 
 function useCountdown(expiresAt: string | null) {
@@ -62,45 +64,13 @@ function useCountdown(expiresAt: string | null) {
   };
 }
 
-function LicenseStatusBadge({ expiresAt }: { expiresAt: string | null }) {
-  const countdown = useCountdown(expiresAt);
-  const isLifetime = !expiresAt;
-  const isExpired = !isLifetime && !!countdown?.expired;
-  const statusLabel = isLifetime ? "VITALICIA" : isExpired ? "EXPIRADA" : "ACTIVA";
-  const statusClasses = isExpired
-    ? "border-red-500/40 bg-red-500/10 text-red-400"
-    : "border-emerald-500/30 bg-emerald-500/10 text-emerald-400";
-  const timeText = isLifetime
-    ? "Sin vencimiento"
-    : isExpired
-      ? `Expiró: ${new Date(expiresAt as string).toLocaleString()}`
-      : `Tiempo restante: ${countdown?.label ?? "—"}`;
-  return (
-    <>
-      <Badge
-        variant="outline"
-        className={`rounded-full text-[10px] font-bold uppercase tracking-widest px-3 py-1 ${statusClasses}`}
-      >
-        {statusLabel}
-      </Badge>
-      <p className="text-[10px] font-bold tracking-widest text-zinc-400 uppercase flex items-center gap-2">
-        <Clock className="w-3 h-3" />
-        {timeText}
-      </p>
-    </>
-  );
-}
-
 type TabKey = "inicio" | "planes" | "llaves" | "extension" | "extras";
 
 export const Dashboard = () => {
   const { user, profile, loading } = useAuth(true);
   const [credits, setCredits] = useState<number | null>(null);
-  const [trial, setTrial] = useState<TrialLicense | null>(null);
-  const [assigned, setAssigned] = useState<AssignedLicense | null>(null);
+  const [licenses, setLicenses] = useState<LicenseRow[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [copied, setCopied] = useState(false);
-  const [copiedAssigned, setCopiedAssigned] = useState(false);
   const [activeTab, setActiveTab] = useState<TabKey>("inicio");
   const navigate = useNavigate();
   const genTrial = useServerFn(generateTrialForNewUser);
@@ -108,61 +78,51 @@ export const Dashboard = () => {
   const isBasicUser = profile?.role === "user" || !profile?.role;
   const displayName = user?.email?.split("@")[0] || "Usuario";
 
+  const refetchLicenses = async (uid: string) => {
+    const { data } = await supabase
+      .from("reseller_licenses")
+      .select("id, license_key, expires_at, created_at, display_name, type, lifetime")
+      .eq("user_id", uid)
+      .order("created_at", { ascending: false });
+    if (data) setLicenses(data as LicenseRow[]);
+  };
+
   useEffect(() => {
     if (!user) return;
     let cancelled = false;
     (async () => {
-      const [creditsRes, trialRes, assignedRes] = await Promise.all([
+      const [creditsRes, licRes] = await Promise.all([
         supabase.from("user_credits").select("credits").eq("user_id", user.id).maybeSingle(),
         supabase
           .from("reseller_licenses")
-          .select("license_key, expires_at, created_at")
+          .select("id, license_key, expires_at, created_at, display_name, type, lifetime")
           .eq("user_id", user.id)
-          .eq("type", "trial")
-          .order("created_at", { ascending: false })
-          .limit(1)
-          .maybeSingle(),
-        supabase
-          .from("reseller_licenses")
-          .select("license_key, expires_at, created_at, display_name, type")
-          .eq("user_id", user.id)
-          .neq("type", "trial")
-          .order("created_at", { ascending: false })
-          .limit(1)
-          .maybeSingle(),
+          .order("created_at", { ascending: false }),
       ]);
       if (cancelled) return;
       setCredits(creditsRes.data?.credits ?? 0);
-      if (trialRes.data) setTrial(trialRes.data as TrialLicense);
-      if (assignedRes.data) setAssigned(assignedRes.data as AssignedLicense);
+      if (licRes.data) setLicenses(licRes.data as LicenseRow[]);
     })();
     return () => {
       cancelled = true;
     };
   }, [user?.id]);
 
+  const trial = licenses.find((l) => l.type === "trial") || null;
+  const assigned = licenses.find((l) => l.type !== "trial") || null;
+  const statusActive = !!assigned || !!trial;
+
   const handleGenerateTrial = async () => {
     setIsGenerating(true);
     try {
-      const res = await genTrial({ data: { displayName } });
-      setTrial({
-        license_key: res.license_key,
-        expires_at: res.expires_at,
-        created_at: new Date().toISOString(),
-      });
+      await genTrial({ data: { displayName } });
       toast.success("¡Licencia de prueba generada!");
+      if (user) await refetchLicenses(user.id);
     } catch (e: any) {
       toast.error(e.message || "Error al generar la prueba");
     } finally {
       setIsGenerating(false);
     }
-  };
-
-  const copyKey = async () => {
-    if (!trial) return;
-    await navigator.clipboard.writeText(trial.license_key);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1800);
   };
 
   if (loading) {
@@ -204,8 +164,6 @@ export const Dashboard = () => {
     { key: "extension", label: "Extensión", icon: <Download className="w-4 h-4" /> },
     { key: "extras", label: "Extras", icon: <Layers className="w-4 h-4" /> },
   ];
-
-  const statusActive = !!assigned || !!trial;
 
   return (
     <div className="min-h-screen bg-[#06060a] text-white font-sans relative overflow-x-hidden">
@@ -280,323 +238,623 @@ export const Dashboard = () => {
           </div>
         </nav>
 
-        {/* Hero */}
-        <section className="relative rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.04] to-white/[0.01] backdrop-blur-xl overflow-hidden">
-          <div className="absolute -top-32 -right-20 w-[400px] h-[400px] bg-violet-600/20 blur-[100px] rounded-full" />
-          <div className="absolute -bottom-32 -left-20 w-[400px] h-[400px] bg-fuchsia-600/10 blur-[100px] rounded-full" />
-
-          <div className="relative grid lg:grid-cols-[1fr_auto] gap-8 p-6 sm:p-10">
-            <div>
-              <Badge
-                variant="outline"
-                className="mb-4 rounded-full border-violet-400/30 bg-violet-500/10 text-violet-300 text-[10px] font-bold uppercase tracking-widest px-3 py-1"
-              >
-                <Zap className="w-3 h-3 mr-1.5" />
-                {statusActive ? "Acceso premium activo" : "Cuenta nueva"}
-              </Badge>
-
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-3">
-                ¡Hola,{" "}
-                <span className="bg-gradient-to-r from-violet-400 via-fuchsia-400 to-pink-400 bg-clip-text text-transparent">
-                  {displayName}
-                </span>
-                !
-              </h1>
-              <p className="text-zinc-400 max-w-xl text-base sm:text-lg leading-relaxed mb-6">
-                Tu panel está listo. Gestiona tus llaves y monitoriza el uso de tus extensiones en tiempo real.
-              </p>
-
-              <div className="flex flex-wrap gap-3">
-                <Button
-                  onClick={() => navigate({ to: "/precios" })}
-                  className="rounded-full h-11 px-6 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 font-semibold shadow-lg shadow-violet-600/30"
-                >
-                  Ver planes
-                </Button>
-                <Button
-                  onClick={() => setActiveTab("llaves")}
-                  variant="outline"
-                  className="rounded-full h-11 px-6 bg-white/5 border-white/10 hover:bg-white/10 font-semibold"
-                >
-                  Mis Llaves
-                </Button>
-              </div>
-            </div>
-
-            {/* Status card */}
-            <div className="self-center w-full lg:w-[280px] rounded-2xl border border-white/10 bg-black/40 backdrop-blur-xl p-5">
-              <div className="flex items-center justify-between mb-4">
-                <p className="text-[10px] font-bold tracking-widest text-zinc-500 uppercase">Tu estatus</p>
-                <span
-                  className={`w-2 h-2 rounded-full ${statusActive ? "bg-emerald-400 shadow-[0_0_10px] shadow-emerald-400/60" : "bg-amber-400"}`}
-                />
-              </div>
-              <div className="flex items-baseline gap-2 mb-3">
-                <span className="text-4xl font-bold">{(assigned ? 1 : 0) + (trial ? 1 : 0)}</span>
-                <span className="text-zinc-400 text-sm">Fichas activas</span>
-              </div>
-              <Progress
-                value={statusActive ? 100 : 10}
-                className="h-1.5 bg-white/5 [&>div]:bg-gradient-to-r [&>div]:from-violet-500 [&>div]:to-fuchsia-500"
-              />
-              <div className="mt-4 grid grid-cols-2 gap-3 text-center">
-                <div className="rounded-xl bg-white/[0.03] border border-white/5 p-2">
-                  <p className="text-[10px] text-zinc-500 uppercase tracking-widest">Créditos</p>
-                  <p className="text-sm font-bold">
-                    {credits === null ? "…" : credits === -1 ? "∞" : credits}
-                  </p>
-                </div>
-                <div className="rounded-xl bg-white/[0.03] border border-white/5 p-2">
-                  <p className="text-[10px] text-zinc-500 uppercase tracking-widest">Rol</p>
-                  <p className="text-sm font-bold capitalize">
-                    {isBasicUser ? "Nuevo" : profile?.role}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Summary heading */}
-        <p className="text-[10px] font-bold tracking-[0.25em] text-zinc-500 uppercase pt-2">
-          Resumen de la actuación
-        </p>
-
-        {/* Stat grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <StatCard
-            label="Estado"
-            value={statusActive ? "ACTIVA" : isBasicUser ? "NUEVA" : "ACTIVA"}
-            hint={statusActive ? "Acceso completo" : "Sin licencia aún"}
-            icon={<ShieldCheck className="w-5 h-5" />}
-            tone="violet"
+        {activeTab === "inicio" && (
+          <InicioTab
+            displayName={displayName}
+            statusActive={statusActive}
+            assigned={assigned}
+            trial={trial}
+            credits={credits}
+            role={profile?.role}
+            isBasicUser={isBasicUser}
+            onNavigate={(t) => setActiveTab(t)}
           />
-          <StatCard
-            label="Créditos"
-            value={credits !== null ? (credits === -1 ? "ILIMITADOS" : credits.toString()) : "…"}
-            hint="En tu cuenta"
-            icon={<Zap className="w-5 h-5" />}
-            tone="fuchsia"
+        )}
+
+        {activeTab === "planes" && <PlanesTab />}
+
+        {activeTab === "llaves" && (
+          <LlavesTab
+            licenses={licenses}
+            onGenerateTrial={handleGenerateTrial}
+            isGenerating={isGenerating}
+            hasTrial={!!trial}
           />
-          <StatCard
-            label="Licencia Prueba"
-            value={trial ? "GENERADA" : "DISPONIBLE"}
-            hint={trial ? "Un solo uso" : "Pulsa generar"}
-            icon={<Key className="w-5 h-5" />}
-            tone="emerald"
-          />
-        </div>
+        )}
 
-        {/* Assigned license */}
-        <PanelCard
-          icon={<ShieldCheck className="w-5 h-5 text-violet-300" />}
-          title="Mi Licencia"
-          subtitle={assigned ? "Licencia asignada por el administrador" : "Estado de tu licencia"}
-        >
-          {!assigned ? (
-            <div className="rounded-2xl border border-dashed border-white/10 bg-black/20 p-6 flex flex-col sm:flex-row sm:items-center gap-5">
-              <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center shrink-0">
-                <Lock className="w-6 h-6 text-amber-400" />
-              </div>
-              <div className="flex-1">
-                <h3 className="text-lg font-semibold">Sin licencia asignada</h3>
-                <p className="text-sm text-zinc-400">Adquiere una para empezar a usar Lovable Infinito.</p>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <Button
-                  onClick={() =>
-                    window.open(
-                      "https://wa.me/51936467898?text=Hola,%20quiero%20adquirir%20una%20licencia%20de%20Lovable%20Infinito",
-                      "_blank",
-                    )
-                  }
-                  className="rounded-full h-10 px-5 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 font-semibold"
-                >
-                  Adquirir <ArrowRight className="w-4 h-4 ml-1" />
-                </Button>
-                <Button
-                  onClick={() => navigate({ to: "/precios" })}
-                  variant="outline"
-                  className="rounded-full h-10 px-5 bg-white/5 border-white/10 hover:bg-white/10"
-                >
-                  Ver Planes
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <div className="rounded-2xl border border-violet-400/20 bg-violet-500/[0.05] p-5">
-              <div className="flex items-center justify-between flex-wrap gap-3 mb-4">
-                <LicenseStatusBadge expiresAt={assigned.expires_at ?? null} />
-              </div>
-              <p className="text-[10px] font-bold tracking-widest text-violet-300 uppercase mb-2">
-                Tu llave de acceso
-              </p>
-              <div className="flex items-center gap-2 flex-wrap">
-                <code className="flex-1 min-w-0 font-mono text-sm text-white break-all bg-black/50 px-4 py-3 rounded-xl border border-white/10">
-                  {assigned.license_key}
-                </code>
-                <Button
-                  onClick={async () => {
-                    await navigator.clipboard.writeText(assigned.license_key);
-                    setCopiedAssigned(true);
-                    setTimeout(() => setCopiedAssigned(false), 1800);
-                  }}
-                  variant="outline"
-                  className="rounded-xl h-11 px-4 bg-white/5 border-white/10 hover:bg-white/10"
-                >
-                  {copiedAssigned ? (
-                    <Check className="w-4 h-4 mr-2 text-emerald-400" />
-                  ) : (
-                    <Copy className="w-4 h-4 mr-2" />
-                  )}
-                  {copiedAssigned ? "Copiado" : "Copiar"}
-                </Button>
-              </div>
-            </div>
-          )}
-        </PanelCard>
+        {activeTab === "extension" && <ExtensionTab />}
 
-        {/* Trial license */}
-        <PanelCard
-          icon={<Key className="w-5 h-5 text-fuchsia-300" />}
-          title="Licencia de Prueba"
-          subtitle="15 minutos · Un solo uso por cuenta"
-        >
-          {!trial ? (
-            <div className="rounded-2xl border border-dashed border-white/10 bg-black/20 p-6 flex flex-col sm:flex-row sm:items-center gap-4">
-              <p className="text-sm text-zinc-400 flex-1">
-                Aún no has generado tu licencia de prueba. Pulsa el botón para crearla ahora.
-              </p>
-              <Button
-                onClick={handleGenerateTrial}
-                disabled={isGenerating}
-                className="rounded-full h-11 px-6 bg-gradient-to-r from-fuchsia-600 to-pink-600 hover:from-fuchsia-500 hover:to-pink-500 font-semibold shadow-lg shadow-fuchsia-600/20"
-              >
-                {isGenerating ? (
-                  "Generando..."
-                ) : (
-                  <>
-                    Generar prueba <Zap className="w-4 h-4 ml-1" />
-                  </>
-                )}
-              </Button>
-            </div>
-          ) : (
-            <div className="rounded-2xl border border-fuchsia-400/20 bg-fuchsia-500/[0.05] p-5">
-              <p className="text-[10px] font-bold tracking-widest text-fuchsia-300 uppercase mb-2">
-                Tu llave de acceso
-              </p>
-              <div className="flex items-center gap-2 flex-wrap">
-                <code className="flex-1 min-w-0 font-mono text-sm text-white break-all bg-black/50 px-4 py-3 rounded-xl border border-white/10">
-                  {trial.license_key}
-                </code>
-                <Button
-                  onClick={copyKey}
-                  variant="outline"
-                  className="rounded-xl h-11 px-4 bg-white/5 border-white/10 hover:bg-white/10"
-                >
-                  {copied ? (
-                    <Check className="w-4 h-4 mr-2 text-emerald-400" />
-                  ) : (
-                    <Copy className="w-4 h-4 mr-2" />
-                  )}
-                  {copied ? "Copiado" : "Copiar"}
-                </Button>
-              </div>
-              {trial.expires_at && (
-                <p className="text-[10px] font-bold tracking-widest text-zinc-400 uppercase mt-3 flex items-center gap-2">
-                  <Clock className="w-3 h-3" /> Expira: {new Date(trial.expires_at).toLocaleString()}
-                </p>
-              )}
-            </div>
-          )}
-        </PanelCard>
-
-        {/* Reseller access */}
-        <PanelCard
-          icon={
-            isBasicUser ? (
-              <Lock className="w-5 h-5 text-zinc-400" />
-            ) : (
-              <ShieldCheck className="w-5 h-5 text-emerald-300" />
-            )
-          }
-          title="Panel de Revendedor"
-          subtitle={isBasicUser ? "Acceso limitado" : "Acceso completo"}
-        >
-          {isBasicUser ? (
-            <div className="space-y-4">
-              <p className="text-sm text-zinc-400">
-                Puedes acceder al panel, pero no podrás generar licencias hasta que el{" "}
-                <span className="text-violet-300 font-semibold">administrador active tu cuenta</span>. Una vez
-                activada, tendrás acceso completo para emitir y gestionar tus licencias.
-              </p>
-              <div className="flex flex-wrap items-center gap-3">
-                <Button
-                  onClick={() => navigate({ to: "/reseller" })}
-                  variant="outline"
-                  className="rounded-full h-10 px-5 bg-white/5 border-white/10 hover:bg-white/10"
-                >
-                  Ir al Panel <ArrowRight className="w-4 h-4 ml-1" />
-                </Button>
-                <Badge
-                  variant="outline"
-                  className="rounded-full border-amber-500/30 bg-amber-500/10 text-amber-300 text-[10px] font-bold uppercase tracking-widest px-3 py-1"
-                >
-                  Pendiente de activación
-                </Badge>
-              </div>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <p className="text-sm text-zinc-400">
-                Tu cuenta está activa. Accede al panel para gestionar licencias.
-              </p>
-              <Button
-                onClick={() => navigate({ to: "/reseller" })}
-                className="rounded-full h-11 px-6 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 font-semibold"
-              >
-                Abrir Panel <ArrowRight className="w-4 h-4 ml-1" />
-              </Button>
-            </div>
-          )}
-        </PanelCard>
-
-        <ExtensionDownloadCard />
+        {activeTab === "extras" && (
+          <ExtrasTab isBasicUser={isBasicUser} navigate={navigate} role={profile?.role} />
+        )}
       </div>
     </div>
   );
 };
 
-const PanelCard = ({
-  icon,
-  title,
-  subtitle,
-  children,
+/* -------------------- TAB: INICIO -------------------- */
+const InicioTab = ({
+  displayName,
+  statusActive,
+  assigned,
+  trial,
+  credits,
+  role,
+  isBasicUser,
+  onNavigate,
 }: {
-  icon: React.ReactNode;
-  title: string;
-  subtitle?: string;
-  children: React.ReactNode;
+  displayName: string;
+  statusActive: boolean;
+  assigned: LicenseRow | null;
+  trial: LicenseRow | null;
+  credits: number | null;
+  role?: string | null;
+  isBasicUser: boolean;
+  onNavigate: (t: TabKey) => void;
 }) => (
-  <Card className="rounded-3xl border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-xl shadow-black/20">
-    <CardContent className="p-6 sm:p-7 space-y-5">
-      <div className="flex items-center gap-3">
-        <div className="w-11 h-11 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
-          {icon}
-        </div>
+  <>
+    {/* Hero */}
+    <section className="relative rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.04] to-white/[0.01] backdrop-blur-xl overflow-hidden">
+      <div className="absolute -top-32 -right-20 w-[400px] h-[400px] bg-violet-600/20 blur-[100px] rounded-full" />
+      <div className="absolute -bottom-32 -left-20 w-[400px] h-[400px] bg-fuchsia-600/10 blur-[100px] rounded-full" />
+
+      <div className="relative grid lg:grid-cols-[1fr_auto] gap-8 p-6 sm:p-10">
         <div>
-          <h3 className="text-base sm:text-lg font-semibold tracking-tight">{title}</h3>
-          {subtitle && (
-            <p className="text-[10px] font-bold tracking-widest text-zinc-500 uppercase mt-0.5">
-              {subtitle}
+          <Badge
+            variant="outline"
+            className="mb-4 rounded-full border-violet-400/30 bg-violet-500/10 text-violet-300 text-[10px] font-bold uppercase tracking-widest px-3 py-1"
+          >
+            <Zap className="w-3 h-3 mr-1.5" />
+            {statusActive ? "Acceso premium activo" : "Cuenta nueva"}
+          </Badge>
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-3">
+            ¡Hola,{" "}
+            <span className="bg-gradient-to-r from-violet-400 via-fuchsia-400 to-pink-400 bg-clip-text text-transparent">
+              {displayName}
+            </span>
+            !
+          </h1>
+          <p className="text-zinc-400 max-w-xl text-base sm:text-lg leading-relaxed mb-6">
+            Tu panel está listo. Gestiona tus llaves y monitoriza el uso de tus extensiones en tiempo real.
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <Button
+              onClick={() => onNavigate("planes")}
+              className="rounded-full h-11 px-6 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 font-semibold shadow-lg shadow-violet-600/30"
+            >
+              Ver planes
+            </Button>
+            <Button
+              onClick={() => onNavigate("llaves")}
+              variant="outline"
+              className="rounded-full h-11 px-6 bg-white/5 border-white/10 hover:bg-white/10 font-semibold"
+            >
+              Mis Llaves
+            </Button>
+          </div>
+        </div>
+
+        <div className="self-center w-full lg:w-[280px] rounded-2xl border border-white/10 bg-black/40 backdrop-blur-xl p-5">
+          <div className="flex items-center justify-between mb-4">
+            <p className="text-[10px] font-bold tracking-widest text-zinc-500 uppercase">Tu estatus</p>
+            <span
+              className={`w-2 h-2 rounded-full ${statusActive ? "bg-emerald-400 shadow-[0_0_10px] shadow-emerald-400/60" : "bg-amber-400"}`}
+            />
+          </div>
+          <div className="flex items-baseline gap-2 mb-3">
+            <span className="text-4xl font-bold">{(assigned ? 1 : 0) + (trial ? 1 : 0)}</span>
+            <span className="text-zinc-400 text-sm">Fichas activas</span>
+          </div>
+          <Progress
+            value={statusActive ? 100 : 10}
+            className="h-1.5 bg-white/5 [&>div]:bg-gradient-to-r [&>div]:from-violet-500 [&>div]:to-fuchsia-500"
+          />
+          <div className="mt-4 grid grid-cols-2 gap-3 text-center">
+            <div className="rounded-xl bg-white/[0.03] border border-white/5 p-2">
+              <p className="text-[10px] text-zinc-500 uppercase tracking-widest">Créditos</p>
+              <p className="text-sm font-bold">
+                {credits === null ? "…" : credits === -1 ? "∞" : credits}
+              </p>
+            </div>
+            <div className="rounded-xl bg-white/[0.03] border border-white/5 p-2">
+              <p className="text-[10px] text-zinc-500 uppercase tracking-widest">Rol</p>
+              <p className="text-sm font-bold capitalize">{isBasicUser ? "Nuevo" : role}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <p className="text-[10px] font-bold tracking-[0.25em] text-zinc-500 uppercase pt-2">
+      Resumen de la actuación
+    </p>
+
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <StatCard
+        label="Estado"
+        value={statusActive ? "ACTIVA" : isBasicUser ? "NUEVA" : "ACTIVA"}
+        hint={statusActive ? "Acceso completo" : "Sin licencia aún"}
+        icon={<ShieldCheck className="w-5 h-5" />}
+        tone="violet"
+      />
+      <StatCard
+        label="Créditos"
+        value={credits !== null ? (credits === -1 ? "ILIMITADOS" : credits.toString()) : "…"}
+        hint="En tu cuenta"
+        icon={<Zap className="w-5 h-5" />}
+        tone="fuchsia"
+      />
+      <StatCard
+        label="Llaves totales"
+        value={String((assigned ? 1 : 0) + (trial ? 1 : 0))}
+        hint="Activas hoy"
+        icon={<Key className="w-5 h-5" />}
+        tone="emerald"
+      />
+    </div>
+  </>
+);
+
+/* -------------------- TAB: PLANES -------------------- */
+const PlanesTab = () => {
+  const plans = [
+    {
+      name: "Plan Básico",
+      duration: "1 Día",
+      price: "$5.99",
+      icon: <Flame className="w-5 h-5" />,
+      tone: "violet" as const,
+      features: ["Lovable ilimitado por 1 día", "Sin consumo de créditos", "Acceso inmediato", "Soporte por WhatsApp"],
+    },
+    {
+      name: "Plan Pro",
+      duration: "7 Días",
+      price: "$13.99",
+      popular: true,
+      icon: <Star className="w-5 h-5" />,
+      tone: "fuchsia" as const,
+      features: ["Lovable ilimitado por 7 días", "Sin consumo de créditos", "Acceso inmediato", "Soporte 24/7", "Guía de prompts"],
+    },
+    {
+      name: "Plan Premium",
+      duration: "30 Días",
+      price: "$18.99",
+      oldPrice: "$35.00",
+      icon: <Crown className="w-5 h-5" />,
+      tone: "pink" as const,
+      features: ["Lovable ilimitado por 30 días", "Sin consumo de créditos", "Acceso inmediato", "Soporte VIP", "Actualizaciones garantizadas"],
+    },
+  ];
+  const toneRing: Record<string, string> = {
+    violet: "from-violet-500/30 to-violet-500/0 text-violet-300",
+    fuchsia: "from-fuchsia-500/30 to-fuchsia-500/0 text-fuchsia-300",
+    pink: "from-pink-500/30 to-pink-500/0 text-pink-300",
+  };
+
+  return (
+    <section className="space-y-6">
+      <Header
+        eyebrow="Planes activos"
+        title="Elige el ritmo que necesitas"
+        sub="Energía ilimitada para tus proyectos. Paga solo por el tiempo que usas."
+      />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        {plans.map((p) => (
+          <div
+            key={p.name}
+            className={`relative rounded-3xl border bg-white/[0.03] backdrop-blur-xl p-6 transition hover:-translate-y-1 ${
+              p.popular ? "border-violet-400/40 shadow-2xl shadow-violet-600/20" : "border-white/10"
+            }`}
+          >
+            {p.popular && (
+              <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 text-[10px] font-bold uppercase tracking-widest px-3 py-1">
+                Más popular
+              </span>
+            )}
+            <div
+              className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${toneRing[p.tone]} border border-white/10 flex items-center justify-center mb-5`}
+            >
+              {p.icon}
+            </div>
+            <h3 className="text-lg font-bold">{p.name}</h3>
+            <p className="text-[10px] font-bold tracking-widest text-zinc-500 uppercase mb-4">{p.duration}</p>
+            <div className="flex items-baseline gap-2 mb-5">
+              <span className="text-4xl font-bold tracking-tight">{p.price}</span>
+              {p.oldPrice && <span className="text-sm text-zinc-500 line-through">{p.oldPrice}</span>}
+            </div>
+            <ul className="space-y-2 mb-6">
+              {p.features.map((f) => (
+                <li key={f} className="flex items-start gap-2 text-sm text-zinc-300">
+                  <Check className="w-4 h-4 text-violet-400 mt-0.5 shrink-0" />
+                  <span>{f}</span>
+                </li>
+              ))}
+            </ul>
+            <Button
+              onClick={() =>
+                window.open(
+                  `https://wa.me/51936467898?text=Hola,%20quiero%20el%20${encodeURIComponent(p.name)}`,
+                  "_blank",
+                )
+              }
+              className={`w-full rounded-full h-11 font-semibold ${
+                p.popular
+                  ? "bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 shadow-lg shadow-violet-600/30"
+                  : "bg-white/5 hover:bg-white/10 border border-white/10"
+              }`}
+            >
+              Activar acceso
+            </Button>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+};
+
+/* -------------------- TAB: MIS LLAVES -------------------- */
+const LlavesTab = ({
+  licenses,
+  onGenerateTrial,
+  isGenerating,
+  hasTrial,
+}: {
+  licenses: LicenseRow[];
+  onGenerateTrial: () => void;
+  isGenerating: boolean;
+  hasTrial: boolean;
+}) => (
+  <section className="space-y-6">
+    <div className="flex items-end justify-between flex-wrap gap-4">
+      <Header
+        eyebrow={`${licenses.length} llaves`}
+        title="Mis Llaves"
+        sub="Aquí están todas tus llaves generadas, gratuitas y de pago."
+      />
+      {!hasTrial && (
+        <Button
+          onClick={onGenerateTrial}
+          disabled={isGenerating}
+          className="rounded-full h-11 px-6 bg-gradient-to-r from-fuchsia-600 to-pink-600 hover:from-fuchsia-500 hover:to-pink-500 font-semibold shadow-lg shadow-fuchsia-600/20"
+        >
+          {isGenerating ? (
+            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+          ) : (
+            <Zap className="w-4 h-4 mr-2" />
+          )}
+          Generar prueba gratis
+        </Button>
+      )}
+    </div>
+
+    {licenses.length === 0 ? (
+      <div className="rounded-3xl border border-dashed border-white/10 bg-white/[0.02] p-12 text-center">
+        <div className="w-14 h-14 mx-auto rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-4">
+          <Key className="w-6 h-6 text-zinc-400" />
+        </div>
+        <h3 className="text-lg font-semibold mb-1">Aún no tienes llaves</h3>
+        <p className="text-sm text-zinc-400">
+          Genera tu prueba gratuita o adquiere un plan para empezar.
+        </p>
+      </div>
+    ) : (
+      <div className="space-y-3">
+        {licenses.map((lic) => (
+          <LicenseRowCard key={lic.id} lic={lic} />
+        ))}
+      </div>
+    )}
+  </section>
+);
+
+const LicenseRowCard = ({ lic }: { lic: LicenseRow }) => {
+  const countdown = useCountdown(lic.expires_at);
+  const [copied, setCopied] = useState(false);
+  const isLifetime = !lic.expires_at;
+  const isExpired = !isLifetime && !!countdown?.expired;
+  const typeLabel = lic.type === "trial" ? "Prueba" : lic.type === "assigned" ? "Asignada" : "De pago";
+  const typeTone =
+    lic.type === "trial"
+      ? "border-amber-400/30 bg-amber-500/10 text-amber-300"
+      : "border-violet-400/30 bg-violet-500/10 text-violet-300";
+
+  const copy = async () => {
+    await navigator.clipboard.writeText(lic.license_key);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
+
+  return (
+    <div className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5">
+      <div className="flex flex-wrap items-center gap-2 mb-3">
+        <Badge
+          variant="outline"
+          className={`rounded-full text-[10px] font-bold uppercase tracking-widest px-3 py-1 ${typeTone}`}
+        >
+          {typeLabel}
+        </Badge>
+        <Badge
+          variant="outline"
+          className={`rounded-full text-[10px] font-bold uppercase tracking-widest px-3 py-1 ${
+            isExpired
+              ? "border-red-500/40 bg-red-500/10 text-red-300"
+              : "border-emerald-500/30 bg-emerald-500/10 text-emerald-300"
+          }`}
+        >
+          {isLifetime ? "Vitalicia" : isExpired ? "Expirada" : "Activa"}
+        </Badge>
+        {lic.display_name && (
+          <span className="text-xs text-zinc-400 truncate">· {lic.display_name}</span>
+        )}
+        <span className="ml-auto text-[10px] text-zinc-500 uppercase tracking-widest">
+          {new Date(lic.created_at).toLocaleDateString()}
+        </span>
+      </div>
+      <div className="flex items-center gap-2 flex-wrap">
+        <code className="flex-1 min-w-0 font-mono text-sm text-white break-all bg-black/50 px-4 py-3 rounded-xl border border-white/10">
+          {lic.license_key}
+        </code>
+        <Button
+          onClick={copy}
+          variant="outline"
+          className="rounded-xl h-11 px-4 bg-white/5 border-white/10 hover:bg-white/10"
+        >
+          {copied ? <Check className="w-4 h-4 mr-2 text-emerald-400" /> : <Copy className="w-4 h-4 mr-2" />}
+          {copied ? "Copiado" : "Copiar"}
+        </Button>
+      </div>
+      <p className="text-[10px] font-bold tracking-widest text-zinc-500 uppercase mt-3 flex items-center gap-2">
+        <Clock className="w-3 h-3" />
+        {isLifetime
+          ? "Sin vencimiento"
+          : isExpired
+            ? `Expiró: ${new Date(lic.expires_at as string).toLocaleString()}`
+            : `Tiempo restante: ${countdown?.label ?? "—"}`}
+      </p>
+    </div>
+  );
+};
+
+/* -------------------- TAB: EXTENSIÓN -------------------- */
+const ExtensionTab = () => {
+  const [file, setFile] = useState<{ name: string; size: number; updated_at: string } | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [downloading, setDownloading] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const { data, error } = await supabase.storage
+        .from("extensions")
+        .list("", { limit: 1, sortBy: { column: "updated_at", order: "desc" } });
+      if (!error && data && data.length > 0) {
+        const f = data[0];
+        setFile({
+          name: f.name,
+          size: (f.metadata as { size?: number } | null)?.size ?? 0,
+          updated_at: f.updated_at ?? f.created_at ?? "",
+        });
+      }
+      setLoading(false);
+    })();
+  }, []);
+
+  const handleDownload = async () => {
+    if (!file) return;
+    setDownloading(true);
+    try {
+      const { data, error } = await supabase.storage
+        .from("extensions")
+        .createSignedUrl(file.name, 60, { download: file.name });
+      if (error || !data?.signedUrl) throw error ?? new Error("No URL");
+      window.location.href = data.signedUrl;
+    } catch {
+      toast.error("Error al descargar la extensión");
+    } finally {
+      setDownloading(false);
+    }
+  };
+
+  const steps = [
+    { n: 1, icon: <Download className="w-5 h-5" />, title: "Descargar", desc: "Consigue el pack oficial de la extensión." },
+    { n: 2, icon: <Monitor className="w-5 h-5" />, title: "Extracción", desc: "Prepara los archivos en una carpeta local." },
+    { n: 3, icon: <Chrome className="w-5 h-5" />, title: "Activación", desc: "Carga Chrome en modo desarrollador." },
+  ];
+
+  return (
+    <section className="space-y-6">
+      <div className="relative rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.04] to-white/[0.01] backdrop-blur-xl overflow-hidden p-6 sm:p-10">
+        <div className="absolute -top-32 -right-20 w-[400px] h-[400px] bg-violet-600/20 blur-[100px] rounded-full" />
+        <div className="relative grid lg:grid-cols-[1fr_auto] gap-8 items-center">
+          <div>
+            <Badge
+              variant="outline"
+              className="mb-4 rounded-full border-violet-400/30 bg-violet-500/10 text-violet-300 text-[10px] font-bold uppercase tracking-widest px-3 py-1"
+            >
+              Acceso anticipado
+            </Badge>
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-3">
+              Potencia tu flujo con{" "}
+              <span className="bg-gradient-to-r from-violet-400 via-fuchsia-400 to-pink-400 bg-clip-text text-transparent">
+                Lovable Infinito
+              </span>
+            </h2>
+            <p className="text-zinc-400 max-w-xl mb-6">
+              La extensión de alto rendimiento que integra Lovable directamente en tu navegador. Instalación simplificada en 3 pasos.
             </p>
+          </div>
+          <div className="flex flex-col items-stretch gap-3">
+            <Button
+              onClick={handleDownload}
+              disabled={!file || downloading || loading}
+              className="rounded-full h-12 px-8 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 font-semibold shadow-lg shadow-violet-600/30"
+            >
+              {downloading ? (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              ) : (
+                <Download className="w-4 h-4 mr-2" />
+              )}
+              Descargar extensión
+            </Button>
+            <p className="text-[10px] font-bold tracking-widest text-violet-300/70 uppercase text-center">
+              ✓ Verificada y segura
+            </p>
+          </div>
+        </div>
+
+        <div className="relative grid grid-cols-1 sm:grid-cols-3 gap-6 mt-10 pt-8 border-t border-white/5">
+          {steps.map((s, i) => (
+            <div key={s.n} className="relative">
+              <div className="flex items-start gap-4">
+                <div className="relative">
+                  <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-violet-300">
+                    {s.icon}
+                  </div>
+                  <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-violet-500 text-[10px] font-bold flex items-center justify-center">
+                    {s.n}
+                  </span>
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-semibold mb-1">{s.title}</h4>
+                  <p className="text-xs text-zinc-400 leading-relaxed">{s.desc}</p>
+                </div>
+              </div>
+              {i < steps.length - 1 && (
+                <div className="hidden sm:block absolute top-6 -right-3 w-6 border-t border-dashed border-white/10" />
+              )}
+            </div>
+          ))}
+        </div>
+
+        <div className="relative flex flex-wrap items-center justify-between gap-3 mt-8 pt-6 border-t border-white/5">
+          <div className="flex flex-wrap gap-3 text-[10px] font-bold tracking-widest text-zinc-400 uppercase">
+            <span className="flex items-center gap-1.5"><Chrome className="w-3.5 h-3.5" /> Chrome</span>
+            <span className="flex items-center gap-1.5"><Chrome className="w-3.5 h-3.5" /> Edge</span>
+            <span className="flex items-center gap-1.5"><Chrome className="w-3.5 h-3.5" /> Brave</span>
+            <span className="flex items-center gap-1.5"><Chrome className="w-3.5 h-3.5" /> Opera</span>
+          </div>
+          <span className="text-[10px] font-bold tracking-widest text-zinc-500 uppercase rounded-full border border-white/10 px-3 py-1">
+            Modo desarrollador necesario
+          </span>
+        </div>
+      </div>
+
+      {/* File info */}
+      <div className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-violet-500/10 border border-violet-400/20 flex items-center justify-center">
+            <Package className="w-5 h-5 text-violet-300" />
+          </div>
+          <div className="flex-1 min-w-0">
+            {loading ? (
+              <p className="text-sm text-zinc-400 flex items-center gap-2">
+                <Loader2 className="w-3 h-3 animate-spin" /> Cargando archivo...
+              </p>
+            ) : file ? (
+              <>
+                <p className="text-sm font-semibold truncate">{file.name}</p>
+                <p className="text-[11px] text-zinc-500">
+                  {(file.size / 1024 / 1024).toFixed(2)} MB · Actualizado:{" "}
+                  {file.updated_at ? new Date(file.updated_at).toLocaleDateString() : "—"}
+                </p>
+              </>
+            ) : (
+              <p className="text-sm text-amber-400">
+                La extensión aún no está disponible. El administrador la subirá pronto.
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+/* -------------------- TAB: EXTRAS -------------------- */
+const ExtrasTab = ({
+  isBasicUser,
+  navigate,
+  role,
+}: {
+  isBasicUser: boolean;
+  navigate: ReturnType<typeof useNavigate>;
+  role?: string | null;
+}) => (
+  <section className="space-y-6">
+    <Header eyebrow="Más herramientas" title="Extras" sub="Funciones avanzadas y accesos especiales." />
+
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-11 h-11 rounded-2xl bg-violet-500/10 border border-violet-400/20 flex items-center justify-center">
+            {isBasicUser ? <Lock className="w-5 h-5 text-zinc-400" /> : <ShieldCheck className="w-5 h-5 text-violet-300" />}
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold">Panel de Revendedor</h3>
+            <p className="text-[10px] font-bold tracking-widest text-zinc-500 uppercase">
+              {isBasicUser ? "Acceso limitado" : "Acceso completo"}
+            </p>
+          </div>
+        </div>
+        <p className="text-sm text-zinc-400 mb-5">
+          {isBasicUser
+            ? "Puedes acceder al panel, pero no podrás generar licencias hasta que el administrador active tu cuenta."
+            : "Tu cuenta está activa. Accede al panel para gestionar licencias."}
+        </p>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            onClick={() => navigate({ to: "/reseller" })}
+            className={`rounded-full h-10 px-5 font-semibold ${
+              isBasicUser
+                ? "bg-white/5 hover:bg-white/10 border border-white/10"
+                : "bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500"
+            }`}
+          >
+            Ir al panel <ArrowRight className="w-4 h-4 ml-1" />
+          </Button>
+          {isBasicUser && (
+            <Badge
+              variant="outline"
+              className="rounded-full border-amber-500/30 bg-amber-500/10 text-amber-300 text-[10px] font-bold uppercase tracking-widest px-3 py-1 self-center"
+            >
+              Pendiente de activación
+            </Badge>
           )}
         </div>
       </div>
-      {children}
-    </CardContent>
-  </Card>
+
+      {role === "superadmin" && (
+        <div className="rounded-3xl border border-red-400/20 bg-red-500/[0.04] backdrop-blur-xl p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-11 h-11 rounded-2xl bg-red-500/10 border border-red-400/20 flex items-center justify-center">
+              <ShieldCheck className="w-5 h-5 text-red-300" />
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold">Control Maestro</h3>
+              <p className="text-[10px] font-bold tracking-widest text-zinc-500 uppercase">Solo administrador</p>
+            </div>
+          </div>
+          <p className="text-sm text-zinc-400 mb-5">
+            Gestiona usuarios, roles, licencias asignadas y créditos del sistema.
+          </p>
+          <Button
+            onClick={() => navigate({ to: "/superadmin" })}
+            className="rounded-full h-10 px-5 bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-500 hover:to-pink-500 font-semibold"
+          >
+            Abrir panel <ArrowRight className="w-4 h-4 ml-1" />
+          </Button>
+        </div>
+      )}
+    </div>
+  </section>
+);
+
+/* -------------------- SHARED -------------------- */
+const Header = ({ eyebrow, title, sub }: { eyebrow: string; title: string; sub?: string }) => (
+  <div>
+    <p className="text-[10px] font-bold tracking-[0.25em] text-violet-300/70 uppercase mb-2">{eyebrow}</p>
+    <h2 className="text-2xl sm:text-3xl font-bold tracking-tight mb-1">{title}</h2>
+    {sub && <p className="text-zinc-400 text-sm">{sub}</p>}
+  </div>
 );
 
 const toneMap = {
