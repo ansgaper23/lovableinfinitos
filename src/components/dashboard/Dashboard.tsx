@@ -437,29 +437,32 @@ const InicioTab = ({
 
 /* -------------------- TAB: PLANES -------------------- */
 const PlanesTab = () => {
+  const navigate = useNavigate();
   const plans = [
     {
+      planId: "basico",
       name: "Plan Básico",
       duration: "1 Día",
-      price: "$5.99",
+      price: "S/ 22.50",
       icon: <Flame className="w-5 h-5" />,
       tone: "violet" as const,
       features: ["Lovable ilimitado por 1 día", "Sin consumo de créditos", "Acceso inmediato", "Soporte por WhatsApp"],
     },
     {
+      planId: "pro",
       name: "Plan Pro",
       duration: "7 Días",
-      price: "$13.99",
+      price: "S/ 52.50",
       popular: true,
       icon: <Star className="w-5 h-5" />,
       tone: "fuchsia" as const,
       features: ["Lovable ilimitado por 7 días", "Sin consumo de créditos", "Acceso inmediato", "Soporte 24/7", "Guía de prompts"],
     },
     {
+      planId: "premium",
       name: "Plan Premium",
       duration: "30 Días",
-      price: "$18.99",
-      oldPrice: "$35.00",
+      price: "S/ 71.50",
       icon: <Crown className="w-5 h-5" />,
       tone: "pink" as const,
       features: ["Lovable ilimitado por 30 días", "Sin consumo de créditos", "Acceso inmediato", "Soporte VIP", "Actualizaciones garantizadas"],
