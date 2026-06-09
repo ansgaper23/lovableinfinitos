@@ -471,6 +471,8 @@ export const ResellerDashboard = () => {
                       licenses.slice(0, 10).map((l) => (
                         <LicenseRow
                           key={l.id}
+                          customerName={l.customer_name}
+                          customerPhone={l.customer_phone}
                           type={l.type.toUpperCase()}
                           code={l.code}
                           status={l.status}
