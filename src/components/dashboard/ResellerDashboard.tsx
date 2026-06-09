@@ -397,7 +397,7 @@ export const ResellerDashboard = () => {
                   <LicenseTypeCard
                     icon={<Zap className="w-6 h-6" />}
                     title="Prueba Gratis"
-                    description="15 minutos"
+                    description="15 minutos · Gratis e ilimitada"
                     badge="GRATIS"
                     badgeColor="emerald"
                     disabled={!isActivated}
