@@ -424,7 +424,7 @@ export const ResellerDashboard = () => {
                   <LicenseTypeCard
                     icon={<CalendarDays className="w-6 h-6" />}
                     title="30 Días"
-                    description="Acceso por 1 mes"
+                    description="Acceso por 1 mes · 1 crédito"
                     badge="1 CRÉDITO"
                     badgeColor="primary"
                     featured
