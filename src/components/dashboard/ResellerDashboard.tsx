@@ -300,6 +300,12 @@ export const ResellerDashboard = () => {
                 label="Clientes" 
                 active={currentView === 'customers'} 
               />
+              <ResellerNavItem 
+                onClick={() => { setCurrentView('credits'); setSidebarOpen(false); }} 
+                icon={<Wallet className="w-4 h-4" />} 
+                label="Recargar Créditos" 
+                active={currentView === 'credits'} 
+              />
             </nav>
 
             <p className="text-[9px] font-bold text-muted-foreground/60 uppercase tracking-[0.2em] px-4 mt-8 mb-3">Cuenta</p>
@@ -662,6 +668,80 @@ export const ResellerDashboard = () => {
                     </div>
                   )}
                 </div>
+              </div>
+            )}
+
+            {currentView === 'credits' && (
+              <div className="space-y-6">
+                <div>
+                  <h1 className="text-2xl font-bold text-white tracking-tight">Recargar Créditos</h1>
+                  <p className="text-sm text-muted-foreground">Adquiere más créditos para seguir generando licencias.</p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {[
+                    { amount: 10, price: "$10.00", popular: false },
+                    { amount: 50, price: "$45.00", popular: true },
+                    { amount: 100, price: "$80.00", popular: false }
+                  ].map((pkg, i) => (
+                    <Card key={i} className={`bg-[#0A101F] border-white/[0.08] text-white relative overflow-hidden ${pkg.popular ? 'border-primary/50 ring-1 ring-primary/50' : ''}`}>
+                      {pkg.popular && (
+                        <div className="absolute top-0 right-0 bg-primary text-white text-[10px] font-bold px-3 py-1 rounded-bl-lg uppercase tracking-widest">
+                          Mejor valor
+                        </div>
+                      )}
+                      <CardHeader>
+                        <CardTitle className="text-3xl font-bold flex items-center gap-2">
+                          {pkg.amount}
+                          <span className="text-xs text-muted-foreground font-normal uppercase tracking-widest">Créditos</span>
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-6">
+                        <div className="text-4xl font-bold text-primary">{pkg.price}</div>
+                        <ul className="space-y-2">
+                          <li className="text-xs text-muted-foreground flex items-center gap-2">
+                            <Check className="w-3 h-3 text-emerald-400" /> 1 crédito = 1 licencia
+                          </li>
+                          <li className="text-xs text-muted-foreground flex items-center gap-2">
+                            <Check className="w-3 h-3 text-emerald-400" /> Activación instantánea
+                          </li>
+                          <li className="text-xs text-muted-foreground flex items-center gap-2">
+                            <Check className="w-3 h-3 text-emerald-400" /> Soporte 24/7
+                          </li>
+                        </ul>
+                        <Button 
+                          className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold uppercase italic"
+                          onClick={() => {
+                            window.open(`https://wa.me/YOUR_PHONE?text=Hola, deseo recargar ${pkg.amount} créditos para mi cuenta de Reseller: ${profile?.email}`, '_blank');
+                          }}
+                        >
+                          Recargar por WhatsApp
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+
+                <Card className="bg-primary/5 border-primary/20 text-white">
+                  <CardContent className="pt-6">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center text-primary">
+                        <Wallet className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <p className="font-bold">¿Necesitas una recarga personalizada?</p>
+                        <p className="text-xs text-muted-foreground">Contacta directamente con nosotros para paquetes de mayor volumen o métodos de pago alternativos.</p>
+                      </div>
+                      <Button 
+                        variant="outline" 
+                        className="ml-auto border-white/10 text-white hover:bg-white/5"
+                        onClick={() => setCurrentView('support')}
+                      >
+                        Contactar Soporte
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
             )}
 
