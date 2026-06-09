@@ -443,7 +443,8 @@ const PlanesTab = () => {
       planId: "basico",
       name: "Plan Básico",
       duration: "1 Día",
-      price: "S/ 22.50",
+      price: "$5.99",
+      pricePen: "S/ 22.50",
       icon: <Flame className="w-5 h-5" />,
       tone: "violet" as const,
       features: ["Lovable ilimitado por 1 día", "Sin consumo de créditos", "Acceso inmediato", "Soporte por WhatsApp"],
@@ -452,7 +453,8 @@ const PlanesTab = () => {
       planId: "pro",
       name: "Plan Pro",
       duration: "7 Días",
-      price: "S/ 52.50",
+      price: "$13.99",
+      pricePen: "S/ 52.50",
       popular: true,
       icon: <Star className="w-5 h-5" />,
       tone: "fuchsia" as const,
@@ -462,7 +464,8 @@ const PlanesTab = () => {
       planId: "premium",
       name: "Plan Premium",
       duration: "30 Días",
-      price: "S/ 71.50",
+      price: "$18.99",
+      pricePen: "S/ 71.50",
       icon: <Crown className="w-5 h-5" />,
       tone: "pink" as const,
       features: ["Lovable ilimitado por 30 días", "Sin consumo de créditos", "Acceso inmediato", "Soporte VIP", "Actualizaciones garantizadas"],
@@ -501,9 +504,13 @@ const PlanesTab = () => {
             </div>
             <h3 className="text-lg font-bold">{p.name}</h3>
             <p className="text-[10px] font-bold tracking-widest text-zinc-500 uppercase mb-4">{p.duration}</p>
-            <div className="flex items-baseline gap-2 mb-5">
+            <div className="mb-1">
               <span className="text-4xl font-bold tracking-tight">{p.price}</span>
+              <span className="text-sm text-zinc-500 ml-2">USD</span>
             </div>
+            <p className="text-xs text-zinc-500 mb-5">
+              ≈ {p.pricePen} PEN
+            </p>
             <ul className="space-y-2 mb-6">
               {p.features.map((f) => (
                 <li key={f} className="flex items-start gap-2 text-sm text-zinc-300">

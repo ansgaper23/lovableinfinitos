@@ -8,7 +8,8 @@ export const Pricing = () => {
       id: "basico",
       name: "Plan Básico",
       duration: "1 Día",
-      price: "S/ 22.50",
+      price: "$5.99",
+      pricePen: "S/ 22.50",
       description: "Ideal para probar el servicio o finalizar un pequeño proyecto.",
       features: [
         "Lovable ilimitado por 1 día",
@@ -22,7 +23,8 @@ export const Pricing = () => {
       id: "pro",
       name: "Plan Pro",
       duration: "7 Días",
-      price: "S/ 52.50",
+      price: "$13.99",
+      pricePen: "S/ 52.50",
       description: "La opción preferida por builders y freelancers en Perú.",
       features: [
         "Lovable ilimitado por 7 días",
@@ -37,8 +39,10 @@ export const Pricing = () => {
       id: "premium",
       name: "Plan Premium",
       duration: "30 Días",
-      price: "S/ 71.50",
-      oldPrice: "S/ 131.00",
+      price: "$18.99",
+      pricePen: "S/ 71.50",
+      oldPrice: "$35.00",
+      oldPricePen: "S/ 131.00",
       badge: "Oferta por tiempo limitado",
       description: "Para agencias y desarrolladores de alto rendimiento.",
       features: [
@@ -66,7 +70,7 @@ export const Pricing = () => {
           </p>
           <div className="inline-block mt-8 py-2 px-6 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-md">
             <p className="text-sm font-bold text-primary tracking-widest uppercase">
-              Precios en Soles (PEN) • Pago Seguro con Izipay
+              Precios en Dólares (USD) • Pago Seguro con Izipay
             </p>
           </div>
         </div>
@@ -99,12 +103,18 @@ export const Pricing = () => {
                   )}
                 </div>
                 
-                <div className="mb-10 flex items-baseline gap-3">
+                <div className="mb-2">
                   <span className="text-5xl font-black tracking-tighter text-white">{plan.price}</span>
                   {plan.oldPrice && (
-                    <span className="text-lg text-muted-foreground line-through decoration-destructive decoration-2">{plan.oldPrice}</span>
+                    <span className="text-lg text-muted-foreground line-through decoration-destructive decoration-2 ml-3">{plan.oldPrice}</span>
                   )}
                 </div>
+                <p className="text-xs text-muted-foreground mb-8">
+                  ≈ {plan.pricePen} PEN
+                  {plan.oldPricePen && (
+                    <span className="line-through ml-2">{plan.oldPricePen}</span>
+                  )}
+                </p>
                 
                 <p className="text-sm text-muted-foreground mb-8 h-12 leading-relaxed">{plan.description}</p>
                 
