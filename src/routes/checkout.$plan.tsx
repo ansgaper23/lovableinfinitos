@@ -60,7 +60,7 @@ function CheckoutPage() {
     if (user.email !== "jorge968122@gmail.com") {
       initRef.current = true;
       const msg = encodeURIComponent(
-        `Hola, quiero adquirir el plan ${plan.name} (S/ ${plan.pricePen.toFixed(2)}) de Lovable Infinito.`
+        `Hola, quiero adquirir el plan ${plan.name} ($${plan.priceUsd.toFixed(2)} USD / S/ ${plan.pricePen.toFixed(2)} PEN) de Lovable Infinito.`
       );
       window.location.replace(`https://wa.me/51936467898?text=${msg}`);
       return;
