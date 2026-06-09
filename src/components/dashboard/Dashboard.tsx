@@ -586,22 +586,23 @@ const LlavesTab = ({
   </section>
 );
 
-const LicenseRowCard = ({ lic }: { lic: LicenseRow }) => {
-  const countdown = useCountdown(lic.expires_at);
+const LicenseRowCard = memo(({ lic }: { lic: LicenseRow }) => {
   const [copied, setCopied] = useState(false);
   const isLifetime = !lic.expires_at;
-  const isExpired = !isLifetime && !!countdown?.expired;
+  // Cheap snapshot check; the live ticker lives inside <CountdownLabel/> below
+  // so this card itself does NOT re-render every second.
+  const isExpired = !isLifetime && new Date(lic.expires_at as string).getTime() <= Date.now();
   const typeLabel = lic.type === "trial" ? "Prueba" : lic.type === "assigned" ? "Asignada" : "De pago";
   const typeTone =
     lic.type === "trial"
       ? "border-amber-400/30 bg-amber-500/10 text-amber-300"
       : "border-violet-400/30 bg-violet-500/10 text-violet-300";
 
-  const copy = async () => {
+  const copy = useCallback(async () => {
     await navigator.clipboard.writeText(lic.license_key);
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
-  };
+  }, [lic.license_key]);
 
   return (
     <div className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5">
@@ -644,15 +645,19 @@ const LicenseRowCard = ({ lic }: { lic: LicenseRow }) => {
       </div>
       <p className="text-[10px] font-bold tracking-widest text-zinc-500 uppercase mt-3 flex items-center gap-2">
         <Clock className="w-3 h-3" />
-        {isLifetime
-          ? "Sin vencimiento"
-          : isExpired
-            ? `Expiró: ${new Date(lic.expires_at as string).toLocaleString()}`
-            : `Tiempo restante: ${countdown?.label ?? "—"}`}
+        {isLifetime ? (
+          "Sin vencimiento"
+        ) : isExpired ? (
+          `Expiró: ${new Date(lic.expires_at as string).toLocaleString()}`
+        ) : (
+          <>Tiempo restante: <CountdownLabel expiresAt={lic.expires_at as string} /></>
+        )}
       </p>
     </div>
   );
-};
+});
+LicenseRowCard.displayName = "LicenseRowCard";
+
 
 /* -------------------- TAB: EXTENSIÓN -------------------- */
 const ExtensionTab = () => {
