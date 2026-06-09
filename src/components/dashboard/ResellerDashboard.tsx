@@ -457,6 +457,7 @@ export const ResellerDashboard = () => {
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] bg-white/[0.015]">
+                      <th className="px-6 py-3">Cliente</th>
                       <th className="px-6 py-3">Tipo</th>
                       <th className="px-6 py-3">Código</th>
                       <th className="px-6 py-3">Estado</th>
