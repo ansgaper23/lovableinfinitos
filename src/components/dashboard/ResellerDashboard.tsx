@@ -96,6 +96,30 @@ export const ResellerDashboard = () => {
     }
   }, [user?.id]);
 
+  const uniqueCustomers = useMemo(() => {
+    const map = new Map();
+    licenses.forEach(l => {
+      const name = l.customer_name || 'Sin nombre';
+      const phone = l.customer_phone || '';
+      const key = `${name}-${phone}`;
+      if (!map.has(key)) {
+        map.set(key, {
+          name,
+          phone,
+          licensesCount: 1,
+          lastActive: l.created_at
+        });
+      } else {
+        const existing = map.get(key);
+        existing.licensesCount++;
+        if (new Date(l.created_at) > new Date(existing.lastActive)) {
+          existing.lastActive = l.created_at;
+        }
+      }
+    });
+    return Array.from(map.values()).sort((a, b) => b.licensesCount - a.licensesCount);
+  }, [licenses]);
+
   const openGenerateDialog = (type: string) => {
     setPendingType(type);
     setLicenseName("");
