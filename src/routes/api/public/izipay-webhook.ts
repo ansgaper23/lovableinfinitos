@@ -78,9 +78,7 @@ export const Route = createFileRoute("/api/public/izipay-webhook")({
           answer?.metadata ??
           answer?.orderDetails?.metadata ??
           {};
-        const userId: string | undefined = metadata.user_id;
-        const planId: string | undefined = metadata.plan_id;
-        const days = Number(metadata.days || 0);
+        // userId/planId/days se resuelven más abajo combinando metadata + BD
 
         if (!orderId) {
           console.error("Izipay webhook: orderId faltante", {
