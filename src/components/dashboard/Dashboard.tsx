@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   LayoutDashboard,
   Zap,
@@ -22,11 +22,26 @@ import {
   Flame,
   Crown,
   Star,
+  PlayCircle,
+  GraduationCap,
+  LifeBuoy,
+  MessageCircle,
+  Mail,
+  BookOpen,
+  Search,
+  AlertTriangle,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { supabase } from "@/integrations/supabase/client";
 
 import { useAuth } from "@/hooks/useAuth";
@@ -34,6 +49,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { generateTrialForNewUser } from "@/lib/user-actions.functions";
+
 
 interface LicenseRow {
   id: string;
