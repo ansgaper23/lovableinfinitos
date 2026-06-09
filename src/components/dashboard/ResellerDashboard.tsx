@@ -356,7 +356,7 @@ export const ResellerDashboard = () => {
                 </div>
 
                 {/* Credits highlight */}
-                <div className="relative rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/20 via-primary/10 to-transparent p-5 min-w-[210px] backdrop-blur">
+                <div className="relative rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/20 via-primary/10 to-transparent p-5 w-full sm:min-w-[210px] sm:w-auto backdrop-blur">
                   <div className="absolute inset-0 rounded-2xl bg-[radial-gradient(circle_at_top_right,rgba(79,70,229,0.3),transparent_70%)] pointer-events-none" />
                   <div className="relative">
                     <div className="flex items-center gap-2 mb-1">
