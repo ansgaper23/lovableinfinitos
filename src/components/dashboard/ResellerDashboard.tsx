@@ -393,10 +393,10 @@ export const ResellerDashboard = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   <LicenseTypeCard
-                    icon={<Plus className="w-6 h-6" />}
-                    title="Licencia de Prueba"
+                    icon={<Zap className="w-6 h-6" />}
+                    title="Prueba Gratis"
                     description="15 minutos"
                     badge="GRATIS"
                     badgeColor="emerald"
@@ -405,22 +405,31 @@ export const ResellerDashboard = () => {
                   />
                   <LicenseTypeCard
                     icon={<CalendarDays className="w-6 h-6" />}
-                    title="Licencia Mensual"
-                    description="Acceso por 30 días"
+                    title="1 Día"
+                    description="Acceso por 24 horas"
+                    badge="1 CRÉDITO"
+                    badgeColor="primary"
+                    disabled={!isActivated}
+                    onClick={() => openGenerateDialog('1day')}
+                  />
+                  <LicenseTypeCard
+                    icon={<CalendarDays className="w-6 h-6" />}
+                    title="7 Días"
+                    description="Acceso por 1 semana"
+                    badge="1 CRÉDITO"
+                    badgeColor="primary"
+                    disabled={!isActivated}
+                    onClick={() => openGenerateDialog('7days')}
+                  />
+                  <LicenseTypeCard
+                    icon={<CalendarDays className="w-6 h-6" />}
+                    title="30 Días"
+                    description="Acceso por 1 mes"
                     badge="1 CRÉDITO"
                     badgeColor="primary"
                     featured
                     disabled={!isActivated}
-                    onClick={() => openGenerateDialog('monthly')}
-                  />
-                  <LicenseTypeCard
-                    icon={<Infinity className="w-6 h-6" />}
-                    title="Licencia Vitalicia"
-                    description="Acceso ilimitado"
-                    badge="1 CRÉDITO"
-                    badgeColor="primary"
-                    disabled={!isActivated}
-                    onClick={() => openGenerateDialog('lifetime')}
+                    onClick={() => openGenerateDialog('30days')}
                   />
                 </div>
               </div>
