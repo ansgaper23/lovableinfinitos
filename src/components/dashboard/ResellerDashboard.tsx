@@ -257,21 +257,21 @@ export const ResellerDashboard = () => {
 
             <p className="text-[9px] font-bold text-muted-foreground/60 uppercase tracking-[0.2em] px-4 mb-3">Menú</p>
             <nav className="space-y-1">
-              <ResellerNavItem icon={<LayoutDashboard className="w-4 h-4" />} label="Panel" active />
-              <ResellerNavItem icon={<Key className="w-4 h-4" />} label="Generar Licencias" />
-              <ResellerNavItem icon={<ClipboardList className="w-4 h-4" />} label="Licencias Activas" />
-              <ResellerNavItem icon={<History className="w-4 h-4" />} label="Historial" />
-              <ResellerNavItem icon={<Users className="w-4 h-4" />} label="Clientes" />
-              <ResellerNavItem icon={<Wallet className="w-4 h-4" />} label="Financiero" />
+              <ResellerNavItem onClick={() => setSidebarOpen(false)} icon={<LayoutDashboard className="w-4 h-4" />} label="Panel" active />
+              <ResellerNavItem onClick={() => setSidebarOpen(false)} icon={<Key className="w-4 h-4" />} label="Generar Licencias" />
+              <ResellerNavItem onClick={() => setSidebarOpen(false)} icon={<ClipboardList className="w-4 h-4" />} label="Licencias Activas" />
+              <ResellerNavItem onClick={() => setSidebarOpen(false)} icon={<History className="w-4 h-4" />} label="Historial" />
+              <ResellerNavItem onClick={() => setSidebarOpen(false)} icon={<Users className="w-4 h-4" />} label="Clientes" />
+              <ResellerNavItem onClick={() => setSidebarOpen(false)} icon={<Wallet className="w-4 h-4" />} label="Financiero" />
             </nav>
 
             <p className="text-[9px] font-bold text-muted-foreground/60 uppercase tracking-[0.2em] px-4 mt-8 mb-3">Cuenta</p>
             <nav className="space-y-1">
-              <ResellerNavItem icon={<Settings className="w-4 h-4" />} label="Configuración" />
-              <ResellerNavItem icon={<LifeBuoy className="w-4 h-4" />} label="Soporte" />
+              <ResellerNavItem onClick={() => setSidebarOpen(false)} icon={<Settings className="w-4 h-4" />} label="Configuración" />
+              <ResellerNavItem onClick={() => setSidebarOpen(false)} icon={<LifeBuoy className="w-4 h-4" />} label="Soporte" />
             </nav>
           </div>
-          <div className="mt-auto p-4 relative z-10">
+          <div className="p-4 relative z-10 border-t border-white/5">
             <div className="rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-4 mb-3">
               <div className="flex items-center gap-2 mb-2">
                 <Coins className="w-4 h-4 text-primary" />
