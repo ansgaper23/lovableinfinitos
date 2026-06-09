@@ -609,10 +609,15 @@ export const SuperAdminDashboard = () => {
                               <Key className="w-3 h-3 text-destructive shrink-0" />
                               <span className="font-mono text-[11px] sm:text-xs text-zinc-200 truncate">{lic.license_key}</span>
                             </div>
-                            <div className="flex items-center gap-2 text-[11px] sm:text-xs text-zinc-500 min-w-0">
-                              <span className="truncate">{lic.display_name || "S/N"}</span>
-                              <span>·</span>
-                              <span className="shrink-0">{lic.lifetime ? "Vitalicia" : lic.expires_at ? new Date(lic.expires_at).toLocaleDateString() : "N/A"}</span>
+                            <div className="flex flex-col gap-0.5 min-w-0">
+                              <div className="flex items-center gap-2 text-[11px] sm:text-xs text-zinc-500">
+                                <span className="truncate">{lic.display_name || "S/N"}</span>
+                                <span>·</span>
+                                <span className="shrink-0">{lic.lifetime ? "Vitalicia" : lic.expires_at ? new Date(lic.expires_at).toLocaleDateString() : "N/A"}</span>
+                              </div>
+                              {lic.customer_phone && (
+                                <span className="text-[10px] text-zinc-600 truncate">{lic.customer_phone}</span>
+                              )}
                             </div>
                           </div>
                           <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-3">

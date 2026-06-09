@@ -149,6 +149,8 @@ export type Database = {
       reseller_licenses: {
         Row: {
           created_at: string
+          customer_name: string | null
+          customer_phone: string | null
           display_name: string | null
           duration_seconds: number | null
           expires_at: string | null
@@ -160,6 +162,8 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          customer_name?: string | null
+          customer_phone?: string | null
           display_name?: string | null
           duration_seconds?: number | null
           expires_at?: string | null
@@ -171,6 +175,8 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          customer_name?: string | null
+          customer_phone?: string | null
           display_name?: string | null
           duration_seconds?: number | null
           expires_at?: string | null

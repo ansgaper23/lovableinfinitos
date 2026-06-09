@@ -118,7 +118,7 @@ export const resellerApi = {
   },
 
   // Helper to save license locally in our DB
-  async saveLicenseLocally(userId: string, license: LicenseResponse, displayName: string) {
+  async saveLicenseLocally(userId: string, license: LicenseResponse, displayName: string, customerName?: string, customerPhone?: string) {
     const { error } = await supabase.from("reseller_licenses").insert({
       user_id: userId,
       license_key: license.license_key,
@@ -127,6 +127,8 @@ export const resellerApi = {
       expires_at: license.expires_at,
       duration_seconds: license.duration_seconds,
       lifetime: license.lifetime || false,
+      customer_name: customerName,
+      customer_phone: customerPhone,
     });
     if (error) console.error("Error saving license locally:", error);
   }

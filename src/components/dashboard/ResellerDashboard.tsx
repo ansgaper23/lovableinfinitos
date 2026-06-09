@@ -20,6 +20,8 @@ interface License {
   type: string;
   status: string | null;
   created_at: string;
+  customer_name?: string | null;
+  customer_phone?: string | null;
 }
 
 export const ResellerDashboard = () => {
@@ -31,6 +33,7 @@ export const ResellerDashboard = () => {
   const [nameDialogOpen, setNameDialogOpen] = useState(false);
   const [pendingType, setPendingType] = useState<string | null>(null);
   const [licenseName, setLicenseName] = useState("");
+  const [customerPhone, setCustomerPhone] = useState("");
   const [resultDialogOpen, setResultDialogOpen] = useState(false);
   const [generatedCode, setGeneratedCode] = useState("");
   const [copied, setCopied] = useState(false);
@@ -72,6 +75,8 @@ export const ResellerDashboard = () => {
         type: r.type,
         status: r.expires_at && new Date(r.expires_at) < new Date() ? 'expired' : 'active',
         created_at: r.created_at,
+        customer_name: r.customer_name,
+        customer_phone: r.customer_phone,
       }));
       setLicenses(mapped);
     } catch (error: any) {
@@ -92,6 +97,7 @@ export const ResellerDashboard = () => {
   const openGenerateDialog = (type: string) => {
     setPendingType(type);
     setLicenseName("");
+    setCustomerPhone("");
     setNameDialogOpen(true);
   };
 
@@ -100,6 +106,7 @@ export const ResellerDashboard = () => {
     const type = pendingType;
     const isTest = type.toLowerCase() === 'test';
     const name = licenseName.trim();
+    const phone = customerPhone.trim();
 
     if (!name) {
       toast.error("Ingresa un nombre para la licencia");
@@ -145,7 +152,7 @@ export const ResellerDashboard = () => {
       }
 
       // Guardar en nuestra DB
-      await resellerApi.saveLicenseLocally(user!.id, apiResp, name);
+      await resellerApi.saveLicenseLocally(user!.id, apiResp, name, name, phone);
 
       await fetchLicenses();
       if (!isTest) await fetchCredits();
@@ -450,6 +457,7 @@ export const ResellerDashboard = () => {
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] bg-white/[0.015]">
+                      <th className="px-6 py-3">Cliente</th>
                       <th className="px-6 py-3">Tipo</th>
                       <th className="px-6 py-3">Código</th>
                       <th className="px-6 py-3">Estado</th>
@@ -463,6 +471,8 @@ export const ResellerDashboard = () => {
                       licenses.slice(0, 10).map((l) => (
                         <LicenseRow
                           key={l.id}
+                          customerName={l.customer_name}
+                          customerPhone={l.customer_phone}
                           type={l.type.toUpperCase()}
                           code={l.code}
                           status={l.status}
@@ -506,18 +516,31 @@ export const ResellerDashboard = () => {
               Asigna un nombre para identificar al cliente o destino de esta clave.
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-2 py-2">
-            <Label htmlFor="license-name">Nombre / Cliente</Label>
-            <Input
-              id="license-name"
-              autoFocus
-              value={licenseName}
-              onChange={(e) => setLicenseName(e.target.value)}
-              onKeyDown={(e) => { if (e.key === 'Enter') generateLicense(); }}
-              placeholder="Ej: Juan Pérez"
-              maxLength={50}
-              className="bg-[#02060E] border-white/10 text-white"
-            />
+          <div className="space-y-4 py-2">
+            <div className="space-y-2">
+              <Label htmlFor="license-name">Nombre del Cliente</Label>
+              <Input
+                id="license-name"
+                autoFocus
+                value={licenseName}
+                onChange={(e) => setLicenseName(e.target.value)}
+                placeholder="Ej: Juan Pérez"
+                maxLength={50}
+                className="bg-[#02060E] border-white/10 text-white"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="customer-phone">Celular (Opcional)</Label>
+              <Input
+                id="customer-phone"
+                value={customerPhone}
+                onChange={(e) => setCustomerPhone(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter' && licenseName.trim()) generateLicense(); }}
+                placeholder="Ej: +51 987654321"
+                maxLength={20}
+                className="bg-[#02060E] border-white/10 text-white"
+              />
+            </div>
           </div>
           <DialogFooter>
             <Button variant="ghost" onClick={() => setNameDialogOpen(false)} disabled={isGenerating}>
@@ -669,11 +692,17 @@ const LicenseTypeCard = ({ icon, title, description, badge, badgeColor = 'primar
   </div>
 );
 
-const LicenseRow = ({ type, code, status, date }: { type: string, code: string, status: string | null, date: string }) => {
+const LicenseRow = ({ customerName, customerPhone, type, code, status, date }: { customerName?: string | null, customerPhone?: string | null, type: string, code: string, status: string | null, date: string }) => {
   const isActive = status === 'active';
   const isExpired = status === 'expired';
   return (
     <tr className="border-t border-white/[0.04] hover:bg-white/[0.02] transition-colors group">
+      <td className="px-6 py-4">
+        <div className="flex flex-col">
+          <span className="text-white font-medium">{customerName || '—'}</span>
+          {customerPhone && <span className="text-[10px] text-muted-foreground">{customerPhone}</span>}
+        </div>
+      </td>
       <td className="px-6 py-4">
         <span className="text-[10px] font-bold text-primary uppercase tracking-widest px-2 py-1 rounded-md bg-primary/10 border border-primary/20">{type}</span>
       </td>
