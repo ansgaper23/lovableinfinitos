@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { LayoutDashboard, Key, ClipboardList, History, Users, Wallet, Settings, LifeBuoy, Zap, Plus, CalendarDays, LogOut, Coins, Copy, Check, Sparkles, TrendingUp, ArrowUpRight, Activity } from "lucide-react";
+import { LayoutDashboard, Key, ClipboardList, History, Users, Wallet, Settings, LifeBuoy, Zap, Plus, CalendarDays, LogOut, Coins, Copy, Check, Sparkles, TrendingUp, ArrowUpRight, Activity, Menu, X } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -39,6 +39,7 @@ export const ResellerDashboard = () => {
   const [copied, setCopied] = useState(false);
   const [apiToken, setApiToken] = useState<string | null>(null);
   const navigate = useNavigate();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const fetchCredits = async () => {
     if (!user) return;
@@ -208,12 +209,42 @@ export const ResellerDashboard = () => {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-background">
-      <div className="flex-1 flex overflow-hidden">
+      {/* Mobile Header */}
+      <header className="lg:hidden flex items-center justify-between p-4 border-b border-white/[0.06] bg-[#070B18] relative z-50">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-[0_0_15px_rgba(79,70,229,0.4)]">
+            <Zap className="w-4 h-4 text-white fill-white" />
+          </div>
+          <span className="font-bold text-xs tracking-tight text-white uppercase">Reseller</span>
+        </div>
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="text-white hover:bg-white/5"
+        >
+          {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </Button>
+      </header>
+
+      <div className="flex-1 flex overflow-hidden relative">
+        {/* Sidebar Overlay */}
+        {sidebarOpen && (
+          <div 
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+
         {/* Sidebar */}
-        <aside className="w-64 border-r border-white/[0.06] bg-gradient-to-b from-[#070B18] to-[#03060F] hidden lg:flex flex-col relative">
+        <aside className={`
+          fixed inset-y-0 left-0 w-64 border-r border-white/[0.06] bg-gradient-to-b from-[#070B18] to-[#03060F] 
+          flex flex-col z-50 transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0
+          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+        `}>
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(79,70,229,0.08),transparent_60%)] pointer-events-none" />
-          <div className="p-6 relative z-10">
-            <div className="flex items-center gap-3 mb-10 group px-2">
+          <div className="p-6 relative z-10 flex-1 overflow-y-auto">
+            <div className="hidden lg:flex items-center gap-3 mb-10 group px-2">
               <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-[0_0_25px_rgba(79,70,229,0.5)]">
                 <Zap className="w-5 h-5 text-white fill-white" />
                 <div className="absolute inset-0 rounded-xl bg-primary/40 blur-lg -z-10" />
@@ -226,21 +257,21 @@ export const ResellerDashboard = () => {
 
             <p className="text-[9px] font-bold text-muted-foreground/60 uppercase tracking-[0.2em] px-4 mb-3">Menú</p>
             <nav className="space-y-1">
-              <ResellerNavItem icon={<LayoutDashboard className="w-4 h-4" />} label="Panel" active />
-              <ResellerNavItem icon={<Key className="w-4 h-4" />} label="Generar Licencias" />
-              <ResellerNavItem icon={<ClipboardList className="w-4 h-4" />} label="Licencias Activas" />
-              <ResellerNavItem icon={<History className="w-4 h-4" />} label="Historial" />
-              <ResellerNavItem icon={<Users className="w-4 h-4" />} label="Clientes" />
-              <ResellerNavItem icon={<Wallet className="w-4 h-4" />} label="Financiero" />
+              <ResellerNavItem onClick={() => setSidebarOpen(false)} icon={<LayoutDashboard className="w-4 h-4" />} label="Panel" active />
+              <ResellerNavItem onClick={() => setSidebarOpen(false)} icon={<Key className="w-4 h-4" />} label="Generar Licencias" />
+              <ResellerNavItem onClick={() => setSidebarOpen(false)} icon={<ClipboardList className="w-4 h-4" />} label="Licencias Activas" />
+              <ResellerNavItem onClick={() => setSidebarOpen(false)} icon={<History className="w-4 h-4" />} label="Historial" />
+              <ResellerNavItem onClick={() => setSidebarOpen(false)} icon={<Users className="w-4 h-4" />} label="Clientes" />
+              <ResellerNavItem onClick={() => setSidebarOpen(false)} icon={<Wallet className="w-4 h-4" />} label="Financiero" />
             </nav>
 
             <p className="text-[9px] font-bold text-muted-foreground/60 uppercase tracking-[0.2em] px-4 mt-8 mb-3">Cuenta</p>
             <nav className="space-y-1">
-              <ResellerNavItem icon={<Settings className="w-4 h-4" />} label="Configuración" />
-              <ResellerNavItem icon={<LifeBuoy className="w-4 h-4" />} label="Soporte" />
+              <ResellerNavItem onClick={() => setSidebarOpen(false)} icon={<Settings className="w-4 h-4" />} label="Configuración" />
+              <ResellerNavItem onClick={() => setSidebarOpen(false)} icon={<LifeBuoy className="w-4 h-4" />} label="Soporte" />
             </nav>
           </div>
-          <div className="mt-auto p-4 relative z-10">
+          <div className="p-4 relative z-10 border-t border-white/5">
             <div className="rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-4 mb-3">
               <div className="flex items-center gap-2 mb-2">
                 <Coins className="w-4 h-4 text-primary" />
@@ -263,7 +294,7 @@ export const ResellerDashboard = () => {
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(168,85,247,0.08),transparent_55%)] pointer-events-none" />
           <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:48px_48px] [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_80%)] pointer-events-none" />
 
-          <div className="relative max-w-7xl mx-auto p-6 lg:p-8 space-y-6">
+          <div className="relative max-w-7xl mx-auto p-4 lg:p-8 space-y-6">
             {/* Preview banner for non-activated users */}
             {!isActivated && (
               <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 flex items-center gap-3">
@@ -296,7 +327,7 @@ export const ResellerDashboard = () => {
                       <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">Online</span>
                     </span>
                   </div>
-                  <h1 className="text-3xl lg:text-4xl font-bold text-white tracking-tight leading-tight">
+                  <h1 className="text-2xl lg:text-4xl font-bold text-white tracking-tight leading-tight">
                     Hola,{' '}
                     <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
                       {profile?.email?.split('@')[0] || 'Reseller'}
@@ -325,7 +356,7 @@ export const ResellerDashboard = () => {
                 </div>
 
                 {/* Credits highlight */}
-                <div className="relative rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/20 via-primary/10 to-transparent p-5 min-w-[210px] backdrop-blur">
+                <div className="relative rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/20 via-primary/10 to-transparent p-5 w-full sm:min-w-[210px] sm:w-auto backdrop-blur">
                   <div className="absolute inset-0 rounded-2xl bg-[radial-gradient(circle_at_top_right,rgba(79,70,229,0.3),transparent_70%)] pointer-events-none" />
                   <div className="relative">
                     <div className="flex items-center gap-2 mb-1">
@@ -345,7 +376,7 @@ export const ResellerDashboard = () => {
             </div>
 
             {/* Metrics */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <MetricCard
                 accent
                 icon={<Coins className="w-4 h-4" />}
@@ -457,11 +488,11 @@ export const ResellerDashboard = () => {
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] bg-white/[0.015]">
-                      <th className="px-6 py-3">Cliente</th>
-                      <th className="px-6 py-3">Tipo</th>
-                      <th className="px-6 py-3">Código</th>
-                      <th className="px-6 py-3">Estado</th>
-                      <th className="px-6 py-3 text-right">Fecha</th>
+                      <th className="px-4 py-3 sm:px-6">Cliente</th>
+                      <th className="px-4 py-3 sm:px-6">Tipo</th>
+                      <th className="px-4 py-3 sm:px-6">Código</th>
+                      <th className="px-4 py-3 sm:px-6">Estado</th>
+                      <th className="px-4 py-3 sm:px-6 text-right">Fecha</th>
                     </tr>
                   </thead>
                   <tbody className="text-sm">
@@ -584,8 +615,14 @@ export const ResellerDashboard = () => {
   );
 };
 
-const ResellerNavItem = ({ icon, label, active = false }: { icon: React.ReactNode, label: string, active?: boolean }) => (
-  <a href="#" className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition-all group relative ${
+const ResellerNavItem = ({ icon, label, active = false, onClick }: { icon: React.ReactNode, label: string, active?: boolean, onClick?: () => void }) => (
+  <a 
+    href="#" 
+    onClick={(e) => {
+      e.preventDefault();
+      onClick?.();
+    }}
+    className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition-all group relative ${
     active
       ? 'text-white bg-gradient-to-r from-primary/20 to-primary/5 border border-primary/30 font-semibold'
       : 'text-muted-foreground hover:text-white hover:bg-white/[0.04] font-medium'
@@ -697,18 +734,18 @@ const LicenseRow = ({ customerName, customerPhone, type, code, status, date }: {
   const isExpired = status === 'expired';
   return (
     <tr className="border-t border-white/[0.04] hover:bg-white/[0.02] transition-colors group">
-      <td className="px-6 py-4">
+      <td className="px-4 py-4 sm:px-6">
         <div className="flex flex-col">
-          <span className="text-white font-medium">{customerName || '—'}</span>
-          {customerPhone && <span className="text-[10px] text-muted-foreground">{customerPhone}</span>}
+          <span className="text-white font-medium whitespace-nowrap">{customerName || '—'}</span>
+          {customerPhone && <span className="text-[10px] text-muted-foreground whitespace-nowrap">{customerPhone}</span>}
         </div>
       </td>
-      <td className="px-6 py-4">
-        <span className="text-[10px] font-bold text-primary uppercase tracking-widest px-2 py-1 rounded-md bg-primary/10 border border-primary/20">{type}</span>
+      <td className="px-4 py-4 sm:px-6">
+        <span className="text-[10px] font-bold text-primary uppercase tracking-widest px-2 py-1 rounded-md bg-primary/10 border border-primary/20 whitespace-nowrap">{type}</span>
       </td>
-      <td className="px-6 py-4 font-mono text-white/80 text-xs">{code}</td>
-      <td className="px-6 py-4">
-        <span className={`inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md border ${
+      <td className="px-4 py-4 sm:px-6 font-mono text-white/80 text-xs whitespace-nowrap">{code}</td>
+      <td className="px-4 py-4 sm:px-6">
+        <span className={`inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md border whitespace-nowrap ${
           isActive ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
           : isExpired ? 'text-amber-400 bg-amber-500/10 border-amber-500/20'
           : 'text-red-400 bg-red-500/10 border-red-500/20'
@@ -717,7 +754,7 @@ const LicenseRow = ({ customerName, customerPhone, type, code, status, date }: {
           {isActive ? 'Activa' : isExpired ? 'Expirada' : 'Inactiva'}
         </span>
       </td>
-      <td className="px-6 py-4 text-right text-muted-foreground text-xs tabular-nums">{date}</td>
+      <td className="px-4 py-4 sm:px-6 text-right text-muted-foreground text-xs tabular-nums whitespace-nowrap">{date}</td>
     </tr>
   );
 };
