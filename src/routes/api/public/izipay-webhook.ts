@@ -120,7 +120,7 @@ export const Route = createFileRoute("/api/public/izipay-webhook")({
             user_id: userId,
             license_key: lic.license_key,
             display_name: displayName,
-            type: "assigned",
+            type: lic._isTest ? "trial" : "assigned",
             expires_at: lic.expires_at,
             duration_seconds: lic.duration_seconds,
             lifetime: false,
