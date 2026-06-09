@@ -300,6 +300,12 @@ export const ResellerDashboard = () => {
                 label="Clientes" 
                 active={currentView === 'customers'} 
               />
+              <ResellerNavItem 
+                onClick={() => { setCurrentView('credits'); setSidebarOpen(false); }} 
+                icon={<Wallet className="w-4 h-4" />} 
+                label="Recargar Créditos" 
+                active={currentView === 'credits'} 
+              />
             </nav>
 
             <p className="text-[9px] font-bold text-muted-foreground/60 uppercase tracking-[0.2em] px-4 mt-8 mb-3">Cuenta</p>
