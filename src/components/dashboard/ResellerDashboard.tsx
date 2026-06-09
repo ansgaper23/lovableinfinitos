@@ -152,7 +152,7 @@ export const ResellerDashboard = () => {
       }
 
       // Guardar en nuestra DB
-      await resellerApi.saveLicenseLocally(user!.id, apiResp, name);
+      await resellerApi.saveLicenseLocally(user!.id, apiResp, name, name, phone);
 
       await fetchLicenses();
       if (!isTest) await fetchCredits();
