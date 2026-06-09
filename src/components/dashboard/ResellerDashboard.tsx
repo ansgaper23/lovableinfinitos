@@ -40,6 +40,7 @@ export const ResellerDashboard = () => {
   const [apiToken, setApiToken] = useState<string | null>(null);
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [currentView, setCurrentView] = useState('panel');
 
   const fetchCredits = async () => {
     if (!user) return;
