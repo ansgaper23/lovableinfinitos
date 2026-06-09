@@ -565,38 +565,78 @@ const ResellerNavItem = ({ icon, label, active = false }: { icon: React.ReactNod
   </a>
 );
 
-const MetricCard = ({ title, value, subtitle, icon, accent = false }: { title: string, value: string, subtitle: string, icon?: React.ReactNode, accent?: boolean }) => (
-  <div className={`relative rounded-2xl border p-5 overflow-hidden group transition-all hover:-translate-y-0.5 ${
-    accent
-      ? 'border-primary/30 bg-gradient-to-br from-primary/15 via-primary/5 to-transparent'
-      : 'border-white/[0.06] bg-[#0A101F]'
-  }`}>
-    {accent && <div className="absolute -top-12 -right-12 w-32 h-32 bg-primary/30 rounded-full blur-3xl pointer-events-none" />}
-    <div className="relative">
-      <div className="flex items-center gap-2 mb-3">
-        {icon && (
-          <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${accent ? 'bg-primary/20 text-primary border border-primary/30' : 'bg-white/[0.04] text-muted-foreground border border-white/10'}`}>
-            {icon}
-          </div>
-        )}
-        <p className={`text-[10px] font-bold uppercase tracking-[0.2em] ${accent ? 'text-primary' : 'text-muted-foreground'}`}>{title}</p>
-      </div>
-      <h3 className="text-3xl font-bold text-white mb-1 tracking-tight tabular-nums">{value}</h3>
-      <p className="text-[11px] text-muted-foreground">{subtitle}</p>
-    </div>
-  </div>
-);
+const MetricCard = ({ title, value, subtitle, icon, accent = false, trend, spark }: { title: string, value: string, subtitle: string, icon?: React.ReactNode, accent?: boolean, trend?: string, spark?: number[] }) => {
+  const sparkPath = useMemo(() => {
+    if (!spark || spark.length === 0) return '';
+    const w = 80, h = 24;
+    const max = Math.max(...spark, 1);
+    const min = Math.min(...spark, 0);
+    const range = max - min || 1;
+    const step = w / (spark.length - 1 || 1);
+    return spark.map((v, i) => `${i === 0 ? 'M' : 'L'}${(i * step).toFixed(1)},${(h - ((v - min) / range) * h).toFixed(1)}`).join(' ');
+  }, [spark]);
 
-const LicenseTypeCard = ({ icon, title, description, badge, badgeColor = 'primary', disabled, onClick }: { icon: React.ReactNode, title: string, description: string, badge?: string, badgeColor?: 'primary' | 'emerald', disabled?: boolean, onClick: () => void }) => (
-  <div className={`relative bg-gradient-to-br from-[#0F1729] to-[#0A101F] border border-white/[0.08] p-6 rounded-2xl flex flex-col overflow-hidden transition-all ${
-    disabled ? 'opacity-60 pointer-events-none' : 'group hover:border-primary/40 hover:shadow-[0_0_40px_rgba(79,70,229,0.15)]'
+  return (
+    <div className={`relative rounded-2xl border p-5 overflow-hidden group transition-all hover:-translate-y-0.5 hover:border-white/20 ${
+      accent
+        ? 'border-primary/30 bg-gradient-to-br from-primary/15 via-primary/5 to-transparent'
+        : 'border-white/[0.06] bg-[#0A101F]'
+    }`}>
+      {accent && <div className="absolute -top-12 -right-12 w-32 h-32 bg-primary/30 rounded-full blur-3xl pointer-events-none" />}
+      <div className="relative">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            {icon && (
+              <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${accent ? 'bg-primary/20 text-primary border border-primary/30' : 'bg-white/[0.04] text-muted-foreground border border-white/10'}`}>
+                {icon}
+              </div>
+            )}
+            <p className={`text-[10px] font-bold uppercase tracking-[0.2em] ${accent ? 'text-primary' : 'text-muted-foreground'}`}>{title}</p>
+          </div>
+          {trend && (
+            <span className={`inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-md ${accent ? 'text-primary bg-primary/10' : 'text-emerald-400 bg-emerald-500/10'}`}>
+              <TrendingUp className="w-2.5 h-2.5" />{trend}
+            </span>
+          )}
+        </div>
+        <div className="flex items-end justify-between gap-2">
+          <h3 className="text-3xl font-bold text-white tracking-tight tabular-nums leading-none">{value}</h3>
+          {sparkPath && (
+            <svg width="80" height="24" viewBox="0 0 80 24" className="opacity-70 shrink-0">
+              <defs>
+                <linearGradient id={`sg-${title}`} x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stopColor={accent ? 'rgb(79,70,229)' : 'rgb(94,234,212)'} stopOpacity="0.6" />
+                  <stop offset="100%" stopColor={accent ? 'rgb(79,70,229)' : 'rgb(94,234,212)'} stopOpacity="0" />
+                </linearGradient>
+              </defs>
+              <path d={`${sparkPath} L80,24 L0,24 Z`} fill={`url(#sg-${title})`} />
+              <path d={sparkPath} fill="none" stroke={accent ? 'rgb(129,140,248)' : 'rgb(94,234,212)'} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          )}
+        </div>
+        <p className="text-[11px] text-muted-foreground mt-2">{subtitle}</p>
+      </div>
+    </div>
+  );
+};
+
+const LicenseTypeCard = ({ icon, title, description, badge, badgeColor = 'primary', featured, disabled, onClick }: { icon: React.ReactNode, title: string, description: string, badge?: string, badgeColor?: 'primary' | 'emerald', featured?: boolean, disabled?: boolean, onClick: () => void }) => (
+  <div className={`relative bg-gradient-to-br from-[#0F1729] to-[#0A101F] border p-6 rounded-2xl flex flex-col overflow-hidden transition-all ${
+    featured ? 'border-primary/40 shadow-[0_0_40px_rgba(79,70,229,0.2)]' : 'border-white/[0.08]'
+  } ${
+    disabled ? 'opacity-60 pointer-events-none' : 'group hover:border-primary/40 hover:shadow-[0_0_40px_rgba(79,70,229,0.18)] hover:-translate-y-0.5'
   }`}>
-    <div className={`absolute inset-0 bg-gradient-to-br from-primary/0 to-primary/0 transition-all pointer-events-none ${disabled ? '' : 'group-hover:from-primary/[0.04] group-hover:to-transparent'}`} />
+    {featured && (
+      <span className="absolute top-3 right-3 text-[8px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded bg-gradient-to-r from-primary to-accent text-white z-10">
+        Popular
+      </span>
+    )}
+    <div className={`absolute inset-0 bg-gradient-to-br from-primary/0 to-primary/0 transition-all pointer-events-none ${disabled ? '' : 'group-hover:from-primary/[0.06] group-hover:to-transparent'}`} />
     <div className="relative flex items-start justify-between mb-6">
       <div className={`w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary transition-all ${disabled ? '' : 'group-hover:scale-110 group-hover:bg-primary/20'}`}>
         {icon}
       </div>
-      {badge && (
+      {badge && !featured && (
         <span className={`text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-md border ${
           badgeColor === 'emerald'
             ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
@@ -608,10 +648,14 @@ const LicenseTypeCard = ({ icon, title, description, badge, badgeColor = 'primar
       <h3 className="text-base font-bold text-white tracking-tight mb-1">{title}</h3>
       <p className="text-xs text-muted-foreground mb-6">{description}</p>
     </div>
-    <Button onClick={onClick} disabled={disabled} className="relative w-full bg-white/[0.04] hover:bg-primary text-white font-semibold h-11 rounded-xl border border-white/10 hover:border-primary transition-all group/btn disabled:opacity-40 disabled:cursor-not-allowed">
+    <Button onClick={onClick} disabled={disabled} className={`relative w-full font-semibold h-11 rounded-xl transition-all group/btn disabled:opacity-40 disabled:cursor-not-allowed ${
+      featured
+        ? 'bg-gradient-to-r from-primary to-accent hover:opacity-90 text-white border-0'
+        : 'bg-white/[0.04] hover:bg-primary text-white border border-white/10 hover:border-primary'
+    }`}>
       <span className="flex items-center justify-center gap-2">
         {disabled ? 'Bloqueado' : 'Generar Clave'}
-        <Key className="w-4 h-4 transition-transform group-hover/btn:rotate-12" />
+        <ArrowUpRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
       </span>
     </Button>
   </div>
