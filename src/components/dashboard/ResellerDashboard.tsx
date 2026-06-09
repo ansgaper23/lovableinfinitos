@@ -385,7 +385,7 @@ export const ResellerDashboard = () => {
                       <div className="w-1 h-5 bg-gradient-to-b from-primary to-accent rounded-full" />
                       <h2 className="text-xl font-bold text-white tracking-tight">Generar Nueva Licencia</h2>
                     </div>
-                    <p className="text-muted-foreground text-sm">Elige el tipo de clave que deseas emitir</p>
+                    <p className="text-muted-foreground text-sm">Las pruebas son gratis e ilimitadas. Cada licencia por días cuesta <span className="text-white font-semibold">1 crédito</span>.</p>
                   </div>
                   <div className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-white/[0.03] border border-white/10 text-xs text-muted-foreground">
                     <Coins className="w-4 h-4 text-primary" />
