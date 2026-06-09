@@ -22,7 +22,7 @@ import {
   Flame,
   Crown,
   Star,
-  PlayCircle,
+  Play,
   GraduationCap,
   LifeBuoy,
   MessageCircle,
