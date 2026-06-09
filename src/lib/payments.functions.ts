@@ -33,6 +33,14 @@ export const createIzipayPayment = createServerFn({ method: "POST" })
       .maybeSingle();
     const email = prof?.email || `user-${userId}@lovableinfinito.com`;
 
+    // Modo TEST: solo permitido para el superadmin mientras se prueba la integración
+    const isTestMode = (process.env.IZIPAY_PASSWORD || "").startsWith("testpassword_");
+    if (isTestMode && email !== "jorge968122@gmail.com") {
+      throw new Error(
+        "Los pagos están en modo de prueba. Solo la cuenta de administrador puede realizar pagos en este momento."
+      );
+    }
+
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     // Crear orden pending
