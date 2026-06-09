@@ -816,7 +816,7 @@ export const ResellerDashboard = () => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <a href="https://wa.me/YOUR_PHONE" target="_blank" rel="noreferrer" className="block group">
+                  <a href="https://wa.me/51936467898" target="_blank" rel="noreferrer" className="block group">
                     <Card className="bg-[#0A101F] border-white/[0.08] text-white group-hover:border-primary/40 transition-all">
                       <CardContent className="pt-6 flex items-center gap-4">
                         <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400">
