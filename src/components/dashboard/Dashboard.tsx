@@ -950,6 +950,60 @@ const TUTORIALS = [
   { title: "Gestión avanzada de créditos", duration: "6:42", level: "Avanzado", desc: "Aprovecha al máximo cada plan." },
 ];
 
+const getYoutubeId = (url: string): string | null => {
+  const m = url.match(/(?:embed\/|v=|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+  return m ? m[1] : null;
+};
+
+const VideoPlayer = memo(({ videoUrl, title, duration }: { videoUrl: string; title: string; duration: string }) => {
+  const [playing, setPlaying] = useState(false);
+  const ytId = getYoutubeId(videoUrl);
+  const thumb = ytId ? `https://img.youtube.com/vi/${ytId}/hqdefault.jpg` : null;
+  const playSrc = videoUrl.includes("?") ? `${videoUrl}&autoplay=1` : `${videoUrl}?autoplay=1`;
+
+  if (playing) {
+    return (
+      <div className="relative aspect-video bg-black">
+        <iframe
+          className="absolute inset-0 w-full h-full rounded-t-3xl"
+          src={playSrc}
+          title={title}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowFullScreen
+        />
+      </div>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={() => setPlaying(true)}
+      className="relative aspect-video w-full bg-black overflow-hidden block group/play"
+      aria-label={`Reproducir ${title}`}
+    >
+      {thumb && (
+        <img
+          src={thumb}
+          alt={title}
+          className="absolute inset-0 w-full h-full object-cover blur-md scale-110"
+          loading="lazy"
+        />
+      )}
+      <div className="absolute inset-0 bg-black/40" />
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="w-16 h-16 rounded-full bg-white/90 backdrop-blur flex items-center justify-center shadow-2xl group-hover/play:scale-110 transition">
+          <PlayCircle className="w-10 h-10 text-violet-600" fill="currentColor" />
+        </div>
+      </div>
+      <span className="absolute bottom-2 right-2 rounded-md bg-black/70 backdrop-blur px-2 py-0.5 text-[10px] font-bold text-white">
+        {duration}
+      </span>
+    </button>
+  );
+});
+VideoPlayer.displayName = "VideoPlayer";
+
 const TutorialesTab = () => (
   <section className="space-y-6">
     <Header
@@ -961,18 +1015,7 @@ const TutorialesTab = () => (
       {TUTORIALS.map((t) => (
         <div key={t.title} className="group rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl overflow-hidden hover:border-violet-400/30 transition">
           {t.videoUrl ? (
-            <div className="relative aspect-video bg-black">
-              <iframe
-                className="absolute inset-0 w-full h-full rounded-t-3xl"
-                src={t.videoUrl}
-                title={t.title}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-              />
-              <span className="absolute bottom-2 right-2 rounded-md bg-black/60 backdrop-blur px-2 py-0.5 text-[10px] font-bold text-white z-10">
-                {t.duration}
-              </span>
-            </div>
+            <VideoPlayer videoUrl={t.videoUrl} title={t.title} duration={t.duration} />
           ) : (
             <div className="relative aspect-video bg-gradient-to-br from-violet-600/30 via-fuchsia-600/20 to-pink-600/20 flex items-center justify-center">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.08),transparent_70%)]" />
