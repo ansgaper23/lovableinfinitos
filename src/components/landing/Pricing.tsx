@@ -103,12 +103,18 @@ export const Pricing = () => {
                   )}
                 </div>
                 
-                <div className="mb-10 flex items-baseline gap-3">
+                <div className="mb-2">
                   <span className="text-5xl font-black tracking-tighter text-white">{plan.price}</span>
                   {plan.oldPrice && (
-                    <span className="text-lg text-muted-foreground line-through decoration-destructive decoration-2">{plan.oldPrice}</span>
+                    <span className="text-lg text-muted-foreground line-through decoration-destructive decoration-2 ml-3">{plan.oldPrice}</span>
                   )}
                 </div>
+                <p className="text-xs text-muted-foreground mb-8">
+                  ≈ {plan.pricePen} PEN
+                  {plan.oldPricePen && (
+                    <span className="line-through ml-2">{plan.oldPricePen}</span>
+                  )}
+                </p>
                 
                 <p className="text-sm text-muted-foreground mb-8 h-12 leading-relaxed">{plan.description}</p>
                 
