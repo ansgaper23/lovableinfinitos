@@ -20,6 +20,8 @@ interface License {
   type: string;
   status: string | null;
   created_at: string;
+  customer_name?: string | null;
+  customer_phone?: string | null;
 }
 
 export const ResellerDashboard = () => {
