@@ -615,8 +615,14 @@ export const ResellerDashboard = () => {
   );
 };
 
-const ResellerNavItem = ({ icon, label, active = false }: { icon: React.ReactNode, label: string, active?: boolean }) => (
-  <a href="#" className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition-all group relative ${
+const ResellerNavItem = ({ icon, label, active = false, onClick }: { icon: React.ReactNode, label: string, active?: boolean, onClick?: () => void }) => (
+  <a 
+    href="#" 
+    onClick={(e) => {
+      e.preventDefault();
+      onClick?.();
+    }}
+    className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition-all group relative ${
     active
       ? 'text-white bg-gradient-to-r from-primary/20 to-primary/5 border border-primary/30 font-semibold'
       : 'text-muted-foreground hover:text-white hover:bg-white/[0.04] font-medium'
