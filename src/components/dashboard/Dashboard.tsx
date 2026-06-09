@@ -285,6 +285,10 @@ export const Dashboard = () => {
         {activeTab === "extras" && (
           <ExtrasTab isBasicUser={isBasicUser} navigate={navigate} role={profile?.role} />
         )}
+
+        {activeTab === "tutoriales" && <TutorialesTab />}
+
+        {activeTab === "ayuda" && <AyudaTab />
       </div>
     </div>
   );
