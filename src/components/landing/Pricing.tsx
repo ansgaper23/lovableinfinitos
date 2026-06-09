@@ -5,9 +5,10 @@ import { Link } from "@tanstack/react-router";
 export const Pricing = () => {
   const plans = [
     {
+      id: "basico",
       name: "Plan Básico",
       duration: "1 Día",
-      price: "$5.99",
+      price: "S/ 22.50",
       description: "Ideal para probar el servicio o finalizar un pequeño proyecto.",
       features: [
         "Lovable ilimitado por 1 día",
@@ -18,9 +19,10 @@ export const Pricing = () => {
       popular: false,
     },
     {
+      id: "pro",
       name: "Plan Pro",
       duration: "7 Días",
-      price: "$13.99",
+      price: "S/ 52.50",
       description: "La opción preferida por builders y freelancers en Perú.",
       features: [
         "Lovable ilimitado por 7 días",
@@ -32,10 +34,11 @@ export const Pricing = () => {
       popular: true,
     },
     {
+      id: "premium",
       name: "Plan Premium",
       duration: "30 Días",
-      price: "$18.99",
-      oldPrice: "$35.00",
+      price: "S/ 71.50",
+      oldPrice: "S/ 131.00",
       badge: "Oferta por tiempo limitado",
       description: "Para agencias y desarrolladores de alto rendimiento.",
       features: [
@@ -63,7 +66,7 @@ export const Pricing = () => {
           </p>
           <div className="inline-block mt-8 py-2 px-6 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-md">
             <p className="text-sm font-bold text-primary tracking-widest uppercase">
-              Precios en Dólares (USD) • Pago Seguro
+              Precios en Soles (PEN) • Pago Seguro con Izipay
             </p>
           </div>
         </div>
@@ -117,14 +120,15 @@ export const Pricing = () => {
                 </ul>
                 
                 <Link
-                  to="/auth"
+                  to="/checkout/$plan"
+                  params={{ plan: plan.id }}
                   className={`block w-full py-5 rounded-none font-black uppercase tracking-widest text-center transition-all duration-300 transform ${
                     plan.popular
                       ? "bg-primary text-primary-foreground hover:shadow-[0_0_30px_rgba(var(--color-primary),0.4)]"
                       : "bg-primary text-primary-foreground hover:shadow-[0_0_30px_rgba(var(--color-primary),0.4)]"
                   }`}
                 >
-                  Activar Acceso
+                  Pagar Ahora
                 </Link>
               </CardContent>
             </Card>

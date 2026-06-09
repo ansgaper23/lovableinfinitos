@@ -71,6 +71,54 @@ export type Database = {
         }
         Relationships: []
       }
+      payment_orders: {
+        Row: {
+          amount_pen: number
+          created_at: string
+          currency: string
+          days: number
+          id: string
+          izipay_order_id: string | null
+          izipay_uuid: string | null
+          license_key: string | null
+          plan_id: string
+          raw_response: Json | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount_pen: number
+          created_at?: string
+          currency?: string
+          days: number
+          id?: string
+          izipay_order_id?: string | null
+          izipay_uuid?: string | null
+          license_key?: string | null
+          plan_id: string
+          raw_response?: Json | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount_pen?: number
+          created_at?: string
+          currency?: string
+          days?: number
+          id?: string
+          izipay_order_id?: string | null
+          izipay_uuid?: string | null
+          license_key?: string | null
+          plan_id?: string
+          raw_response?: Json | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
