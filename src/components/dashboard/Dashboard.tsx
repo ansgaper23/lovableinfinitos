@@ -1017,11 +1017,10 @@ const TutorialesTab = () => (
           {t.videoUrl ? (
             <VideoPlayer videoUrl={t.videoUrl} title={t.title} duration={t.duration} />
           ) : (
-            <div className="relative aspect-video bg-gradient-to-br from-violet-600/30 via-fuchsia-600/20 to-pink-600/20 flex items-center justify-center">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.08),transparent_70%)]" />
-              <Play className="w-14 h-14 text-white/90 group-hover:scale-110 transition" fill="currentColor" />
-              <span className="absolute bottom-2 right-2 rounded-md bg-black/60 backdrop-blur px-2 py-0.5 text-[10px] font-bold text-white">
-                {t.duration}
+            <div className="relative aspect-video bg-gradient-to-br from-zinc-800/60 via-zinc-800/40 to-zinc-700/30 flex flex-col items-center justify-center">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.04),transparent_70%)]" />
+              <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+                Próximamente
               </span>
             </div>
           )}
