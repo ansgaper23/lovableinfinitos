@@ -5,9 +5,10 @@ import { Link } from "@tanstack/react-router";
 export const Pricing = () => {
   const plans = [
     {
+      id: "basico",
       name: "Plan Básico",
       duration: "1 Día",
-      price: "$5.99",
+      price: "S/ 22.50",
       description: "Ideal para probar el servicio o finalizar un pequeño proyecto.",
       features: [
         "Lovable ilimitado por 1 día",
@@ -18,9 +19,10 @@ export const Pricing = () => {
       popular: false,
     },
     {
+      id: "pro",
       name: "Plan Pro",
       duration: "7 Días",
-      price: "$13.99",
+      price: "S/ 52.50",
       description: "La opción preferida por builders y freelancers en Perú.",
       features: [
         "Lovable ilimitado por 7 días",
@@ -32,10 +34,11 @@ export const Pricing = () => {
       popular: true,
     },
     {
+      id: "premium",
       name: "Plan Premium",
       duration: "30 Días",
-      price: "$18.99",
-      oldPrice: "$35.00",
+      price: "S/ 71.50",
+      oldPrice: "S/ 131.00",
       badge: "Oferta por tiempo limitado",
       description: "Para agencias y desarrolladores de alto rendimiento.",
       features: [
