@@ -198,19 +198,24 @@ function CheckoutPage() {
             <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-6 space-y-4">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Precio</span>
-                <span className="font-semibold">S/ {plan.pricePen.toFixed(2)}</span>
+                <span className="font-semibold">${plan.priceUsd.toFixed(2)} USD</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Equivalente</span>
                 <span className="text-muted-foreground">
-                  ≈ ${plan.priceUsd.toFixed(2)} USD
+                  ≈ S/ {plan.pricePen.toFixed(2)} PEN
                 </span>
               </div>
-              <div className="border-t border-white/10 pt-4 flex justify-between">
+              <div className="border-t border-white/10 pt-4 flex justify-between items-end">
                 <span className="font-bold">Total</span>
-                <span className="text-2xl font-black tracking-tighter">
-                  S/ {plan.pricePen.toFixed(2)}
-                </span>
+                <div className="text-right">
+                  <span className="text-2xl font-black tracking-tighter">
+                    ${plan.priceUsd.toFixed(2)} USD
+                  </span>
+                  <p className="text-xs text-muted-foreground">
+                    ≈ S/ {plan.pricePen.toFixed(2)} PEN
+                  </p>
+                </div>
               </div>
               <div className="flex items-center gap-2 text-xs text-muted-foreground pt-2">
                 <ShieldCheck className="w-4 h-4 text-primary" />
