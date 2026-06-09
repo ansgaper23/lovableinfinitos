@@ -828,3 +828,49 @@ const LicenseRow = ({ type, code, status, date }: { type: string, code: string, 
     </tr>
   );
 };
+
+const TutorialCard = ({ badge, title, description, duration, level }: { badge: string, title: string, description: string, duration: string, level: string }) => (
+  <button className="group relative text-left rounded-2xl border border-white/[0.08] bg-[#0F1729] overflow-hidden hover:border-primary/40 hover:-translate-y-0.5 hover:shadow-[0_0_40px_rgba(79,70,229,0.15)] transition-all">
+    <div className="relative aspect-video bg-gradient-to-br from-primary/20 via-accent/10 to-transparent flex items-center justify-center overflow-hidden">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(79,70,229,0.25),transparent_70%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:24px_24px]" />
+      <div className="relative w-14 h-14 rounded-full bg-white/10 backdrop-blur border border-white/20 flex items-center justify-center group-hover:scale-110 group-hover:bg-primary/30 transition-all">
+        <PlayCircle className="w-7 h-7 text-white fill-primary/30" />
+      </div>
+      <span className="absolute top-3 left-3 text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-md bg-black/50 backdrop-blur border border-white/10 text-white">{badge}</span>
+      <span className="absolute bottom-3 right-3 inline-flex items-center gap-1 text-[10px] font-bold text-white/90 bg-black/50 backdrop-blur border border-white/10 px-2 py-1 rounded-md">
+        <Clock className="w-3 h-3" /> {duration}
+      </span>
+    </div>
+    <div className="p-4">
+      <h3 className="text-sm font-bold text-white tracking-tight mb-1 group-hover:text-primary transition-colors">{title}</h3>
+      <p className="text-xs text-muted-foreground line-clamp-2 mb-3">{description}</p>
+      <div className="flex items-center justify-between">
+        <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{level}</span>
+        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-primary uppercase tracking-widest">
+          Ver lección <ChevronRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5" />
+        </span>
+      </div>
+    </div>
+  </button>
+);
+
+const HelpContactCard = ({ icon, title, description, cta, href, accent }: { icon: React.ReactNode, title: string, description: string, cta: string, href: string, accent: 'emerald' | 'primary' | 'violet' }) => {
+  const accentMap = {
+    emerald: { bg: 'bg-emerald-500/10', border: 'border-emerald-500/30', text: 'text-emerald-400', glow: 'shadow-[0_0_40px_rgba(16,185,129,0.15)]' },
+    primary: { bg: 'bg-primary/10', border: 'border-primary/30', text: 'text-primary', glow: 'shadow-[0_0_40px_rgba(79,70,229,0.15)]' },
+    violet: { bg: 'bg-violet-500/10', border: 'border-violet-500/30', text: 'text-violet-400', glow: 'shadow-[0_0_40px_rgba(139,92,246,0.15)]' },
+  }[accent];
+  return (
+    <a href={href} target={href.startsWith('http') ? '_blank' : undefined} rel="noreferrer" className={`group relative rounded-2xl border border-white/[0.08] bg-[#0F1729] p-5 flex flex-col hover:border-white/20 hover:-translate-y-0.5 transition-all hover:${accentMap.glow}`}>
+      <div className={`w-11 h-11 rounded-xl ${accentMap.bg} border ${accentMap.border} flex items-center justify-center ${accentMap.text} mb-4 group-hover:scale-110 transition-transform`}>
+        {icon}
+      </div>
+      <h3 className="text-sm font-bold text-white tracking-tight mb-1">{title}</h3>
+      <p className="text-xs text-muted-foreground mb-4 flex-1">{description}</p>
+      <span className={`inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider ${accentMap.text}`}>
+        {cta} <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+      </span>
+    </a>
+  );
+};
