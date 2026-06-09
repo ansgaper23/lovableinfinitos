@@ -53,7 +53,7 @@ export const createIzipayPayment = createServerFn({ method: "POST" })
 
     // Llamar a Izipay CreatePayment
     const auth = Buffer.from(`${username}:${password}`).toString("base64");
-    const res = await fetch(`${IZIPAY_ENDPOINT}/api/V4/Charge/CreatePayment`, {
+    const res = await fetch(`${IZIPAY_ENDPOINT}/api-payment/V4/Charge/CreatePayment`, {
       method: "POST",
       headers: {
         Authorization: `Basic ${auth}`,
