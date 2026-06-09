@@ -66,7 +66,7 @@ export const Pricing = () => {
           </p>
           <div className="inline-block mt-8 py-2 px-6 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-md">
             <p className="text-sm font-bold text-primary tracking-widest uppercase">
-              Precios en Dólares (USD) • Pago Seguro
+              Precios en Soles (PEN) • Pago Seguro con Izipay
             </p>
           </div>
         </div>
