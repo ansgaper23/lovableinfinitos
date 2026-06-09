@@ -514,12 +514,7 @@ const PlanesTab = () => {
               ))}
             </ul>
             <Button
-              onClick={() =>
-                window.open(
-                  `https://wa.me/51936467898?text=Hola,%20quiero%20el%20${encodeURIComponent(p.name)}`,
-                  "_blank",
-                )
-              }
+              onClick={() => navigate({ to: "/checkout/$plan", params: { plan: p.planId } })}
               className={`w-full rounded-full h-11 font-semibold ${
                 p.popular
                   ? "bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 shadow-lg shadow-violet-600/30"
