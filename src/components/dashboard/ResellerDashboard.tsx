@@ -680,9 +680,9 @@ export const ResellerDashboard = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {[
-                    { amount: 10, price: "S/ 35.00", popular: false },
-                    { amount: 50, price: "S/ 150.00", popular: true },
-                    { amount: 100, price: "S/ 250.00", popular: false }
+                    { amount: 10, popular: false },
+                    { amount: 50, popular: true },
+                    { amount: 100, popular: false }
                   ].map((pkg, i) => (
                     <Card key={i} className={`bg-[#0A101F] border-white/[0.08] text-white relative overflow-hidden ${pkg.popular ? 'border-primary/50 ring-1 ring-primary/50' : ''}`}>
                       {pkg.popular && (
@@ -697,7 +697,6 @@ export const ResellerDashboard = () => {
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-6">
-                        <div className="text-4xl font-bold text-primary">{pkg.price}</div>
                         <ul className="space-y-2">
                           <li className="text-xs text-muted-foreground flex items-center gap-2">
                             <Check className="w-3 h-3 text-emerald-400" /> 1 crédito = 1 licencia
@@ -712,10 +711,10 @@ export const ResellerDashboard = () => {
                         <Button 
                           className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold uppercase italic"
                           onClick={() => {
-                            window.open(`https://wa.me/51936467898?text=Hola, deseo recargar ${pkg.amount} créditos para mi cuenta de Reseller: ${profile?.email}`, '_blank');
+                            window.open(`https://wa.me/51936467898?text=Hola, deseo consultar el precio para recargar ${pkg.amount} créditos para mi cuenta de Reseller: ${profile?.email}`, '_blank');
                           }}
                         >
-                          Recargar por WhatsApp
+                          Consultar por WhatsApp
                         </Button>
                       </CardContent>
                     </Card>
