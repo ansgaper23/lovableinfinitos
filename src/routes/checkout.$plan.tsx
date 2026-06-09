@@ -54,6 +54,18 @@ function CheckoutPage() {
       return;
     }
     if (authLoading || !user || initRef.current) return;
+
+    // Modo TEST: solo el superadmin puede pagar. Las demás cuentas son
+    // redirigidas a WhatsApp con el plan seleccionado.
+    if (user.email !== "jorge968122@gmail.com") {
+      initRef.current = true;
+      const msg = encodeURIComponent(
+        `Hola, quiero adquirir el plan ${plan.name} (S/ ${plan.pricePen.toFixed(2)}) de Lovable Infinito.`
+      );
+      window.location.replace(`https://wa.me/51936467898?text=${msg}`);
+      return;
+    }
+
     initRef.current = true;
 
     (async () => {
