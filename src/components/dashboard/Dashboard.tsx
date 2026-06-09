@@ -284,6 +284,8 @@ export const Dashboard = () => {
             role={profile?.role}
             isBasicUser={isBasicUser}
             onNavigate={(t) => setActiveTab(t)}
+            onGenerateTrial={handleGenerateTrial}
+            isGenerating={isGenerating}
           />
         )}
 
