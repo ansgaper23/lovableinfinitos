@@ -893,13 +893,14 @@ const ExtrasTab = ({
 );
 
 /* -------------------- SHARED -------------------- */
-const Header = ({ eyebrow, title, sub }: { eyebrow: string; title: string; sub?: string }) => (
+const Header = memo(({ eyebrow, title, sub }: { eyebrow: string; title: string; sub?: string }) => (
   <div>
     <p className="text-[10px] font-bold tracking-[0.25em] text-violet-300/70 uppercase mb-2">{eyebrow}</p>
     <h2 className="text-2xl sm:text-3xl font-bold tracking-tight mb-1">{title}</h2>
     {sub && <p className="text-zinc-400 text-sm">{sub}</p>}
   </div>
-);
+));
+Header.displayName = "Header";
 
 const toneMap = {
   violet: { bg: "bg-violet-500/10", border: "border-violet-400/20", text: "text-violet-300" },
