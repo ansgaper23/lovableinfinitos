@@ -692,11 +692,17 @@ const LicenseTypeCard = ({ icon, title, description, badge, badgeColor = 'primar
   </div>
 );
 
-const LicenseRow = ({ type, code, status, date }: { type: string, code: string, status: string | null, date: string }) => {
+const LicenseRow = ({ customerName, customerPhone, type, code, status, date }: { customerName?: string | null, customerPhone?: string | null, type: string, code: string, status: string | null, date: string }) => {
   const isActive = status === 'active';
   const isExpired = status === 'expired';
   return (
     <tr className="border-t border-white/[0.04] hover:bg-white/[0.02] transition-colors group">
+      <td className="px-6 py-4">
+        <div className="flex flex-col">
+          <span className="text-white font-medium">{customerName || '—'}</span>
+          {customerPhone && <span className="text-[10px] text-muted-foreground">{customerPhone}</span>}
+        </div>
+      </td>
       <td className="px-6 py-4">
         <span className="text-[10px] font-bold text-primary uppercase tracking-widest px-2 py-1 rounded-md bg-primary/10 border border-primary/20">{type}</span>
       </td>
