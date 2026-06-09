@@ -258,18 +258,40 @@ export const ResellerDashboard = () => {
 
             <p className="text-[9px] font-bold text-muted-foreground/60 uppercase tracking-[0.2em] px-4 mb-3">Menú</p>
             <nav className="space-y-1">
-              <ResellerNavItem onClick={() => setSidebarOpen(false)} icon={<LayoutDashboard className="w-4 h-4" />} label="Panel" active />
-              <ResellerNavItem onClick={() => setSidebarOpen(false)} icon={<Key className="w-4 h-4" />} label="Generar Licencias" />
-              <ResellerNavItem onClick={() => setSidebarOpen(false)} icon={<ClipboardList className="w-4 h-4" />} label="Licencias Activas" />
-              <ResellerNavItem onClick={() => setSidebarOpen(false)} icon={<History className="w-4 h-4" />} label="Historial" />
-              <ResellerNavItem onClick={() => setSidebarOpen(false)} icon={<Users className="w-4 h-4" />} label="Clientes" />
-              <ResellerNavItem onClick={() => setSidebarOpen(false)} icon={<Wallet className="w-4 h-4" />} label="Financiero" />
+              <ResellerNavItem 
+                onClick={() => { setCurrentView('panel'); setSidebarOpen(false); }} 
+                icon={<LayoutDashboard className="w-4 h-4" />} 
+                label="Panel" 
+                active={currentView === 'panel'} 
+              />
+              <ResellerNavItem 
+                onClick={() => { setCurrentView('licenses'); setSidebarOpen(false); }} 
+                icon={<ClipboardList className="w-4 h-4" />} 
+                label="Licencias" 
+                active={currentView === 'licenses'} 
+              />
+              <ResellerNavItem 
+                onClick={() => { setCurrentView('customers'); setSidebarOpen(false); }} 
+                icon={<Users className="w-4 h-4" />} 
+                label="Clientes" 
+                active={currentView === 'customers'} 
+              />
             </nav>
 
             <p className="text-[9px] font-bold text-muted-foreground/60 uppercase tracking-[0.2em] px-4 mt-8 mb-3">Cuenta</p>
             <nav className="space-y-1">
-              <ResellerNavItem onClick={() => setSidebarOpen(false)} icon={<Settings className="w-4 h-4" />} label="Configuración" />
-              <ResellerNavItem onClick={() => setSidebarOpen(false)} icon={<LifeBuoy className="w-4 h-4" />} label="Soporte" />
+              <ResellerNavItem 
+                onClick={() => { setCurrentView('settings'); setSidebarOpen(false); }} 
+                icon={<Settings className="w-4 h-4" />} 
+                label="Configuración" 
+                active={currentView === 'settings'} 
+              />
+              <ResellerNavItem 
+                onClick={() => { setCurrentView('support'); setSidebarOpen(false); }} 
+                icon={<LifeBuoy className="w-4 h-4" />} 
+                label="Soporte" 
+                active={currentView === 'support'} 
+              />
             </nav>
           </div>
           <div className="p-4 relative z-10 border-t border-white/5">
