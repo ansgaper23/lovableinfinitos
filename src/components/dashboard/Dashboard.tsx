@@ -284,6 +284,8 @@ export const Dashboard = () => {
             role={profile?.role}
             isBasicUser={isBasicUser}
             onNavigate={(t) => setActiveTab(t)}
+            onGenerateTrial={handleGenerateTrial}
+            isGenerating={isGenerating}
           />
         )}
 
@@ -322,6 +324,8 @@ const InicioTab = ({
   role,
   isBasicUser,
   onNavigate,
+  onGenerateTrial,
+  isGenerating,
 }: {
   displayName: string;
   statusActive: boolean;
@@ -331,6 +335,8 @@ const InicioTab = ({
   role?: string | null;
   isBasicUser: boolean;
   onNavigate: (t: TabKey) => void;
+  onGenerateTrial: () => void;
+  isGenerating: boolean;
 }) => (
   <>
     {/* Hero */}
@@ -404,6 +410,40 @@ const InicioTab = ({
         </div>
       </div>
     </section>
+
+    {!statusActive && (
+      <section className="relative rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-emerald-500/10 to-emerald-900/10 backdrop-blur-xl overflow-hidden">
+        <div className="absolute -top-10 -right-10 w-[200px] h-[200px] bg-emerald-500/20 blur-[80px] rounded-full" />
+        <div className="relative p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center gap-5">
+          <div className="w-12 h-12 rounded-xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center shrink-0">
+            <Sparkles className="w-6 h-6 text-emerald-300" />
+          </div>
+          <div className="flex-1">
+            <h3 className="text-lg font-bold mb-1">Genera tu clave de prueba gratis</h3>
+            <p className="text-zinc-300 text-sm leading-relaxed max-w-lg">
+              Como usuario nuevo puedes obtener una llave de prueba gratuita por <span className="text-emerald-300 font-semibold">15 minutos</span> para probar Lovable Infinito sin compromiso.
+            </p>
+          </div>
+          <Button
+            onClick={onGenerateTrial}
+            disabled={isGenerating}
+            className="rounded-full h-11 px-6 bg-emerald-600 hover:bg-emerald-500 font-semibold shadow-lg shadow-emerald-600/30 shrink-0"
+          >
+            {isGenerating ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Generando...
+              </>
+            ) : (
+              <>
+                <Key className="w-4 h-4 mr-2" />
+                Probar gratis
+              </>
+            )}
+          </Button>
+        </div>
+      </section>
+    )}
 
     <p className="text-[10px] font-bold tracking-[0.25em] text-zinc-500 uppercase pt-2">
       Resumen de la actuación
