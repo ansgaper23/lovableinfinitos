@@ -942,7 +942,7 @@ StatCard.displayName = "StatCard";
 
 /* -------------------- TAB: TUTORIALES -------------------- */
 const TUTORIALS = [
-  { title: "Primeros pasos en Lovable Infinito", duration: "4:32", level: "Básico", desc: "Configura tu cuenta y activa tu primera llave." },
+  { title: "Primeros pasos en Lovable Infinito", duration: "4:32", level: "Básico", desc: "Configura tu cuenta y activa tu primera llave.", videoUrl: "https://www.youtube.com/embed/KR5pNeKN8yY?si=enUzhHujYcmOpAU8" },
   { title: "Instalar la extensión de Chrome", duration: "3:15", level: "Básico", desc: "Guía paso a paso para instalar y enlazar." },
   { title: "Activar tu llave de licencia", duration: "2:48", level: "Básico", desc: "Cómo pegar tu llave y validar el acceso." },
   { title: "Optimiza tus prompts en Lovable", duration: "7:21", level: "Intermedio", desc: "Buenas prácticas para obtener mejores resultados." },
@@ -960,13 +960,28 @@ const TutorialesTab = () => (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
       {TUTORIALS.map((t) => (
         <div key={t.title} className="group rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl overflow-hidden hover:border-violet-400/30 transition">
-          <div className="relative aspect-video bg-gradient-to-br from-violet-600/30 via-fuchsia-600/20 to-pink-600/20 flex items-center justify-center">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.08),transparent_70%)]" />
-            <PlayCircle className="w-14 h-14 text-white/90 group-hover:scale-110 transition" />
-            <span className="absolute bottom-2 right-2 rounded-md bg-black/60 backdrop-blur px-2 py-0.5 text-[10px] font-bold text-white">
-              {t.duration}
-            </span>
-          </div>
+          {t.videoUrl ? (
+            <div className="relative aspect-video bg-black">
+              <iframe
+                className="absolute inset-0 w-full h-full rounded-t-3xl"
+                src={t.videoUrl}
+                title={t.title}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+              <span className="absolute bottom-2 right-2 rounded-md bg-black/60 backdrop-blur px-2 py-0.5 text-[10px] font-bold text-white z-10">
+                {t.duration}
+              </span>
+            </div>
+          ) : (
+            <div className="relative aspect-video bg-gradient-to-br from-violet-600/30 via-fuchsia-600/20 to-pink-600/20 flex items-center justify-center">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.08),transparent_70%)]" />
+              <PlayCircle className="w-14 h-14 text-white/90 group-hover:scale-110 transition" />
+              <span className="absolute bottom-2 right-2 rounded-md bg-black/60 backdrop-blur px-2 py-0.5 text-[10px] font-bold text-white">
+                {t.duration}
+              </span>
+            </div>
+          )}
           <div className="p-5">
             <Badge variant="outline" className="mb-3 rounded-full border-violet-400/30 bg-violet-500/10 text-violet-300 text-[10px] font-bold uppercase tracking-widest">
               {t.level}
