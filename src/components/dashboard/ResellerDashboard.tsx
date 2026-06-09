@@ -209,12 +209,42 @@ export const ResellerDashboard = () => {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-background">
-      <div className="flex-1 flex overflow-hidden">
+      {/* Mobile Header */}
+      <header className="lg:hidden flex items-center justify-between p-4 border-b border-white/[0.06] bg-[#070B18] relative z-50">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-[0_0_15px_rgba(79,70,229,0.4)]">
+            <Zap className="w-4 h-4 text-white fill-white" />
+          </div>
+          <span className="font-bold text-xs tracking-tight text-white uppercase">Reseller</span>
+        </div>
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="text-white hover:bg-white/5"
+        >
+          {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </Button>
+      </header>
+
+      <div className="flex-1 flex overflow-hidden relative">
+        {/* Sidebar Overlay */}
+        {sidebarOpen && (
+          <div 
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+
         {/* Sidebar */}
-        <aside className="w-64 border-r border-white/[0.06] bg-gradient-to-b from-[#070B18] to-[#03060F] hidden lg:flex flex-col relative">
+        <aside className={`
+          fixed inset-y-0 left-0 w-64 border-r border-white/[0.06] bg-gradient-to-b from-[#070B18] to-[#03060F] 
+          flex flex-col z-50 transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0
+          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+        `}>
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(79,70,229,0.08),transparent_60%)] pointer-events-none" />
-          <div className="p-6 relative z-10">
-            <div className="flex items-center gap-3 mb-10 group px-2">
+          <div className="p-6 relative z-10 flex-1 overflow-y-auto">
+            <div className="hidden lg:flex items-center gap-3 mb-10 group px-2">
               <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-[0_0_25px_rgba(79,70,229,0.5)]">
                 <Zap className="w-5 h-5 text-white fill-white" />
                 <div className="absolute inset-0 rounded-xl bg-primary/40 blur-lg -z-10" />
