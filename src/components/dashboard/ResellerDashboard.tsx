@@ -385,7 +385,7 @@ export const ResellerDashboard = () => {
                       <div className="w-1 h-5 bg-gradient-to-b from-primary to-accent rounded-full" />
                       <h2 className="text-xl font-bold text-white tracking-tight">Generar Nueva Licencia</h2>
                     </div>
-                    <p className="text-muted-foreground text-sm">Elige el tipo de clave que deseas emitir</p>
+                    <p className="text-muted-foreground text-sm">Las pruebas son gratis e ilimitadas. Cada licencia por días cuesta <span className="text-white font-semibold">1 crédito</span>.</p>
                   </div>
                   <div className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-white/[0.03] border border-white/10 text-xs text-muted-foreground">
                     <Coins className="w-4 h-4 text-primary" />
@@ -397,7 +397,7 @@ export const ResellerDashboard = () => {
                   <LicenseTypeCard
                     icon={<Zap className="w-6 h-6" />}
                     title="Prueba Gratis"
-                    description="15 minutos"
+                    description="15 minutos · Gratis e ilimitada"
                     badge="GRATIS"
                     badgeColor="emerald"
                     disabled={!isActivated}
@@ -406,7 +406,7 @@ export const ResellerDashboard = () => {
                   <LicenseTypeCard
                     icon={<CalendarDays className="w-6 h-6" />}
                     title="1 Día"
-                    description="Acceso por 24 horas"
+                    description="Acceso por 24 horas · 1 crédito"
                     badge="1 CRÉDITO"
                     badgeColor="primary"
                     disabled={!isActivated}
@@ -415,7 +415,7 @@ export const ResellerDashboard = () => {
                   <LicenseTypeCard
                     icon={<CalendarDays className="w-6 h-6" />}
                     title="7 Días"
-                    description="Acceso por 1 semana"
+                    description="Acceso por 1 semana · 1 crédito"
                     badge="1 CRÉDITO"
                     badgeColor="primary"
                     disabled={!isActivated}
@@ -424,7 +424,7 @@ export const ResellerDashboard = () => {
                   <LicenseTypeCard
                     icon={<CalendarDays className="w-6 h-6" />}
                     title="30 Días"
-                    description="Acceso por 1 mes"
+                    description="Acceso por 1 mes · 1 crédito"
                     badge="1 CRÉDITO"
                     badgeColor="primary"
                     featured
