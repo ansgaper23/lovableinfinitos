@@ -357,7 +357,7 @@ export const ResellerDashboard = () => {
 
             {currentView === 'panel' && (
               <>
-                {/* Hero Welcome */}
+                {/* Hero Welcome & Balance */}
                 <div className="relative overflow-hidden rounded-3xl border border-white/[0.08] bg-gradient-to-br from-[#0d1430] via-[#0a0f24] to-[#070b18] p-6 lg:p-8">
                   <div className="absolute -top-32 -right-20 w-96 h-96 bg-primary/25 rounded-full blur-[120px] pointer-events-none" />
                   <div className="absolute -bottom-32 -left-20 w-80 h-80 bg-accent/20 rounded-full blur-[120px] pointer-events-none" />
@@ -385,23 +385,6 @@ export const ResellerDashboard = () => {
                       <p className="text-sm text-muted-foreground mt-2 max-w-md">
                         Gestiona tus claves, monitorea tus clientes y haz crecer tu negocio con Lovable Infinito.
                       </p>
-                      <div className="flex flex-wrap items-center gap-2 mt-5">
-                        <Button
-                          onClick={() => isActivated && openGenerateDialog('30days')}
-                          disabled={!isActivated}
-                          className="h-10 rounded-xl bg-white text-black hover:bg-white/90 font-semibold text-xs uppercase tracking-wider gap-2 px-4"
-                        >
-                          <Plus className="w-4 h-4" /> Generar Licencia
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          onClick={() => isActivated && openGenerateDialog('test')}
-                          disabled={!isActivated}
-                          className="h-10 rounded-xl bg-white/[0.04] border border-white/10 hover:bg-white/[0.08] text-white font-semibold text-xs uppercase tracking-wider gap-2 px-4"
-                        >
-                          <Zap className="w-4 h-4 text-emerald-400" /> Prueba Gratis
-                        </Button>
-                      </div>
                     </div>
 
                     {/* Credits highlight */}
@@ -420,6 +403,63 @@ export const ResellerDashboard = () => {
                           </span>
                         </div>
                       </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* License Generation - Now right below balance */}
+                <div className="relative rounded-3xl border border-white/[0.08] bg-gradient-to-br from-[#0A1224] via-[#0A101F] to-[#070C18] p-6 lg:p-8 overflow-hidden">
+                  <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary/20 rounded-full blur-3xl pointer-events-none" />
+                  <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-accent/15 rounded-full blur-3xl pointer-events-none" />
+                  <div className="relative">
+                    <div className="flex items-end justify-between flex-wrap gap-4 mb-8">
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <div className="w-1 h-5 bg-gradient-to-b from-primary to-accent rounded-full" />
+                          <h2 className="text-xl font-bold text-white tracking-tight">Generar Nueva Licencia</h2>
+                        </div>
+                        <p className="text-muted-foreground text-sm">Las pruebas son gratis e ilimitadas. Cada licencia por días cuesta <span className="text-white font-semibold">1 crédito</span>.</p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                      <LicenseTypeCard
+                        icon={<Zap className="w-6 h-6" />}
+                        title="Prueba Gratis"
+                        description="15 minutos · Gratis"
+                        badge="GRATIS"
+                        badgeColor="emerald"
+                        disabled={!isActivated}
+                        onClick={() => openGenerateDialog('test')}
+                      />
+                      <LicenseTypeCard
+                        icon={<CalendarDays className="w-6 h-6" />}
+                        title="1 Día"
+                        description="Acceso 24h · 1 crédito"
+                        badge="1 CRÉDITO"
+                        badgeColor="primary"
+                        disabled={!isActivated}
+                        onClick={() => openGenerateDialog('1day')}
+                      />
+                      <LicenseTypeCard
+                        icon={<CalendarDays className="w-6 h-6" />}
+                        title="7 Días"
+                        description="Acceso 1 sem · 1 crédito"
+                        badge="1 CRÉDITO"
+                        badgeColor="primary"
+                        disabled={!isActivated}
+                        onClick={() => openGenerateDialog('7days')}
+                      />
+                      <LicenseTypeCard
+                        icon={<CalendarDays className="w-6 h-6" />}
+                        title="30 Días"
+                        description="Acceso 1 mes · 1 crédito"
+                        badge="1 CRÉDITO"
+                        badgeColor="primary"
+                        featured
+                        disabled={!isActivated}
+                        onClick={() => openGenerateDialog('30days')}
+                      />
                     </div>
                   </div>
                 </div>
@@ -459,67 +499,6 @@ export const ResellerDashboard = () => {
                     trend="free"
                     spark={[1,1,2,2,3,3,4]}
                   />
-                </div>
-
-                {/* License Generation */}
-                <div className="relative rounded-3xl border border-white/[0.08] bg-gradient-to-br from-[#0A1224] via-[#0A101F] to-[#070C18] p-6 lg:p-8 overflow-hidden">
-                  <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary/20 rounded-full blur-3xl pointer-events-none" />
-                  <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-accent/15 rounded-full blur-3xl pointer-events-none" />
-                  <div className="relative">
-                    <div className="flex items-end justify-between flex-wrap gap-4 mb-8">
-                      <div>
-                        <div className="flex items-center gap-2 mb-1">
-                          <div className="w-1 h-5 bg-gradient-to-b from-primary to-accent rounded-full" />
-                          <h2 className="text-xl font-bold text-white tracking-tight">Generar Nueva Licencia</h2>
-                        </div>
-                        <p className="text-muted-foreground text-sm">Las pruebas son gratis e ilimitadas. Cada licencia por días cuesta <span className="text-white font-semibold">1 crédito</span>.</p>
-                      </div>
-                      <div className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-white/[0.03] border border-white/10 text-xs text-muted-foreground">
-                        <Coins className="w-4 h-4 text-primary" />
-                        <span><span className="text-white font-bold tabular-nums">{credits}</span> créditos disponibles</span>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                      <LicenseTypeCard
-                        icon={<Zap className="w-6 h-6" />}
-                        title="Prueba Gratis"
-                        description="15 minutos · Gratis e ilimitada"
-                        badge="GRATIS"
-                        badgeColor="emerald"
-                        disabled={!isActivated}
-                        onClick={() => openGenerateDialog('test')}
-                      />
-                      <LicenseTypeCard
-                        icon={<CalendarDays className="w-6 h-6" />}
-                        title="1 Día"
-                        description="Acceso por 24 horas · 1 crédito"
-                        badge="1 CRÉDITO"
-                        badgeColor="primary"
-                        disabled={!isActivated}
-                        onClick={() => openGenerateDialog('1day')}
-                      />
-                      <LicenseTypeCard
-                        icon={<CalendarDays className="w-6 h-6" />}
-                        title="7 Días"
-                        description="Acceso por 1 semana · 1 crédito"
-                        badge="1 CRÉDITO"
-                        badgeColor="primary"
-                        disabled={!isActivated}
-                        onClick={() => openGenerateDialog('7days')}
-                      />
-                      <LicenseTypeCard
-                        icon={<CalendarDays className="w-6 h-6" />}
-                        title="30 Días"
-                        description="Acceso por 1 mes · 1 crédito"
-                        badge="1 CRÉDITO"
-                        badgeColor="primary"
-                        featured
-                        disabled={!isActivated}
-                        onClick={() => openGenerateDialog('30days')}
-                      />
-                    </div>
-                  </div>
                 </div>
 
                 {/* Recent Licenses */}
