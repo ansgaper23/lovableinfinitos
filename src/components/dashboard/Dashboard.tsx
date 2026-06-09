@@ -914,3 +914,282 @@ const StatCard = ({
     </div>
   );
 };
+
+/* -------------------- TAB: TUTORIALES -------------------- */
+const TUTORIALS = [
+  { title: "Primeros pasos en Lovable Infinito", duration: "4:32", level: "Básico", desc: "Configura tu cuenta y activa tu primera llave." },
+  { title: "Instalar la extensión de Chrome", duration: "3:15", level: "Básico", desc: "Guía paso a paso para instalar y enlazar." },
+  { title: "Activar tu llave de licencia", duration: "2:48", level: "Básico", desc: "Cómo pegar tu llave y validar el acceso." },
+  { title: "Optimiza tus prompts en Lovable", duration: "7:21", level: "Intermedio", desc: "Buenas prácticas para obtener mejores resultados." },
+  { title: "Solución de errores frecuentes", duration: "5:09", level: "Intermedio", desc: "401, 429, 500 y cómo resolverlos rápido." },
+  { title: "Gestión avanzada de créditos", duration: "6:42", level: "Avanzado", desc: "Aprovecha al máximo cada plan." },
+];
+
+const TutorialesTab = () => (
+  <section className="space-y-6">
+    <Header
+      eyebrow="Centro de aprendizaje"
+      title="Tutoriales en video"
+      sub="Aprende a sacarle el máximo provecho a Lovable Infinito con nuestras lecciones."
+    />
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      {TUTORIALS.map((t) => (
+        <div key={t.title} className="group rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl overflow-hidden hover:border-violet-400/30 transition">
+          <div className="relative aspect-video bg-gradient-to-br from-violet-600/30 via-fuchsia-600/20 to-pink-600/20 flex items-center justify-center">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.08),transparent_70%)]" />
+            <PlayCircle className="w-14 h-14 text-white/90 group-hover:scale-110 transition" />
+            <span className="absolute bottom-2 right-2 rounded-md bg-black/60 backdrop-blur px-2 py-0.5 text-[10px] font-bold text-white">
+              {t.duration}
+            </span>
+          </div>
+          <div className="p-5">
+            <Badge variant="outline" className="mb-3 rounded-full border-violet-400/30 bg-violet-500/10 text-violet-300 text-[10px] font-bold uppercase tracking-widest">
+              {t.level}
+            </Badge>
+            <h3 className="font-bold tracking-tight mb-1">{t.title}</h3>
+            <p className="text-sm text-zinc-400">{t.desc}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+);
+
+/* -------------------- TAB: AYUDA + DOCUMENTACIÓN -------------------- */
+type DocError = { code: string; title: string; cause: string; solution: string; category: string };
+
+const DOC_ERRORS: DocError[] = [
+  { code: "400", title: "Solicitud incorrecta", cause: "El comando o los datos enviados no tienen el formato correcto.", solution: "Verifica la sintaxis del comando. Revisa la documentación del comando que estás usando.", category: "Comando" },
+  { code: "401", title: "No autorizado", cause: "Tu llave de licencia es inválida, ha expirado o no se envió correctamente.", solution: "Verifica tu llave en la pestaña Mis Llaves. Genera una nueva si es necesario.", category: "Autenticación" },
+  { code: "402", title: "Pago requerido", cause: "Tu plan actual no incluye esta función o tus créditos se agotaron.", solution: "Actualiza tu plan en la sección Planes o recarga créditos.", category: "Créditos" },
+  { code: "403", title: "Acceso denegado", cause: "No tienes permisos para usar este recurso con tu rol actual.", solution: "Contacta a soporte si crees que esto es un error.", category: "Licencia" },
+  { code: "404", title: "No encontrado", cause: "El recurso solicitado no existe o ha sido eliminado.", solution: "Revisa que el endpoint o ID sea correcto.", category: "Comando" },
+  { code: "408", title: "Tiempo de espera agotado", cause: "La solicitud tardó demasiado en procesarse.", solution: "Verifica tu conexión a internet y reintenta.", category: "Servidor" },
+  { code: "409", title: "Conflicto", cause: "Hay un conflicto con el estado actual del recurso.", solution: "Recarga la extensión y vuelve a intentarlo.", category: "Comando" },
+  { code: "410", title: "Recurso eliminado", cause: "El recurso ya no está disponible permanentemente.", solution: "Usa una versión actualizada de la extensión.", category: "Comando" },
+  { code: "413", title: "Carga demasiado grande", cause: "El contenido enviado supera el tamaño permitido.", solution: "Divide tu solicitud en partes más pequeñas.", category: "Comando" },
+  { code: "418", title: "Bloqueo de seguridad", cause: "Se detectó actividad inusual en tu cuenta.", solution: "Espera unos minutos y contacta a soporte si persiste.", category: "Licencia" },
+  { code: "423", title: "Recurso bloqueado", cause: "Tu licencia está temporalmente bloqueada.", solution: "Contacta a soporte para desbloquear.", category: "Licencia" },
+  { code: "425", title: "Demasiado pronto", cause: "Hiciste una solicitud antes de que la anterior terminara.", solution: "Espera a que termine la solicitud previa.", category: "Comando" },
+  { code: "429", title: "Demasiadas solicitudes", cause: "Has superado el límite de uso permitido por minuto.", solution: "Espera 1-2 minutos antes de reintentar. Considera actualizar tu plan.", category: "Límite de uso" },
+  { code: "451", title: "No disponible legalmente", cause: "El contenido no está disponible en tu región.", solution: "Usa una VPN o contacta a soporte.", category: "Licencia" },
+  { code: "498", title: "Token expirado", cause: "Tu sesión ha expirado por inactividad.", solution: "Cierra sesión y vuelve a iniciar.", category: "Autenticación" },
+  { code: "499", title: "Cliente cerró la conexión", cause: "La conexión se cerró antes de completar la solicitud.", solution: "Verifica tu conexión y reintenta.", category: "Servidor" },
+  { code: "500", title: "Error interno del servidor", cause: "Hubo un fallo inesperado en nuestro servidor.", solution: "Espera unos minutos y reintenta. Si persiste, contacta soporte.", category: "Servidor" },
+  { code: "502", title: "Puerta de enlace incorrecta", cause: "Nuestro servidor recibió una respuesta inválida.", solution: "Reintenta en unos segundos.", category: "Servidor" },
+  { code: "503", title: "Servicio no disponible", cause: "Estamos en mantenimiento o bajo alta carga.", solution: "Consulta nuestro estado en redes sociales o reintenta más tarde.", category: "Servidor" },
+  { code: "504", title: "Tiempo de espera de la puerta", cause: "El servidor no respondió a tiempo.", solution: "Reintenta en unos minutos.", category: "Servidor" },
+  { code: "507", title: "Almacenamiento insuficiente", cause: "No hay espacio suficiente para procesar tu solicitud.", solution: "Contacta a soporte si persiste.", category: "Servidor" },
+];
+
+const DOC_CATEGORIES = ["Todas", "Autenticación", "Límite de uso", "Créditos", "Licencia", "Servidor", "Comando"];
+
+const httpToneFor = (code: string) => {
+  const n = parseInt(code, 10);
+  if (n >= 500) return "border-red-500/30 bg-red-500/10 text-red-300";
+  if (n === 401 || n === 403) return "border-amber-500/30 bg-amber-500/10 text-amber-300";
+  if (n === 429) return "border-orange-500/30 bg-orange-500/10 text-orange-300";
+  return "border-violet-500/30 bg-violet-500/10 text-violet-300";
+};
+
+const AyudaTab = () => {
+  const [query, setQuery] = useState("");
+  const [category, setCategory] = useState("Todas");
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return DOC_ERRORS.filter((e) => {
+      const matchCat = category === "Todas" || e.category === category;
+      const matchQ = !q || e.code.includes(q) || e.title.toLowerCase().includes(q) || e.cause.toLowerCase().includes(q);
+      return matchCat && matchQ;
+    });
+  }, [query, category]);
+
+  return (
+    <section className="space-y-8">
+      <Header
+        eyebrow="Centro de ayuda"
+        title="¿Cómo podemos ayudarte?"
+        sub="Encuentra respuestas, documentación de errores y formas de contacto."
+      />
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <HelpContactCard
+          icon={<MessageCircle className="w-5 h-5" />}
+          title="WhatsApp"
+          desc="Soporte rápido por chat"
+          action="Escribir ahora"
+          href="https://wa.me/000000000"
+          tone="emerald"
+        />
+        <HelpContactCard
+          icon={<Mail className="w-5 h-5" />}
+          title="Correo electrónico"
+          desc="soporte@lovableinfinito.com"
+          action="Enviar correo"
+          href="mailto:soporte@lovableinfinito.com"
+          tone="violet"
+        />
+        <HelpContactCard
+          icon={<BookOpen className="w-5 h-5" />}
+          title="Documentación"
+          desc="Guías, manuales y FAQs"
+          action="Ver guías"
+          href="#docs"
+          tone="fuchsia"
+        />
+      </div>
+
+      <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-6">
+        <h3 className="text-lg font-bold tracking-tight mb-4">Preguntas frecuentes</h3>
+        <Accordion type="single" collapsible className="w-full">
+          <AccordionItem value="q1" className="border-white/10">
+            <AccordionTrigger className="text-left">¿Cómo activo mi llave de licencia?</AccordionTrigger>
+            <AccordionContent className="text-zinc-400">
+              Ve a la pestaña Mis Llaves, copia tu llave y pégala en la extensión de Chrome al iniciar sesión.
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="q2" className="border-white/10">
+            <AccordionTrigger className="text-left">¿Puedo cambiar de plan en cualquier momento?</AccordionTrigger>
+            <AccordionContent className="text-zinc-400">
+              Sí, puedes actualizar tu plan cuando quieras desde la sección Planes. El tiempo restante se ajusta automáticamente.
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="q3" className="border-white/10">
+            <AccordionTrigger className="text-left">¿Qué hago si mi llave deja de funcionar?</AccordionTrigger>
+            <AccordionContent className="text-zinc-400">
+              Verifica que esté vigente en Mis Llaves. Si el problema persiste, contáctanos por WhatsApp con tu correo.
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="q4" className="border-white/10">
+            <AccordionTrigger className="text-left">¿La extensión funciona en otros navegadores?</AccordionTrigger>
+            <AccordionContent className="text-zinc-400">
+              Actualmente está optimizada para Chrome y navegadores basados en Chromium (Edge, Brave, Opera).
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      </div>
+
+      <div id="docs" className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-6 space-y-5">
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div>
+            <Badge variant="outline" className="mb-2 rounded-full border-violet-400/30 bg-violet-500/10 text-violet-300 text-[10px] font-bold uppercase tracking-widest">
+              Documentación
+            </Badge>
+            <h3 className="text-2xl font-bold tracking-tight">Catálogo de errores</h3>
+            <p className="text-sm text-zinc-400 mt-1">Encuentra el código, su causa y la solución recomendada.</p>
+          </div>
+          <div className="relative w-full sm:w-72">
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" />
+            <Input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Buscar por código o palabra…"
+              className="pl-9 rounded-full bg-white/5 border-white/10"
+            />
+          </div>
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          {DOC_CATEGORIES.map((c) => {
+            const active = category === c;
+            return (
+              <button
+                key={c}
+                onClick={() => setCategory(c)}
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition ${
+                  active
+                    ? "bg-gradient-to-r from-violet-600/30 to-fuchsia-600/20 border-violet-400/30 text-white"
+                    : "bg-white/5 border-white/10 text-zinc-400 hover:text-white hover:bg-white/10"
+                }`}
+              >
+                {c}
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-4 flex gap-3">
+          <AlertTriangle className="w-5 h-5 text-amber-300 shrink-0 mt-0.5" />
+          <div className="text-sm text-amber-100/90">
+            <p className="font-bold mb-1">Tips rápidos</p>
+            <ul className="list-disc pl-5 space-y-1 text-amber-100/80">
+              <li>Reinicia la extensión antes de reportar un error.</li>
+              <li>Verifica que tu llave esté vigente en Mis Llaves.</li>
+              <li>Revisa tu conexión a internet y desactiva VPN si tienes problemas.</li>
+              <li>Limpia el caché del navegador en caso de errores 4xx.</li>
+              <li>Si nada funciona, contáctanos con la captura del error.</li>
+            </ul>
+          </div>
+        </div>
+
+        {filtered.length === 0 ? (
+          <p className="text-center text-sm text-zinc-500 py-8">No encontramos errores para tu búsqueda.</p>
+        ) : (
+          <Accordion type="single" collapsible className="w-full">
+            {filtered.map((e) => (
+              <AccordionItem key={e.code} value={e.code} className="border-white/10">
+                <AccordionTrigger className="text-left hover:no-underline">
+                  <div className="flex items-center gap-3">
+                    <span className={`rounded-lg border px-2.5 py-1 text-xs font-bold ${httpToneFor(e.code)}`}>
+                      {e.code}
+                    </span>
+                    <span className="font-semibold">{e.title}</span>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="text-zinc-400 space-y-2">
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Causa</p>
+                    <p>{e.cause}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Solución</p>
+                    <p>{e.solution}</p>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        )}
+      </div>
+    </section>
+  );
+};
+
+const helpToneMap: Record<string, string> = {
+  emerald: "from-emerald-500/30 to-emerald-500/0 text-emerald-300 border-emerald-400/30",
+  violet: "from-violet-500/30 to-violet-500/0 text-violet-300 border-violet-400/30",
+  fuchsia: "from-fuchsia-500/30 to-fuchsia-500/0 text-fuchsia-300 border-fuchsia-400/30",
+};
+
+const HelpContactCard = ({
+  icon,
+  title,
+  desc,
+  action,
+  href,
+  tone,
+}: {
+  icon: ReactNode;
+  title: string;
+  desc: string;
+  action: string;
+  href: string;
+  tone: "emerald" | "violet" | "fuchsia";
+}) => (
+  <a
+    href={href}
+    target={href.startsWith("http") ? "_blank" : undefined}
+    rel="noreferrer"
+    className="group rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5 hover:border-white/20 transition flex flex-col"
+  >
+    <div className={`w-11 h-11 rounded-2xl border bg-gradient-to-br ${helpToneMap[tone]} flex items-center justify-center mb-4`}>
+      {icon}
+    </div>
+    <h3 className="font-bold tracking-tight mb-1">{title}</h3>
+    <p className="text-sm text-zinc-400 mb-4">{desc}</p>
+    <span className="mt-auto inline-flex items-center gap-1 text-sm font-semibold text-violet-300 group-hover:gap-2 transition-all">
+      {action} <ArrowRight className="w-4 h-4" />
+    </span>
+  </a>
+);
