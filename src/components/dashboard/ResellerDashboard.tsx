@@ -226,6 +226,8 @@ export const ResellerDashboard = () => {
               <ResellerNavItem icon={<History className="w-4 h-4" />} label="Historial" />
               <ResellerNavItem icon={<Users className="w-4 h-4" />} label="Clientes" />
               <ResellerNavItem icon={<Wallet className="w-4 h-4" />} label="Financiero" />
+              <ResellerNavItem icon={<GraduationCap className="w-4 h-4" />} label="Tutoriales" />
+              <ResellerNavItem icon={<HelpCircle className="w-4 h-4" />} label="Centro de Ayuda" />
             </nav>
 
             <p className="text-[9px] font-bold text-muted-foreground/60 uppercase tracking-[0.2em] px-4 mt-8 mb-3">Cuenta</p>
@@ -484,6 +486,82 @@ export const ResellerDashboard = () => {
             </div>
 
             <ExtensionDownloadCard />
+
+            {/* Tutoriales */}
+            <section id="tutoriales" className="rounded-3xl border border-white/[0.08] bg-gradient-to-br from-[#0A1224] via-[#0A101F] to-[#070C18] p-6 lg:p-8 relative overflow-hidden">
+              <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary/15 rounded-full blur-3xl pointer-events-none" />
+              <div className="relative">
+                <div className="flex items-end justify-between flex-wrap gap-4 mb-6">
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <div className="w-1 h-5 bg-gradient-to-b from-primary to-accent rounded-full" />
+                      <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2"><GraduationCap className="w-5 h-5 text-primary" /> Tutoriales</h2>
+                    </div>
+                    <p className="text-muted-foreground text-sm">Aprende a sacarle el máximo provecho a tu cuenta reseller paso a paso.</p>
+                  </div>
+                  <span className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-white/[0.03] border border-white/10 text-xs text-muted-foreground">
+                    <BookOpen className="w-4 h-4 text-primary" /> 6 lecciones
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <TutorialCard badge="Inicio" title="Cómo activar tu cuenta reseller" description="Configura tu perfil, créditos y primer cliente en menos de 5 minutos." duration="3 min" level="Básico" />
+                  <TutorialCard badge="Licencias" title="Generar tu primera licencia" description="Aprende los tipos de licencia disponibles y cuándo usarlos." duration="4 min" level="Básico" />
+                  <TutorialCard badge="Extensión" title="Instalar la extensión en Chrome" description="Guía paso a paso para que tu cliente active Lovable Infinito." duration="5 min" level="Básico" />
+                  <TutorialCard badge="Clientes" title="Gestionar tus clientes" description="Organiza claves por cliente y lleva control de renovaciones." duration="6 min" level="Intermedio" />
+                  <TutorialCard badge="Ventas" title="Estrategias para vender más" description="Tips probados para escalar tu negocio como reseller." duration="8 min" level="Intermedio" />
+                  <TutorialCard badge="API" title="Automatiza con la API" description="Integra la generación de licencias en tu propio sistema." duration="10 min" level="Avanzado" />
+                </div>
+              </div>
+            </section>
+
+            {/* Centro de Ayuda */}
+            <section id="ayuda" className="rounded-3xl border border-white/[0.08] bg-gradient-to-br from-[#0A1224] via-[#0A101F] to-[#070C18] p-6 lg:p-8 relative overflow-hidden">
+              <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-accent/15 rounded-full blur-3xl pointer-events-none" />
+              <div className="relative">
+                <div className="flex items-end justify-between flex-wrap gap-4 mb-6">
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <div className="w-1 h-5 bg-gradient-to-b from-primary to-accent rounded-full" />
+                      <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2"><HelpCircle className="w-5 h-5 text-primary" /> Centro de Ayuda</h2>
+                    </div>
+                    <p className="text-muted-foreground text-sm">¿Necesitas ayuda? Encuentra respuestas o contáctanos directamente.</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+                  <HelpContactCard icon={<MessageCircle className="w-5 h-5" />} title="Chat por WhatsApp" description="Respuesta en menos de 10 minutos en horario laboral." cta="Abrir WhatsApp" href="https://wa.me/" accent="emerald" />
+                  <HelpContactCard icon={<Mail className="w-5 h-5" />} title="Soporte por correo" description="Escríbenos y te responderemos en menos de 24 horas." cta="Enviar correo" href="mailto:soporte@lovableinfinito.com" accent="primary" />
+                  <HelpContactCard icon={<FileText className="w-5 h-5" />} title="Documentación" description="Guías técnicas completas para integrar y vender." cta="Leer docs" href="#tutoriales" accent="violet" />
+                </div>
+
+                <div className="rounded-2xl border border-white/[0.06] bg-[#02060E]/60 p-5">
+                  <p className="text-[10px] font-bold text-primary uppercase tracking-[0.2em] mb-3">Preguntas frecuentes</p>
+                  <Accordion type="single" collapsible className="w-full">
+                    <AccordionItem value="q1" className="border-white/5">
+                      <AccordionTrigger className="text-sm text-white hover:text-primary text-left">¿Cuánto cuesta generar una licencia?</AccordionTrigger>
+                      <AccordionContent className="text-sm text-muted-foreground">Cada licencia por días (1, 7 o 30) cuesta 1 crédito. Las licencias de prueba de 15 minutos son gratis e ilimitadas.</AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="q2" className="border-white/5">
+                      <AccordionTrigger className="text-sm text-white hover:text-primary text-left">¿Cómo recargo créditos en mi cuenta?</AccordionTrigger>
+                      <AccordionContent className="text-sm text-muted-foreground">Contáctanos por WhatsApp o correo y te enviamos los métodos de pago disponibles. Los créditos se acreditan al instante.</AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="q3" className="border-white/5">
+                      <AccordionTrigger className="text-sm text-white hover:text-primary text-left">¿La licencia se activa automáticamente?</AccordionTrigger>
+                      <AccordionContent className="text-sm text-muted-foreground">Sí. Una vez generada, tu cliente solo debe pegar la clave en la extensión y queda activa por el tiempo contratado.</AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="q4" className="border-white/5">
+                      <AccordionTrigger className="text-sm text-white hover:text-primary text-left">¿Qué pasa si una licencia falla?</AccordionTrigger>
+                      <AccordionContent className="text-sm text-muted-foreground">Reportamos cualquier falla en menos de 24 horas. Si se confirma el problema, reponemos el crédito sin costo.</AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="q5" className="border-none">
+                      <AccordionTrigger className="text-sm text-white hover:text-primary text-left">¿Puedo poner mi propia marca?</AccordionTrigger>
+                      <AccordionContent className="text-sm text-muted-foreground">Sí, en planes superiores puedes ofrecer la extensión bajo tu marca. Pregúntanos por white-label.</AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+                </div>
+              </div>
+            </section>
 
             <div className="p-4 rounded-2xl bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border border-primary/20 flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-primary/20 border border-primary/30 flex items-center justify-center shrink-0">
