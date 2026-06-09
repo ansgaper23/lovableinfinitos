@@ -24,14 +24,21 @@ import {
   Star,
   GraduationCap,
   PlayCircle,
-  BookOpen,
   HelpCircle,
   MessageCircle,
   Mail,
   FileText,
   ChevronRight,
+  Search,
+  BookOpen,
 } from "lucide-react";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Input } from "@/components/ui/input";
 
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -171,9 +178,9 @@ export const Dashboard = () => {
     { key: "planes", label: "Planes", icon: <CreditCard className="w-4 h-4" /> },
     { key: "llaves", label: "Mis Llaves", icon: <Key className="w-4 h-4" /> },
     { key: "extension", label: "Extensión", icon: <Download className="w-4 h-4" /> },
+    { key: "extras", label: "Extras", icon: <Layers className="w-4 h-4" /> },
     { key: "tutoriales", label: "Tutoriales", icon: <GraduationCap className="w-4 h-4" /> },
     { key: "ayuda", label: "Ayuda", icon: <HelpCircle className="w-4 h-4" /> },
-    { key: "extras", label: "Extras", icon: <Layers className="w-4 h-4" /> },
   ];
 
   return (
@@ -275,13 +282,13 @@ export const Dashboard = () => {
 
         {activeTab === "extension" && <ExtensionTab />}
 
-        {activeTab === "tutoriales" && <TutorialesTab />}
-
-        {activeTab === "ayuda" && <AyudaTab />}
-
         {activeTab === "extras" && (
           <ExtrasTab isBasicUser={isBasicUser} navigate={navigate} role={profile?.role} />
         )}
+
+        {activeTab === "tutoriales" && <TutorialesTab />}
+
+        {activeTab === "ayuda" && <AyudaTab />}
       </div>
     </div>
   );
@@ -909,118 +916,238 @@ const StatCard = ({
 };
 
 /* -------------------- TAB: TUTORIALES -------------------- */
-const TutorialesTab = () => {
-  const lessons = [
-    { badge: "Inicio", title: "Bienvenido a Lovable Infinito", description: "Recorre el panel y conoce todas las herramientas disponibles para ti.", duration: "3 min", level: "Básico" },
-    { badge: "Extensión", title: "Instalar la extensión en Chrome", description: "Guía paso a paso para activar Lovable Infinito en tu navegador.", duration: "4 min", level: "Básico" },
-    { badge: "Licencias", title: "Activar tu primera licencia", description: "Aprende a pegar tu clave en la extensión y empezar a usar Lovable sin límites.", duration: "3 min", level: "Básico" },
-    { badge: "Planes", title: "Cómo elegir el plan correcto", description: "Comparativa de planes 1, 7 y 30 días para encontrar el que se ajuste a ti.", duration: "5 min", level: "Básico" },
-    { badge: "Prompts", title: "Mejores prácticas con prompts", description: "Tips para escribir prompts efectivos y obtener mejores resultados con Lovable AI.", duration: "8 min", level: "Intermedio" },
-    { badge: "Resolución", title: "Solucionar errores comunes", description: "Cómo identificar y resolver los problemas más frecuentes al usar la extensión.", duration: "6 min", level: "Intermedio" },
-  ];
-  return (
-    <section className="space-y-6">
-      <Header eyebrow="Aprende" title="Tutoriales en video" sub="Domina Lovable Infinito con guías cortas hechas por nuestro equipo." />
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {lessons.map((l) => (
-          <TutorialCard key={l.title} {...l} />
-        ))}
+const TUTORIALS = [
+  { title: "Primeros pasos", desc: "Configura tu cuenta y activa tu primera licencia.", duration: "3 min", level: "Básico" },
+  { title: "Instalar la extensión", desc: "Guía paso a paso para Chrome y navegadores compatibles.", duration: "4 min", level: "Básico" },
+  { title: "Gestión de licencias", desc: "Genera, asigna y renueva tus llaves de acceso.", duration: "3 min", level: "Básico" },
+  { title: "Elegir el plan correcto", desc: "Compara planes y descubre cuál se adapta a ti.", duration: "5 min", level: "Intermedio" },
+  { title: "Mejores prompts", desc: "Saca el máximo provecho con prompts efectivos.", duration: "8 min", level: "Avanzado" },
+  { title: "Resolución de errores", desc: "Soluciona los problemas más comunes en segundos.", duration: "6 min", level: "Intermedio" },
+];
+
+const TutorialesTab = () => (
+  <div className="space-y-6">
+    <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-violet-600/10 via-fuchsia-600/5 to-transparent p-6 sm:p-8">
+      <div className="flex items-center gap-3 mb-2">
+        <div className="w-10 h-10 rounded-2xl bg-violet-500/20 border border-violet-400/30 flex items-center justify-center">
+          <GraduationCap className="w-5 h-5 text-violet-300" />
+        </div>
+        <div>
+          <h2 className="text-xl sm:text-2xl font-bold tracking-tight">Tutoriales</h2>
+          <p className="text-sm text-zinc-400">Aprende a usar la plataforma con lecciones cortas en video.</p>
+        </div>
       </div>
-    </section>
+    </div>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {TUTORIALS.map((t) => (
+        <TutorialCard key={t.title} {...t} />
+      ))}
+    </div>
+  </div>
+);
+
+const TutorialCard = ({ title, desc, duration, level }: { title: string; desc: string; duration: string; level: string }) => (
+  <div className="group rounded-2xl border border-white/10 bg-white/[0.03] overflow-hidden hover:border-violet-400/40 hover:bg-white/[0.06] transition-all">
+    <div className="relative aspect-video bg-gradient-to-br from-violet-600/30 via-fuchsia-600/20 to-zinc-900 flex items-center justify-center">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.08),transparent_70%)]" />
+      <PlayCircle className="w-14 h-14 text-white/90 group-hover:scale-110 transition-transform drop-shadow-lg" />
+      <div className="absolute bottom-2 right-2 rounded-full bg-black/60 backdrop-blur px-2 py-0.5 text-[10px] font-semibold flex items-center gap-1">
+        <Clock className="w-3 h-3" /> {duration}
+      </div>
+      <div className="absolute top-2 left-2 rounded-full bg-violet-500/30 border border-violet-400/40 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-violet-100">
+        {level}
+      </div>
+    </div>
+    <div className="p-4">
+      <h3 className="font-bold text-base mb-1">{title}</h3>
+      <p className="text-xs text-zinc-400 mb-3 line-clamp-2">{desc}</p>
+      <button className="text-xs font-semibold text-violet-300 hover:text-violet-200 inline-flex items-center gap-1">
+        Ver lección <ChevronRight className="w-3 h-3" />
+      </button>
+    </div>
+  </div>
+);
+
+/* -------------------- TAB: AYUDA + DOCUMENTACIÓN -------------------- */
+const DOC_ERRORS: { code: string; category: string; title: string; cause: string; solution: string }[] = [
+  { code: "401", category: "Autenticación", title: "No autorizado", cause: "Tu sesión expiró o la llave no es válida.", solution: "Cierra sesión, vuelve a iniciar y verifica que la licencia esté activa." },
+  { code: "403", category: "Autenticación", title: "Acceso denegado", cause: "El recurso requiere permisos que tu plan no incluye.", solution: "Actualiza tu plan o contacta soporte." },
+  { code: "429", category: "Límite de uso", title: "Demasiadas solicitudes", cause: "Has superado el límite de generaciones por minuto.", solution: "Espera 60 segundos antes de intentar nuevamente." },
+  { code: "402", category: "Créditos", title: "Créditos insuficientes", cause: "No tienes créditos disponibles para esta operación.", solution: "Recarga créditos desde la sección Planes." },
+  { code: "404", category: "Licencia", title: "Licencia no encontrada", cause: "La llave introducida no existe o fue revocada.", solution: "Genera una nueva licencia desde Mis Llaves." },
+  { code: "410", category: "Licencia", title: "Licencia expirada", cause: "Tu licencia ya cumplió su periodo de validez.", solution: "Renueva o adquiere una nueva licencia." },
+  { code: "500", category: "Servidor", title: "Error interno del servidor", cause: "Fallo temporal en nuestros servidores.", solution: "Espera unos minutos y vuelve a intentar." },
+  { code: "502", category: "Servidor", title: "Bad Gateway", cause: "El proveedor de IA no respondió a tiempo.", solution: "Reintenta la operación; suele ser transitorio." },
+  { code: "503", category: "Servidor", title: "Servicio no disponible", cause: "Mantenimiento o sobrecarga del servicio.", solution: "Revisa nuestro canal de estado y reintenta más tarde." },
+  { code: "504", category: "Servidor", title: "Tiempo de espera agotado", cause: "La generación tardó más de lo permitido.", solution: "Reduce la complejidad del prompt o reintenta." },
+  { code: "CMD-01", category: "Comando", title: "Comando no reconocido", cause: "Sintaxis incorrecta o comando obsoleto.", solution: "Consulta la documentación de comandos actualizada." },
+  { code: "CMD-02", category: "Comando", title: "Parámetros incompletos", cause: "Faltan argumentos requeridos.", solution: "Verifica el formato esperado en la guía rápida." },
+  { code: "EXT-01", category: "Extensión", title: "Extensión no detectada", cause: "La extensión del navegador no está instalada o activa.", solution: "Instálala desde la pestaña Extensión y reinicia el navegador." },
+  { code: "EXT-02", category: "Extensión", title: "Versión desactualizada", cause: "Estás usando una versión antigua de la extensión.", solution: "Actualiza a la última versión disponible." },
+];
+
+const DOC_CATEGORIES = ["Todos", "Autenticación", "Límite de uso", "Créditos", "Licencia", "Servidor", "Comando", "Extensión"];
+
+const FAQ_ITEMS = [
+  { q: "¿Cómo activo mi licencia?", a: "Ve a Mis Llaves, copia tu clave y pégala en la extensión instalada en tu navegador." },
+  { q: "¿Qué hago si mi plan expira?", a: "Puedes renovarlo en la pestaña Planes. Tus configuraciones se conservan." },
+  { q: "¿Es segura mi información?", a: "Sí, usamos cifrado de extremo a extremo y no almacenamos tus prompts." },
+  { q: "¿En qué navegadores funciona?", a: "Chrome, Brave, Edge y cualquier navegador basado en Chromium." },
+  { q: "¿Hay reembolsos?", a: "Sí, dispones de 7 días desde la compra para solicitar reembolso si no estás satisfecho." },
+];
+
+const AyudaTab = () => {
+  const [search, setSearch] = useState("");
+  const [cat, setCat] = useState("Todos");
+  const filtered = DOC_ERRORS.filter((e) => {
+    const matchesCat = cat === "Todos" || e.category === cat;
+    const q = search.toLowerCase().trim();
+    const matchesQ = !q || e.code.toLowerCase().includes(q) || e.title.toLowerCase().includes(q) || e.cause.toLowerCase().includes(q);
+    return matchesCat && matchesQ;
+  });
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-violet-600/10 via-fuchsia-600/5 to-transparent p-6 sm:p-8">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="w-10 h-10 rounded-2xl bg-violet-500/20 border border-violet-400/30 flex items-center justify-center">
+            <HelpCircle className="w-5 h-5 text-violet-300" />
+          </div>
+          <div>
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight">Centro de Ayuda</h2>
+            <p className="text-sm text-zinc-400">Contacto, documentación y resolución de errores.</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Contact cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <HelpContactCard tone="emerald" icon={<MessageCircle className="w-5 h-5" />} title="WhatsApp" desc="Respuesta rápida en horario laboral." cta="Abrir chat" />
+        <HelpContactCard tone="violet" icon={<Mail className="w-5 h-5" />} title="Correo" desc="Escríbenos a soporte@lovableinfinito.com" cta="Enviar email" />
+        <HelpContactCard tone="fuchsia" icon={<FileText className="w-5 h-5" />} title="Documentación" desc="Guías, API y mejores prácticas." cta="Ver guías" />
+      </div>
+
+      {/* FAQ */}
+      <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-6 sm:p-8">
+        <div className="flex items-center gap-2 mb-4">
+          <BookOpen className="w-5 h-5 text-violet-300" />
+          <h3 className="text-lg font-bold tracking-tight">Preguntas frecuentes</h3>
+        </div>
+        <Accordion type="single" collapsible className="w-full">
+          {FAQ_ITEMS.map((f, i) => (
+            <AccordionItem key={i} value={`faq-${i}`} className="border-white/10">
+              <AccordionTrigger className="text-left hover:no-underline">{f.q}</AccordionTrigger>
+              <AccordionContent className="text-zinc-400">{f.a}</AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      </div>
+
+      {/* Documentation - errors */}
+      <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-6 sm:p-8">
+        <div className="flex items-center gap-2 mb-4">
+          <FileText className="w-5 h-5 text-violet-300" />
+          <h3 className="text-lg font-bold tracking-tight">Documentación de errores</h3>
+        </div>
+        <p className="text-sm text-zinc-400 mb-4">
+          Consulta el catálogo completo de códigos de error, sus causas y soluciones recomendadas.
+        </p>
+
+        {/* Search */}
+        <div className="relative mb-3">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+          <Input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Buscar por código, título o causa..."
+            className="pl-9 bg-white/5 border-white/10 text-white placeholder:text-zinc-500"
+          />
+        </div>
+
+        {/* Categories */}
+        <div className="flex flex-wrap gap-2 mb-4">
+          {DOC_CATEGORIES.map((c) => (
+            <button
+              key={c}
+              onClick={() => setCat(c)}
+              className={`px-3 py-1 rounded-full text-xs font-semibold border transition ${
+                cat === c
+                  ? "bg-violet-500/20 border-violet-400/40 text-violet-200"
+                  : "bg-white/5 border-white/10 text-zinc-400 hover:text-white"
+              }`}
+            >
+              {c}
+            </button>
+          ))}
+        </div>
+
+        {/* Tips rápidos */}
+        <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-4 mb-4">
+          <p className="text-xs font-bold uppercase tracking-widest text-amber-300 mb-2">Tips rápidos</p>
+          <ul className="text-sm text-zinc-300 space-y-1 list-disc pl-5">
+            <li>Reinicia la extensión y el navegador antes de reportar.</li>
+            <li>Verifica que tu licencia esté activa en Mis Llaves.</li>
+            <li>Revisa tu cuota de créditos disponibles.</li>
+            <li>Comprueba tu conexión a internet.</li>
+            <li>Actualiza siempre a la última versión de la extensión.</li>
+          </ul>
+        </div>
+
+        {/* Errors list */}
+        <Accordion type="single" collapsible className="w-full">
+          {filtered.map((e) => (
+            <AccordionItem key={e.code} value={e.code} className="border-white/10">
+              <AccordionTrigger className="text-left hover:no-underline">
+                <div className="flex items-center gap-3 flex-1">
+                  <span className="rounded-md bg-violet-500/20 border border-violet-400/30 px-2 py-0.5 text-xs font-mono font-bold text-violet-200">
+                    {e.code}
+                  </span>
+                  <span className="font-semibold">{e.title}</span>
+                  <span className="ml-auto mr-2 hidden sm:inline text-[10px] uppercase tracking-widest text-zinc-500">
+                    {e.category}
+                  </span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="space-y-2">
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">Causa</p>
+                  <p className="text-sm text-zinc-300">{e.cause}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-400 mb-1">Solución</p>
+                  <p className="text-sm text-zinc-300">{e.solution}</p>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+          {filtered.length === 0 && (
+            <p className="text-sm text-zinc-500 text-center py-8">No se encontraron errores con ese filtro.</p>
+          )}
+        </Accordion>
+      </div>
+    </div>
   );
 };
 
-const TutorialCard = ({ badge, title, description, duration, level }: { badge: string; title: string; description: string; duration: string; level: string }) => (
-  <button className="group relative text-left rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl overflow-hidden hover:border-violet-400/40 hover:-translate-y-1 transition-all shadow-lg hover:shadow-violet-600/20">
-    <div className="relative aspect-video bg-gradient-to-br from-violet-600/30 via-fuchsia-600/15 to-transparent flex items-center justify-center overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(139,92,246,0.35),transparent_70%)]" />
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:24px_24px]" />
-      <div className="relative w-16 h-16 rounded-full bg-white/10 backdrop-blur border border-white/20 flex items-center justify-center group-hover:scale-110 group-hover:bg-violet-500/40 transition-all shadow-2xl">
-        <PlayCircle className="w-8 h-8 text-white" />
-      </div>
-      <span className="absolute top-3 left-3 text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-full bg-black/60 backdrop-blur border border-white/10 text-white">{badge}</span>
-      <span className="absolute bottom-3 right-3 inline-flex items-center gap-1 text-[10px] font-bold text-white/90 bg-black/60 backdrop-blur border border-white/10 px-2 py-1 rounded-full">
-        <Clock className="w-3 h-3" /> {duration}
-      </span>
-    </div>
-    <div className="p-5">
-      <h3 className="text-base font-bold text-white tracking-tight mb-1 group-hover:text-violet-300 transition-colors">{title}</h3>
-      <p className="text-sm text-zinc-400 line-clamp-2 mb-4">{description}</p>
-      <div className="flex items-center justify-between">
-        <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">{level}</span>
-        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-violet-300 uppercase tracking-widest">
-          Ver lección <ChevronRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5" />
-        </span>
-      </div>
-    </div>
-  </button>
-);
+const helpToneMap: Record<string, { bg: string; border: string; text: string; btn: string }> = {
+  emerald: { bg: "bg-emerald-500/10", border: "border-emerald-400/30", text: "text-emerald-300", btn: "bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-100" },
+  violet: { bg: "bg-violet-500/10", border: "border-violet-400/30", text: "text-violet-300", btn: "bg-violet-500/20 hover:bg-violet-500/30 text-violet-100" },
+  fuchsia: { bg: "bg-fuchsia-500/10", border: "border-fuchsia-400/30", text: "text-fuchsia-300", btn: "bg-fuchsia-500/20 hover:bg-fuchsia-500/30 text-fuchsia-100" },
+};
 
-/* -------------------- TAB: AYUDA -------------------- */
-const AyudaTab = () => (
-  <section className="space-y-6">
-    <Header eyebrow="Centro de ayuda" title="¿En qué podemos ayudarte?" sub="Encuentra respuestas o contáctanos directamente. Estamos aquí para ti." />
-
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-      <HelpContactCard icon={<MessageCircle className="w-5 h-5" />} title="Chat por WhatsApp" description="Respuesta en menos de 10 minutos en horario laboral." cta="Abrir WhatsApp" href="https://wa.me/" tone="emerald" />
-      <HelpContactCard icon={<Mail className="w-5 h-5" />} title="Soporte por correo" description="Escríbenos y te responderemos en menos de 24 horas." cta="Enviar correo" href="mailto:soporte@lovableinfinito.com" tone="violet" />
-      <HelpContactCard icon={<FileText className="w-5 h-5" />} title="Documentación" description="Guías técnicas completas para sacarle el máximo provecho." cta="Leer docs" href="#" tone="fuchsia" />
-    </div>
-
-    <div className="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-6 sm:p-8">
-      <div className="flex items-center gap-3 mb-5">
-        <div className="w-10 h-10 rounded-xl bg-violet-500/10 border border-violet-400/20 text-violet-300 flex items-center justify-center">
-          <BookOpen className="w-5 h-5" />
-        </div>
-        <div>
-          <p className="text-[10px] font-bold tracking-[0.25em] text-violet-300/70 uppercase">FAQ</p>
-          <h3 className="text-lg font-bold tracking-tight">Preguntas frecuentes</h3>
-        </div>
-      </div>
-      <Accordion type="single" collapsible className="w-full">
-        <AccordionItem value="q1" className="border-white/10">
-          <AccordionTrigger className="text-sm sm:text-base text-white hover:text-violet-300 text-left">¿Cómo activo mi licencia?</AccordionTrigger>
-          <AccordionContent className="text-sm text-zinc-400">Descarga la extensión desde la pestaña Extensión, instálala en Chrome y pega tu clave en el campo de activación. Quedará activa al instante.</AccordionContent>
-        </AccordionItem>
-        <AccordionItem value="q2" className="border-white/10">
-          <AccordionTrigger className="text-sm sm:text-base text-white hover:text-violet-300 text-left">¿Qué pasa cuando se acaba mi plan?</AccordionTrigger>
-          <AccordionContent className="text-sm text-zinc-400">Tu acceso se desactiva automáticamente cuando vence. Puedes renovar comprando un nuevo plan desde la pestaña Planes.</AccordionContent>
-        </AccordionItem>
-        <AccordionItem value="q3" className="border-white/10">
-          <AccordionTrigger className="text-sm sm:text-base text-white hover:text-violet-300 text-left">¿Mi cuenta de Lovable es segura?</AccordionTrigger>
-          <AccordionContent className="text-sm text-zinc-400">Sí. La extensión no almacena tus credenciales y trabaja localmente en tu navegador. Tus proyectos y datos permanecen en tu cuenta de Lovable.</AccordionContent>
-        </AccordionItem>
-        <AccordionItem value="q4" className="border-white/10">
-          <AccordionTrigger className="text-sm sm:text-base text-white hover:text-violet-300 text-left">¿Funciona con cualquier proyecto de Lovable?</AccordionTrigger>
-          <AccordionContent className="text-sm text-zinc-400">Sí. Funciona con todos los proyectos nuevos o existentes en tu cuenta personal o de equipo.</AccordionContent>
-        </AccordionItem>
-        <AccordionItem value="q5" className="border-none">
-          <AccordionTrigger className="text-sm sm:text-base text-white hover:text-violet-300 text-left">¿Puedo pedir un reembolso?</AccordionTrigger>
-          <AccordionContent className="text-sm text-zinc-400">Si tu licencia no funciona y no podemos solucionarlo, te reembolsamos el 100% del pago. Contáctanos por WhatsApp.</AccordionContent>
-        </AccordionItem>
-      </Accordion>
-    </div>
-  </section>
-);
-
-const helpToneMap = {
-  emerald: { bg: "bg-emerald-500/10", border: "border-emerald-400/30", text: "text-emerald-300", glow: "hover:shadow-emerald-500/20" },
-  violet: { bg: "bg-violet-500/10", border: "border-violet-400/30", text: "text-violet-300", glow: "hover:shadow-violet-500/20" },
-  fuchsia: { bg: "bg-fuchsia-500/10", border: "border-fuchsia-400/30", text: "text-fuchsia-300", glow: "hover:shadow-fuchsia-500/20" },
-} as const;
-
-const HelpContactCard = ({ icon, title, description, cta, href, tone }: { icon: React.ReactNode; title: string; description: string; cta: string; href: string; tone: keyof typeof helpToneMap }) => {
-  const t = helpToneMap[tone];
+const HelpContactCard = ({ tone, icon, title, desc, cta }: { tone: string; icon: React.ReactNode; title: string; desc: string; cta: string }) => {
+  const t = helpToneMap[tone] || helpToneMap.violet;
   return (
-    <a href={href} target={href.startsWith("http") ? "_blank" : undefined} rel="noreferrer" className={`group relative rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-6 flex flex-col hover:border-white/20 hover:-translate-y-1 transition-all shadow-lg ${t.glow}`}>
-      <div className={`w-12 h-12 rounded-2xl ${t.bg} border ${t.border} ${t.text} flex items-center justify-center mb-5 group-hover:scale-110 transition-transform`}>
+    <div className={`rounded-2xl border ${t.border} ${t.bg} p-5 flex flex-col`}>
+      <div className={`w-10 h-10 rounded-xl ${t.bg} border ${t.border} flex items-center justify-center ${t.text} mb-3`}>
         {icon}
       </div>
-      <h3 className="text-base font-bold tracking-tight mb-1">{title}</h3>
-      <p className="text-sm text-zinc-400 mb-5 flex-1">{description}</p>
-      <span className={`inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest ${t.text}`}>
-        {cta} <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
-      </span>
-    </a>
+      <h3 className="font-bold text-base mb-1">{title}</h3>
+      <p className="text-xs text-zinc-400 mb-4 flex-1">{desc}</p>
+      <button className={`rounded-full text-xs font-semibold px-3 py-2 ${t.btn} inline-flex items-center justify-center gap-1`}>
+        {cta} <ChevronRight className="w-3 h-3" />
+      </button>
+    </div>
   );
 };
