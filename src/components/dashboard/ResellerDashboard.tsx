@@ -97,6 +97,7 @@ export const ResellerDashboard = () => {
   const openGenerateDialog = (type: string) => {
     setPendingType(type);
     setLicenseName("");
+    setCustomerPhone("");
     setNameDialogOpen(true);
   };
 
