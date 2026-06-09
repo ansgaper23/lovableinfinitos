@@ -193,7 +193,7 @@ export const Dashboard = () => {
     );
   }
 
-  const tabs: { key: TabKey; label: string; icon: ReactNode }[] = [
+  const tabs = useMemo<{ key: TabKey; label: string; icon: ReactNode }[]>(() => [
     { key: "inicio", label: "Inicio", icon: <LayoutDashboard className="w-4 h-4" /> },
     { key: "planes", label: "Planes", icon: <CreditCard className="w-4 h-4" /> },
     { key: "llaves", label: "Mis Llaves", icon: <Key className="w-4 h-4" /> },
@@ -201,7 +201,7 @@ export const Dashboard = () => {
     { key: "extras", label: "Extras", icon: <Layers className="w-4 h-4" /> },
     { key: "tutoriales", label: "Tutoriales", icon: <GraduationCap className="w-4 h-4" /> },
     { key: "ayuda", label: "Ayuda", icon: <LifeBuoy className="w-4 h-4" /> },
-  ];
+  ], []);
 
   return (
     <div className="min-h-screen bg-[#06060a] text-white font-sans relative overflow-x-hidden">
