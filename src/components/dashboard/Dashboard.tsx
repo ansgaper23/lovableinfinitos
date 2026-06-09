@@ -288,7 +288,7 @@ export const Dashboard = () => {
 
         {activeTab === "tutoriales" && <TutorialesTab />}
 
-        {activeTab === "ayuda" && <AyudaTab />
+        {activeTab === "ayuda" && <AyudaTab />}
       </div>
     </div>
   );
