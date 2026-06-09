@@ -1101,7 +1101,7 @@ const AyudaTab = () => {
           title="WhatsApp"
           desc="Soporte rápido por chat"
           action="Escribir ahora"
-          href="https://wa.me/000000000"
+          href="https://wa.me/51936467898?text=Hola,%20necesito%20soporte"
           tone="emerald"
         />
         <HelpContactCard
