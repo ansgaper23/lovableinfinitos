@@ -942,7 +942,7 @@ StatCard.displayName = "StatCard";
 
 /* -------------------- TAB: TUTORIALES -------------------- */
 const TUTORIALS = [
-  { title: "Primeros pasos en Lovable Infinito", duration: "4:32", level: "Básico", desc: "Configura tu cuenta y activa tu primera llave." },
+  { title: "Primeros pasos en Lovable Infinito", duration: "4:32", level: "Básico", desc: "Configura tu cuenta y activa tu primera llave.", videoUrl: "https://www.youtube.com/embed/KR5pNeKN8yY?si=enUzhHujYcmOpAU8" },
   { title: "Instalar la extensión de Chrome", duration: "3:15", level: "Básico", desc: "Guía paso a paso para instalar y enlazar." },
   { title: "Activar tu llave de licencia", duration: "2:48", level: "Básico", desc: "Cómo pegar tu llave y validar el acceso." },
   { title: "Optimiza tus prompts en Lovable", duration: "7:21", level: "Intermedio", desc: "Buenas prácticas para obtener mejores resultados." },
