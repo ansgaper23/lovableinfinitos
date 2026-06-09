@@ -680,9 +680,9 @@ export const ResellerDashboard = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {[
-                    { amount: 10, price: "$10.00", popular: false },
-                    { amount: 50, price: "$45.00", popular: true },
-                    { amount: 100, price: "$80.00", popular: false }
+                    { amount: 10, price: "S/ 35.00", popular: false },
+                    { amount: 50, price: "S/ 150.00", popular: true },
+                    { amount: 100, price: "S/ 250.00", popular: false }
                   ].map((pkg, i) => (
                     <Card key={i} className={`bg-[#0A101F] border-white/[0.08] text-white relative overflow-hidden ${pkg.popular ? 'border-primary/50 ring-1 ring-primary/50' : ''}`}>
                       {pkg.popular && (
@@ -712,7 +712,7 @@ export const ResellerDashboard = () => {
                         <Button 
                           className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold uppercase italic"
                           onClick={() => {
-                            window.open(`https://wa.me/YOUR_PHONE?text=Hola, deseo recargar ${pkg.amount} créditos para mi cuenta de Reseller: ${profile?.email}`, '_blank');
+                            window.open(`https://wa.me/51936467898?text=Hola, deseo recargar ${pkg.amount} créditos para mi cuenta de Reseller: ${profile?.email}`, '_blank');
                           }}
                         >
                           Recargar por WhatsApp
@@ -816,7 +816,7 @@ export const ResellerDashboard = () => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <a href="https://wa.me/YOUR_PHONE" target="_blank" rel="noreferrer" className="block group">
+                  <a href="https://wa.me/51936467898" target="_blank" rel="noreferrer" className="block group">
                     <Card className="bg-[#0A101F] border-white/[0.08] text-white group-hover:border-primary/40 transition-all">
                       <CardContent className="pt-6 flex items-center gap-4">
                         <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400">
