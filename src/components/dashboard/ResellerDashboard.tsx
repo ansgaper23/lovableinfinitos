@@ -106,6 +106,7 @@ export const ResellerDashboard = () => {
     const type = pendingType;
     const isTest = type.toLowerCase() === 'test';
     const name = licenseName.trim();
+    const phone = customerPhone.trim();
 
     if (!name) {
       toast.error("Ingresa un nombre para la licencia");
