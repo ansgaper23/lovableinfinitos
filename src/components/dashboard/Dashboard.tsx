@@ -99,6 +99,16 @@ CountdownLabel.displayName = "CountdownLabel";
 
 type TabKey = "inicio" | "planes" | "llaves" | "extension" | "extras" | "tutoriales" | "ayuda";
 
+const TABS: { key: TabKey; label: string; icon: ReactNode }[] = [
+  { key: "inicio", label: "Inicio", icon: <LayoutDashboard className="w-4 h-4" /> },
+  { key: "planes", label: "Planes", icon: <CreditCard className="w-4 h-4" /> },
+  { key: "llaves", label: "Mis Llaves", icon: <Key className="w-4 h-4" /> },
+  { key: "extension", label: "Extensión", icon: <Download className="w-4 h-4" /> },
+  { key: "extras", label: "Extras", icon: <Layers className="w-4 h-4" /> },
+  { key: "tutoriales", label: "Tutoriales", icon: <GraduationCap className="w-4 h-4" /> },
+  { key: "ayuda", label: "Ayuda", icon: <LifeBuoy className="w-4 h-4" /> },
+];
+
 export const Dashboard = () => {
   const { user, profile, loading } = useAuth(true);
   const [credits, setCredits] = useState<number | null>(null);
@@ -193,15 +203,6 @@ export const Dashboard = () => {
     );
   }
 
-  const tabs = useMemo<{ key: TabKey; label: string; icon: ReactNode }[]>(() => [
-    { key: "inicio", label: "Inicio", icon: <LayoutDashboard className="w-4 h-4" /> },
-    { key: "planes", label: "Planes", icon: <CreditCard className="w-4 h-4" /> },
-    { key: "llaves", label: "Mis Llaves", icon: <Key className="w-4 h-4" /> },
-    { key: "extension", label: "Extensión", icon: <Download className="w-4 h-4" /> },
-    { key: "extras", label: "Extras", icon: <Layers className="w-4 h-4" /> },
-    { key: "tutoriales", label: "Tutoriales", icon: <GraduationCap className="w-4 h-4" /> },
-    { key: "ayuda", label: "Ayuda", icon: <LifeBuoy className="w-4 h-4" /> },
-  ], []);
 
   return (
     <div className="min-h-screen bg-[#06060a] text-white font-sans relative overflow-x-hidden">
@@ -253,7 +254,7 @@ export const Dashboard = () => {
         {/* Tab nav pill */}
         <nav className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-2">
           <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 gap-1">
-            {tabs.map((t) => {
+            {TABS.map((t) => {
               const active = activeTab === t.key;
               return (
                 <button
