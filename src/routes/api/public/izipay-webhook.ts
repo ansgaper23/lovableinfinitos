@@ -36,26 +36,30 @@ export const Route = createFileRoute("/api/public/izipay-webhook")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const hmacKey = process.env.IZIPAY_HMAC_KEY;
-        if (!hmacKey) {
-          return new Response("HMAC key missing", { status: 500 });
-        }
-
         const formData = await request.formData();
         const krAnswer = formData.get("kr-answer");
         const krHash = formData.get("kr-hash");
         const krHashAlg = formData.get("kr-hash-algorithm");
+        const krHashKey = (formData.get("kr-hash-key") as string) || "hmac-sha-256";
 
         if (typeof krAnswer !== "string" || typeof krHash !== "string") {
           return new Response("Missing fields", { status: 400 });
         }
 
-        // Validar HMAC
-        const expected = createHmac("sha256", hmacKey).update(krAnswer).digest("hex");
+        // Seleccionar clave según kr-hash-key (password para client return, hmac para IPN)
+        const signingKey =
+          krHashKey === "password"
+            ? process.env.IZIPAY_PASSWORD
+            : process.env.IZIPAY_HMAC_KEY;
+        if (!signingKey) {
+          return new Response("Signing key missing", { status: 500 });
+        }
+
+        const expected = createHmac("sha256", signingKey).update(krAnswer).digest("hex");
         const sig = Buffer.from(krHash);
         const exp = Buffer.from(expected);
         if (sig.length !== exp.length || !timingSafeEqual(sig, exp)) {
-          console.error("Izipay webhook: HMAC inválido", { krHashAlg });
+          console.error("Izipay webhook: HMAC inválido", { krHashAlg, krHashKey });
           return new Response("Invalid signature", { status: 401 });
         }
 
