@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { LayoutDashboard, Key, ClipboardList, History, Users, Wallet, Settings, LifeBuoy, Zap, Plus, Infinity, CalendarDays, LogOut, Coins, Copy, Check } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { LayoutDashboard, Key, ClipboardList, History, Users, Wallet, Settings, LifeBuoy, Zap, Plus, Infinity, CalendarDays, LogOut, Coins, Copy, Check, Sparkles, TrendingUp, ArrowUpRight, Activity } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -253,10 +253,11 @@ export const ResellerDashboard = () => {
         {/* Main Content */}
         <main className="flex-1 overflow-y-auto bg-[#02060E] relative">
           {/* Decorative background */}
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(79,70,229,0.12),transparent_50%)] pointer-events-none" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(79,70,229,0.14),transparent_55%)] pointer-events-none" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(168,85,247,0.08),transparent_55%)] pointer-events-none" />
           <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:48px_48px] [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_80%)] pointer-events-none" />
 
-          <div className="relative max-w-7xl mx-auto p-8 space-y-8">
+          <div className="relative max-w-7xl mx-auto p-6 lg:p-8 space-y-6">
             {/* Preview banner for non-activated users */}
             {!isActivated && (
               <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 flex items-center gap-3">
@@ -270,35 +271,70 @@ export const ResellerDashboard = () => {
               </div>
             )}
 
-            {/* Header */}
-            <div className="flex flex-wrap gap-4 justify-between items-start">
-              <div>
-                <div className="flex items-center gap-3 mb-2">
-                  <h1 className="text-3xl font-bold text-white tracking-tight">Panel de Revendedor</h1>
-                  <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
-                    <span className="relative flex h-1.5 w-1.5">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                      <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
+            {/* Hero Welcome */}
+            <div className="relative overflow-hidden rounded-3xl border border-white/[0.08] bg-gradient-to-br from-[#0d1430] via-[#0a0f24] to-[#070b18] p-6 lg:p-8">
+              <div className="absolute -top-32 -right-20 w-96 h-96 bg-primary/25 rounded-full blur-[120px] pointer-events-none" />
+              <div className="absolute -bottom-32 -left-20 w-80 h-80 bg-accent/20 rounded-full blur-[120px] pointer-events-none" />
+
+              <div className="relative flex flex-wrap items-center justify-between gap-6">
+                <div className="flex-1 min-w-[260px]">
+                  <div className="flex items-center gap-2 mb-4">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/[0.04] border border-white/10 text-[10px] font-bold text-primary uppercase tracking-[0.2em]">
+                      <Sparkles className="w-3 h-3" /> Panel Reseller
                     </span>
-                    <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">Online</span>
-                  </span>
-                </div>
-                <p className="text-sm text-muted-foreground">Bienvenido de vuelta, gestiona tus claves y clientes.</p>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="hidden md:flex items-center gap-2 px-3 py-2 rounded-xl bg-white/[0.03] border border-white/10">
-                  <div className="w-7 h-7 rounded-lg bg-primary/20 border border-primary/30 flex items-center justify-center">
-                    <Users className="w-3.5 h-3.5 text-primary" />
+                    <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                      <span className="relative flex h-1.5 w-1.5">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
+                      </span>
+                      <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">Online</span>
+                    </span>
                   </div>
-                  <div className="flex flex-col leading-none">
-                    <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Reseller</span>
-                    <span className="text-xs text-white font-medium truncate max-w-[160px]">{profile?.email || 'cuenta'}</span>
+                  <h1 className="text-3xl lg:text-4xl font-bold text-white tracking-tight leading-tight">
+                    Hola,{' '}
+                    <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+                      {profile?.email?.split('@')[0] || 'Reseller'}
+                    </span>
+                  </h1>
+                  <p className="text-sm text-muted-foreground mt-2 max-w-md">
+                    Gestiona tus claves, monitorea tus clientes y haz crecer tu negocio con Lovable Infinito.
+                  </p>
+                  <div className="flex flex-wrap items-center gap-2 mt-5">
+                    <Button
+                      onClick={() => isActivated && openGenerateDialog('monthly')}
+                      disabled={!isActivated}
+                      className="h-10 rounded-xl bg-white text-black hover:bg-white/90 font-semibold text-xs uppercase tracking-wider gap-2 px-4"
+                    >
+                      <Plus className="w-4 h-4" /> Generar Licencia
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      onClick={() => isActivated && openGenerateDialog('test')}
+                      disabled={!isActivated}
+                      className="h-10 rounded-xl bg-white/[0.04] border border-white/10 hover:bg-white/[0.08] text-white font-semibold text-xs uppercase tracking-wider gap-2 px-4"
+                    >
+                      <Zap className="w-4 h-4 text-emerald-400" /> Prueba Gratis
+                    </Button>
                   </div>
                 </div>
-                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-white relative rounded-xl bg-white/[0.03] border border-white/10 w-10 h-10">
-                  <div className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full ring-2 ring-[#02060E]" />
-                  <LifeBuoy className="w-5 h-5" />
-                </Button>
+
+                {/* Credits highlight */}
+                <div className="relative rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/20 via-primary/10 to-transparent p-5 min-w-[210px] backdrop-blur">
+                  <div className="absolute inset-0 rounded-2xl bg-[radial-gradient(circle_at_top_right,rgba(79,70,229,0.3),transparent_70%)] pointer-events-none" />
+                  <div className="relative">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Coins className="w-3.5 h-3.5 text-primary" />
+                      <p className="text-[10px] font-bold text-primary uppercase tracking-[0.2em]">Saldo</p>
+                    </div>
+                    <p className="text-5xl font-bold text-white tabular-nums leading-none mt-2">{credits}</p>
+                    <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/10">
+                      <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Créditos</p>
+                      <span className="inline-flex items-center gap-1 text-[10px] text-emerald-400 font-bold">
+                        <Activity className="w-3 h-3" /> Live
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -310,39 +346,51 @@ export const ResellerDashboard = () => {
                 title="Créditos"
                 value={credits.toString()}
                 subtitle="1 crédito = 1 licencia"
+                trend="saldo"
+                spark={[2,3,2,4,3,5,4]}
               />
               <MetricCard
                 icon={<Key className="w-4 h-4" />}
                 title="Generadas"
                 value={licenses.length.toString()}
                 subtitle="Total acumulado"
+                trend={`+${licenses.length}`}
+                spark={[1,2,2,3,4,5,6]}
               />
               <MetricCard
                 icon={<Zap className="w-4 h-4" />}
                 title="Activas"
                 value={licenses.filter(l => l.status === 'active').length.toString()}
                 subtitle="En uso por clientes"
+                trend="live"
+                spark={[3,4,3,5,4,6,5]}
               />
               <MetricCard
                 icon={<Plus className="w-4 h-4" />}
                 title="Pruebas"
                 value={licenses.filter(l => l.type === 'test' || l.type === 'trial').length.toString()}
                 subtitle="Trial gratuitas"
+                trend="free"
+                spark={[1,1,2,2,3,3,4]}
               />
             </div>
 
             {/* License Generation */}
-            <div className="relative rounded-3xl border border-white/[0.08] bg-gradient-to-br from-[#0A1224] via-[#0A101F] to-[#070C18] p-8 overflow-hidden">
+            <div className="relative rounded-3xl border border-white/[0.08] bg-gradient-to-br from-[#0A1224] via-[#0A101F] to-[#070C18] p-6 lg:p-8 overflow-hidden">
               <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary/20 rounded-full blur-3xl pointer-events-none" />
+              <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-accent/15 rounded-full blur-3xl pointer-events-none" />
               <div className="relative">
                 <div className="flex items-end justify-between flex-wrap gap-4 mb-8">
                   <div>
-                    <h2 className="text-xl font-bold text-white tracking-tight">Generar Nueva Licencia</h2>
-                    <p className="text-muted-foreground text-sm mt-1">Elige el tipo de clave que deseas emitir</p>
+                    <div className="flex items-center gap-2 mb-1">
+                      <div className="w-1 h-5 bg-gradient-to-b from-primary to-accent rounded-full" />
+                      <h2 className="text-xl font-bold text-white tracking-tight">Generar Nueva Licencia</h2>
+                    </div>
+                    <p className="text-muted-foreground text-sm">Elige el tipo de clave que deseas emitir</p>
                   </div>
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <div className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-white/[0.03] border border-white/10 text-xs text-muted-foreground">
                     <Coins className="w-4 h-4 text-primary" />
-                    <span><span className="text-white font-bold">{credits}</span> créditos</span>
+                    <span><span className="text-white font-bold tabular-nums">{credits}</span> créditos disponibles</span>
                   </div>
                 </div>
 
@@ -362,6 +410,7 @@ export const ResellerDashboard = () => {
                     description="Acceso por 30 días"
                     badge="1 CRÉDITO"
                     badgeColor="primary"
+                    featured
                     disabled={!isActivated}
                     onClick={() => openGenerateDialog('monthly')}
                   />
@@ -516,38 +565,78 @@ const ResellerNavItem = ({ icon, label, active = false }: { icon: React.ReactNod
   </a>
 );
 
-const MetricCard = ({ title, value, subtitle, icon, accent = false }: { title: string, value: string, subtitle: string, icon?: React.ReactNode, accent?: boolean }) => (
-  <div className={`relative rounded-2xl border p-5 overflow-hidden group transition-all hover:-translate-y-0.5 ${
-    accent
-      ? 'border-primary/30 bg-gradient-to-br from-primary/15 via-primary/5 to-transparent'
-      : 'border-white/[0.06] bg-[#0A101F]'
-  }`}>
-    {accent && <div className="absolute -top-12 -right-12 w-32 h-32 bg-primary/30 rounded-full blur-3xl pointer-events-none" />}
-    <div className="relative">
-      <div className="flex items-center gap-2 mb-3">
-        {icon && (
-          <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${accent ? 'bg-primary/20 text-primary border border-primary/30' : 'bg-white/[0.04] text-muted-foreground border border-white/10'}`}>
-            {icon}
-          </div>
-        )}
-        <p className={`text-[10px] font-bold uppercase tracking-[0.2em] ${accent ? 'text-primary' : 'text-muted-foreground'}`}>{title}</p>
-      </div>
-      <h3 className="text-3xl font-bold text-white mb-1 tracking-tight tabular-nums">{value}</h3>
-      <p className="text-[11px] text-muted-foreground">{subtitle}</p>
-    </div>
-  </div>
-);
+const MetricCard = ({ title, value, subtitle, icon, accent = false, trend, spark }: { title: string, value: string, subtitle: string, icon?: React.ReactNode, accent?: boolean, trend?: string, spark?: number[] }) => {
+  const sparkPath = useMemo(() => {
+    if (!spark || spark.length === 0) return '';
+    const w = 80, h = 24;
+    const max = Math.max(...spark, 1);
+    const min = Math.min(...spark, 0);
+    const range = max - min || 1;
+    const step = w / (spark.length - 1 || 1);
+    return spark.map((v, i) => `${i === 0 ? 'M' : 'L'}${(i * step).toFixed(1)},${(h - ((v - min) / range) * h).toFixed(1)}`).join(' ');
+  }, [spark]);
 
-const LicenseTypeCard = ({ icon, title, description, badge, badgeColor = 'primary', disabled, onClick }: { icon: React.ReactNode, title: string, description: string, badge?: string, badgeColor?: 'primary' | 'emerald', disabled?: boolean, onClick: () => void }) => (
-  <div className={`relative bg-gradient-to-br from-[#0F1729] to-[#0A101F] border border-white/[0.08] p-6 rounded-2xl flex flex-col overflow-hidden transition-all ${
-    disabled ? 'opacity-60 pointer-events-none' : 'group hover:border-primary/40 hover:shadow-[0_0_40px_rgba(79,70,229,0.15)]'
+  return (
+    <div className={`relative rounded-2xl border p-5 overflow-hidden group transition-all hover:-translate-y-0.5 hover:border-white/20 ${
+      accent
+        ? 'border-primary/30 bg-gradient-to-br from-primary/15 via-primary/5 to-transparent'
+        : 'border-white/[0.06] bg-[#0A101F]'
+    }`}>
+      {accent && <div className="absolute -top-12 -right-12 w-32 h-32 bg-primary/30 rounded-full blur-3xl pointer-events-none" />}
+      <div className="relative">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            {icon && (
+              <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${accent ? 'bg-primary/20 text-primary border border-primary/30' : 'bg-white/[0.04] text-muted-foreground border border-white/10'}`}>
+                {icon}
+              </div>
+            )}
+            <p className={`text-[10px] font-bold uppercase tracking-[0.2em] ${accent ? 'text-primary' : 'text-muted-foreground'}`}>{title}</p>
+          </div>
+          {trend && (
+            <span className={`inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-md ${accent ? 'text-primary bg-primary/10' : 'text-emerald-400 bg-emerald-500/10'}`}>
+              <TrendingUp className="w-2.5 h-2.5" />{trend}
+            </span>
+          )}
+        </div>
+        <div className="flex items-end justify-between gap-2">
+          <h3 className="text-3xl font-bold text-white tracking-tight tabular-nums leading-none">{value}</h3>
+          {sparkPath && (
+            <svg width="80" height="24" viewBox="0 0 80 24" className="opacity-70 shrink-0">
+              <defs>
+                <linearGradient id={`sg-${title}`} x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stopColor={accent ? 'rgb(79,70,229)' : 'rgb(94,234,212)'} stopOpacity="0.6" />
+                  <stop offset="100%" stopColor={accent ? 'rgb(79,70,229)' : 'rgb(94,234,212)'} stopOpacity="0" />
+                </linearGradient>
+              </defs>
+              <path d={`${sparkPath} L80,24 L0,24 Z`} fill={`url(#sg-${title})`} />
+              <path d={sparkPath} fill="none" stroke={accent ? 'rgb(129,140,248)' : 'rgb(94,234,212)'} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          )}
+        </div>
+        <p className="text-[11px] text-muted-foreground mt-2">{subtitle}</p>
+      </div>
+    </div>
+  );
+};
+
+const LicenseTypeCard = ({ icon, title, description, badge, badgeColor = 'primary', featured, disabled, onClick }: { icon: React.ReactNode, title: string, description: string, badge?: string, badgeColor?: 'primary' | 'emerald', featured?: boolean, disabled?: boolean, onClick: () => void }) => (
+  <div className={`relative bg-gradient-to-br from-[#0F1729] to-[#0A101F] border p-6 rounded-2xl flex flex-col overflow-hidden transition-all ${
+    featured ? 'border-primary/40 shadow-[0_0_40px_rgba(79,70,229,0.2)]' : 'border-white/[0.08]'
+  } ${
+    disabled ? 'opacity-60 pointer-events-none' : 'group hover:border-primary/40 hover:shadow-[0_0_40px_rgba(79,70,229,0.18)] hover:-translate-y-0.5'
   }`}>
-    <div className={`absolute inset-0 bg-gradient-to-br from-primary/0 to-primary/0 transition-all pointer-events-none ${disabled ? '' : 'group-hover:from-primary/[0.04] group-hover:to-transparent'}`} />
+    {featured && (
+      <span className="absolute top-3 right-3 text-[8px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded bg-gradient-to-r from-primary to-accent text-white z-10">
+        Popular
+      </span>
+    )}
+    <div className={`absolute inset-0 bg-gradient-to-br from-primary/0 to-primary/0 transition-all pointer-events-none ${disabled ? '' : 'group-hover:from-primary/[0.06] group-hover:to-transparent'}`} />
     <div className="relative flex items-start justify-between mb-6">
       <div className={`w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary transition-all ${disabled ? '' : 'group-hover:scale-110 group-hover:bg-primary/20'}`}>
         {icon}
       </div>
-      {badge && (
+      {badge && !featured && (
         <span className={`text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-md border ${
           badgeColor === 'emerald'
             ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
@@ -559,10 +648,14 @@ const LicenseTypeCard = ({ icon, title, description, badge, badgeColor = 'primar
       <h3 className="text-base font-bold text-white tracking-tight mb-1">{title}</h3>
       <p className="text-xs text-muted-foreground mb-6">{description}</p>
     </div>
-    <Button onClick={onClick} disabled={disabled} className="relative w-full bg-white/[0.04] hover:bg-primary text-white font-semibold h-11 rounded-xl border border-white/10 hover:border-primary transition-all group/btn disabled:opacity-40 disabled:cursor-not-allowed">
+    <Button onClick={onClick} disabled={disabled} className={`relative w-full font-semibold h-11 rounded-xl transition-all group/btn disabled:opacity-40 disabled:cursor-not-allowed ${
+      featured
+        ? 'bg-gradient-to-r from-primary to-accent hover:opacity-90 text-white border-0'
+        : 'bg-white/[0.04] hover:bg-primary text-white border border-white/10 hover:border-primary'
+    }`}>
       <span className="flex items-center justify-center gap-2">
         {disabled ? 'Bloqueado' : 'Generar Clave'}
-        <Key className="w-4 h-4 transition-transform group-hover/btn:rotate-12" />
+        <ArrowUpRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
       </span>
     </Button>
   </div>
