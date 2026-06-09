@@ -82,30 +82,33 @@ export const Route = createFileRoute("/api/public/izipay-webhook")({
         const planId: string | undefined = metadata.plan_id;
         const days = Number(metadata.days || 0);
 
-        if (!orderId || !userId || !planId || !days) {
-          console.error("Izipay webhook: metadata incompleta", {
-            orderId,
-            userId,
-            planId,
-            days,
-            answerKeys: Object.keys(answer || {}),
+        if (!orderId) {
+          console.error("Izipay webhook: orderId faltante", {
             answer: JSON.stringify(answer).slice(0, 2000),
           });
-          return new Response("Missing metadata", { status: 400 });
+          return new Response("Missing orderId", { status: 400 });
         }
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-        // Verificar que la orden existe y pertenece al usuario
+        // Recuperar la orden desde la BD (fuente de verdad)
         const { data: order } = await supabaseAdmin
           .from("payment_orders")
-          .select("id, status")
+          .select("id, status, user_id, plan_id, days")
           .eq("id", orderId)
-          .eq("user_id", userId)
           .maybeSingle();
 
         if (!order) {
           return new Response("Order not found", { status: 404 });
+        }
+
+        const userId = (metadata.user_id as string) || order.user_id;
+        const planId = (metadata.plan_id as string) || order.plan_id;
+        const days = Number(metadata.days || order.days || 0);
+
+        if (!userId || !planId || !days) {
+          console.error("Izipay webhook: datos incompletos tras fallback", { userId, planId, days });
+          return new Response("Missing data", { status: 400 });
         }
 
         // Idempotencia: si ya está pagada, no procesar de nuevo
