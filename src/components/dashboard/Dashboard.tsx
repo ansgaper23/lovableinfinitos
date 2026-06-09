@@ -503,7 +503,6 @@ const PlanesTab = () => {
             <p className="text-[10px] font-bold tracking-widest text-zinc-500 uppercase mb-4">{p.duration}</p>
             <div className="flex items-baseline gap-2 mb-5">
               <span className="text-4xl font-bold tracking-tight">{p.price}</span>
-              {p.oldPrice && <span className="text-sm text-zinc-500 line-through">{p.oldPrice}</span>}
             </div>
             <ul className="space-y-2 mb-6">
               {p.features.map((f) => (
