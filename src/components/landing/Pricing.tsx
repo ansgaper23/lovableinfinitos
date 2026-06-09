@@ -8,7 +8,8 @@ export const Pricing = () => {
       id: "basico",
       name: "Plan Básico",
       duration: "1 Día",
-      price: "S/ 22.50",
+      price: "$5.99",
+      pricePen: "S/ 22.50",
       description: "Ideal para probar el servicio o finalizar un pequeño proyecto.",
       features: [
         "Lovable ilimitado por 1 día",
@@ -22,7 +23,8 @@ export const Pricing = () => {
       id: "pro",
       name: "Plan Pro",
       duration: "7 Días",
-      price: "S/ 52.50",
+      price: "$13.99",
+      pricePen: "S/ 52.50",
       description: "La opción preferida por builders y freelancers en Perú.",
       features: [
         "Lovable ilimitado por 7 días",
@@ -37,8 +39,10 @@ export const Pricing = () => {
       id: "premium",
       name: "Plan Premium",
       duration: "30 Días",
-      price: "S/ 71.50",
-      oldPrice: "S/ 131.00",
+      price: "$18.99",
+      pricePen: "S/ 71.50",
+      oldPrice: "$35.00",
+      oldPricePen: "S/ 131.00",
       badge: "Oferta por tiempo limitado",
       description: "Para agencias y desarrolladores de alto rendimiento.",
       features: [
