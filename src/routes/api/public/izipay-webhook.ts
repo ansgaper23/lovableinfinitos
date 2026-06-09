@@ -129,6 +129,17 @@ export const Route = createFileRoute("/api/public/izipay-webhook")({
             .select("email")
             .eq("id", userId)
             .maybeSingle();
+
+          // Modo TEST restringido al superadmin
+          const isTestMode = (process.env.IZIPAY_PASSWORD || "").startsWith("testpassword_");
+          if (isTestMode && prof?.email !== "jorge968122@gmail.com") {
+            await supabaseAdmin
+              .from("payment_orders")
+              .update({ status: "rejected_test_mode", raw_response: answer })
+              .eq("id", orderId);
+            return new Response("Test mode restricted", { status: 200 });
+          }
+
           const displayName = (prof?.email?.split("@")[0] || "Usuario").slice(0, 60);
 
           const lic = await generateLicense(displayName, days);
