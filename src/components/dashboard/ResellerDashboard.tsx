@@ -34,6 +34,7 @@ export const ResellerDashboard = () => {
   const [pendingType, setPendingType] = useState<string | null>(null);
   const [licenseName, setLicenseName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
+  const [resultDialogOpen, setResultDialogOpen] = useState(false);
   const [generatedCode, setGeneratedCode] = useState("");
   const [copied, setCopied] = useState(false);
   const [apiToken, setApiToken] = useState<string | null>(null);
