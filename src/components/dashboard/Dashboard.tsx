@@ -183,10 +183,7 @@ export const Dashboard = () => {
           Tu cuenta ha sido bloqueada. Contacta con soporte para más información.
         </p>
         <Button
-          onClick={async () => {
-            await supabase.auth.signOut();
-            navigate({ to: "/" });
-          }}
+          onClick={handleSignOut}
           variant="outline"
           className="rounded-full h-11 px-6 border-white/10 bg-white/5 hover:bg-white/10"
         >
