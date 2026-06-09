@@ -235,7 +235,7 @@ export const Dashboard = () => {
 
         {/* Tab nav pill */}
         <nav className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-2">
-          <div className="grid grid-cols-3 sm:grid-cols-5 gap-1">
+          <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 gap-1">
             {tabs.map((t) => {
               const active = activeTab === t.key;
               return (
