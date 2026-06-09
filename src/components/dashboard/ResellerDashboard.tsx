@@ -39,6 +39,7 @@ export const ResellerDashboard = () => {
   const [copied, setCopied] = useState(false);
   const [apiToken, setApiToken] = useState<string | null>(null);
   const navigate = useNavigate();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const fetchCredits = async () => {
     if (!user) return;
