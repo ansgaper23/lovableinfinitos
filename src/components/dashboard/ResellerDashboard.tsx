@@ -355,220 +355,438 @@ export const ResellerDashboard = () => {
               </div>
             )}
 
-            {/* Hero Welcome */}
-            <div className="relative overflow-hidden rounded-3xl border border-white/[0.08] bg-gradient-to-br from-[#0d1430] via-[#0a0f24] to-[#070b18] p-6 lg:p-8">
-              <div className="absolute -top-32 -right-20 w-96 h-96 bg-primary/25 rounded-full blur-[120px] pointer-events-none" />
-              <div className="absolute -bottom-32 -left-20 w-80 h-80 bg-accent/20 rounded-full blur-[120px] pointer-events-none" />
+            {currentView === 'panel' && (
+              <>
+                {/* Hero Welcome */}
+                <div className="relative overflow-hidden rounded-3xl border border-white/[0.08] bg-gradient-to-br from-[#0d1430] via-[#0a0f24] to-[#070b18] p-6 lg:p-8">
+                  <div className="absolute -top-32 -right-20 w-96 h-96 bg-primary/25 rounded-full blur-[120px] pointer-events-none" />
+                  <div className="absolute -bottom-32 -left-20 w-80 h-80 bg-accent/20 rounded-full blur-[120px] pointer-events-none" />
 
-              <div className="relative flex flex-wrap items-center justify-between gap-6">
-                <div className="flex-1 min-w-[260px]">
-                  <div className="flex items-center gap-2 mb-4">
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/[0.04] border border-white/10 text-[10px] font-bold text-primary uppercase tracking-[0.2em]">
-                      <Sparkles className="w-3 h-3" /> Panel Reseller
-                    </span>
-                    <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
-                      <span className="relative flex h-1.5 w-1.5">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
-                      </span>
-                      <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">Online</span>
-                    </span>
-                  </div>
-                  <h1 className="text-2xl lg:text-4xl font-bold text-white tracking-tight leading-tight">
-                    Hola,{' '}
-                    <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
-                      {profile?.email?.split('@')[0] || 'Reseller'}
-                    </span>
-                  </h1>
-                  <p className="text-sm text-muted-foreground mt-2 max-w-md">
-                    Gestiona tus claves, monitorea tus clientes y haz crecer tu negocio con Lovable Infinito.
-                  </p>
-                  <div className="flex flex-wrap items-center gap-2 mt-5">
-                    <Button
-                      onClick={() => isActivated && openGenerateDialog('30days')}
-                      disabled={!isActivated}
-                      className="h-10 rounded-xl bg-white text-black hover:bg-white/90 font-semibold text-xs uppercase tracking-wider gap-2 px-4"
-                    >
-                      <Plus className="w-4 h-4" /> Generar Licencia
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      onClick={() => isActivated && openGenerateDialog('test')}
-                      disabled={!isActivated}
-                      className="h-10 rounded-xl bg-white/[0.04] border border-white/10 hover:bg-white/[0.08] text-white font-semibold text-xs uppercase tracking-wider gap-2 px-4"
-                    >
-                      <Zap className="w-4 h-4 text-emerald-400" /> Prueba Gratis
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Credits highlight */}
-                <div className="relative rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/20 via-primary/10 to-transparent p-5 w-full sm:min-w-[210px] sm:w-auto backdrop-blur">
-                  <div className="absolute inset-0 rounded-2xl bg-[radial-gradient(circle_at_top_right,rgba(79,70,229,0.3),transparent_70%)] pointer-events-none" />
-                  <div className="relative">
-                    <div className="flex items-center gap-2 mb-1">
-                      <Coins className="w-3.5 h-3.5 text-primary" />
-                      <p className="text-[10px] font-bold text-primary uppercase tracking-[0.2em]">Saldo</p>
+                  <div className="relative flex flex-wrap items-center justify-between gap-6">
+                    <div className="flex-1 min-w-[260px]">
+                      <div className="flex items-center gap-2 mb-4">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/[0.04] border border-white/10 text-[10px] font-bold text-primary uppercase tracking-[0.2em]">
+                          <Sparkles className="w-3 h-3" /> Panel Reseller
+                        </span>
+                        <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                          <span className="relative flex h-1.5 w-1.5">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
+                          </span>
+                          <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">Online</span>
+                        </span>
+                      </div>
+                      <h1 className="text-2xl lg:text-4xl font-bold text-white tracking-tight leading-tight">
+                        Hola,{' '}
+                        <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+                          {profile?.email?.split('@')[0] || 'Reseller'}
+                        </span>
+                      </h1>
+                      <p className="text-sm text-muted-foreground mt-2 max-w-md">
+                        Gestiona tus claves, monitorea tus clientes y haz crecer tu negocio con Lovable Infinito.
+                      </p>
+                      <div className="flex flex-wrap items-center gap-2 mt-5">
+                        <Button
+                          onClick={() => isActivated && openGenerateDialog('30days')}
+                          disabled={!isActivated}
+                          className="h-10 rounded-xl bg-white text-black hover:bg-white/90 font-semibold text-xs uppercase tracking-wider gap-2 px-4"
+                        >
+                          <Plus className="w-4 h-4" /> Generar Licencia
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          onClick={() => isActivated && openGenerateDialog('test')}
+                          disabled={!isActivated}
+                          className="h-10 rounded-xl bg-white/[0.04] border border-white/10 hover:bg-white/[0.08] text-white font-semibold text-xs uppercase tracking-wider gap-2 px-4"
+                        >
+                          <Zap className="w-4 h-4 text-emerald-400" /> Prueba Gratis
+                        </Button>
+                      </div>
                     </div>
-                    <p className="text-5xl font-bold text-white tabular-nums leading-none mt-2">{credits}</p>
-                    <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/10">
-                      <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Créditos</p>
-                      <span className="inline-flex items-center gap-1 text-[10px] text-emerald-400 font-bold">
-                        <Activity className="w-3 h-3" /> Live
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
 
-            {/* Metrics */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <MetricCard
-                accent
-                icon={<Coins className="w-4 h-4" />}
-                title="Créditos"
-                value={credits.toString()}
-                subtitle="1 crédito = 1 licencia"
-                trend="saldo"
-                spark={[2,3,2,4,3,5,4]}
-              />
-              <MetricCard
-                icon={<Key className="w-4 h-4" />}
-                title="Generadas"
-                value={licenses.length.toString()}
-                subtitle="Total acumulado"
-                trend={`+${licenses.length}`}
-                spark={[1,2,2,3,4,5,6]}
-              />
-              <MetricCard
-                icon={<Zap className="w-4 h-4" />}
-                title="Activas"
-                value={licenses.filter(l => l.status === 'active').length.toString()}
-                subtitle="En uso por clientes"
-                trend="live"
-                spark={[3,4,3,5,4,6,5]}
-              />
-              <MetricCard
-                icon={<Plus className="w-4 h-4" />}
-                title="Pruebas"
-                value={licenses.filter(l => l.type === 'test' || l.type === 'trial').length.toString()}
-                subtitle="Trial gratuitas"
-                trend="free"
-                spark={[1,1,2,2,3,3,4]}
-              />
-            </div>
-
-            {/* License Generation */}
-            <div className="relative rounded-3xl border border-white/[0.08] bg-gradient-to-br from-[#0A1224] via-[#0A101F] to-[#070C18] p-6 lg:p-8 overflow-hidden">
-              <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary/20 rounded-full blur-3xl pointer-events-none" />
-              <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-accent/15 rounded-full blur-3xl pointer-events-none" />
-              <div className="relative">
-                <div className="flex items-end justify-between flex-wrap gap-4 mb-8">
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <div className="w-1 h-5 bg-gradient-to-b from-primary to-accent rounded-full" />
-                      <h2 className="text-xl font-bold text-white tracking-tight">Generar Nueva Licencia</h2>
-                    </div>
-                    <p className="text-muted-foreground text-sm">Las pruebas son gratis e ilimitadas. Cada licencia por días cuesta <span className="text-white font-semibold">1 crédito</span>.</p>
-                  </div>
-                  <div className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-white/[0.03] border border-white/10 text-xs text-muted-foreground">
-                    <Coins className="w-4 h-4 text-primary" />
-                    <span><span className="text-white font-bold tabular-nums">{credits}</span> créditos disponibles</span>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <LicenseTypeCard
-                    icon={<Zap className="w-6 h-6" />}
-                    title="Prueba Gratis"
-                    description="15 minutos · Gratis e ilimitada"
-                    badge="GRATIS"
-                    badgeColor="emerald"
-                    disabled={!isActivated}
-                    onClick={() => openGenerateDialog('test')}
-                  />
-                  <LicenseTypeCard
-                    icon={<CalendarDays className="w-6 h-6" />}
-                    title="1 Día"
-                    description="Acceso por 24 horas · 1 crédito"
-                    badge="1 CRÉDITO"
-                    badgeColor="primary"
-                    disabled={!isActivated}
-                    onClick={() => openGenerateDialog('1day')}
-                  />
-                  <LicenseTypeCard
-                    icon={<CalendarDays className="w-6 h-6" />}
-                    title="7 Días"
-                    description="Acceso por 1 semana · 1 crédito"
-                    badge="1 CRÉDITO"
-                    badgeColor="primary"
-                    disabled={!isActivated}
-                    onClick={() => openGenerateDialog('7days')}
-                  />
-                  <LicenseTypeCard
-                    icon={<CalendarDays className="w-6 h-6" />}
-                    title="30 Días"
-                    description="Acceso por 1 mes · 1 crédito"
-                    badge="1 CRÉDITO"
-                    badgeColor="primary"
-                    featured
-                    disabled={!isActivated}
-                    onClick={() => openGenerateDialog('30days')}
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Recent Licenses */}
-            <div className="rounded-3xl border border-white/[0.08] bg-[#0A101F]/80 backdrop-blur overflow-hidden">
-              <div className="p-6 flex items-center justify-between border-b border-white/5">
-                <div>
-                  <h2 className="text-lg font-bold text-white tracking-tight">Licencias Recientes</h2>
-                  <p className="text-xs text-muted-foreground mt-0.5">Historial de las claves emitidas</p>
-                </div>
-                <span className="text-xs text-muted-foreground px-3 py-1 rounded-full bg-white/[0.03] border border-white/10">
-                  {licenses.length} total
-                </span>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] bg-white/[0.015]">
-                      <th className="px-4 py-3 sm:px-6">Cliente</th>
-                      <th className="px-4 py-3 sm:px-6">Tipo</th>
-                      <th className="px-4 py-3 sm:px-6">Código</th>
-                      <th className="px-4 py-3 sm:px-6">Estado</th>
-                      <th className="px-4 py-3 sm:px-6 text-right">Fecha</th>
-                    </tr>
-                  </thead>
-                  <tbody className="text-sm">
-                    {fetchingLicenses ? (
-                      <tr><td colSpan={4} className="p-12 text-center text-muted-foreground text-xs uppercase tracking-widest">Cargando datos…</td></tr>
-                    ) : licenses.length > 0 ? (
-                      licenses.slice(0, 10).map((l) => (
-                        <LicenseRow
-                          key={l.id}
-                          customerName={l.customer_name}
-                          customerPhone={l.customer_phone}
-                          type={l.type.toUpperCase()}
-                          code={l.code}
-                          status={l.status}
-                          date={new Date(l.created_at).toLocaleDateString()}
-                        />
-                      ))
-                    ) : (
-                      <tr><td colSpan={4} className="p-12 text-center">
-                        <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                          <Key className="w-8 h-8 opacity-30" />
-                          <p className="text-xs uppercase tracking-widest">Aún no has generado licencias</p>
+                    {/* Credits highlight */}
+                    <div className="relative rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/20 via-primary/10 to-transparent p-5 w-full sm:min-w-[210px] sm:w-auto backdrop-blur">
+                      <div className="absolute inset-0 rounded-2xl bg-[radial-gradient(circle_at_top_right,rgba(79,70,229,0.3),transparent_70%)] pointer-events-none" />
+                      <div className="relative">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Coins className="w-3.5 h-3.5 text-primary" />
+                          <p className="text-[10px] font-bold text-primary uppercase tracking-[0.2em]">Saldo</p>
                         </div>
-                      </td></tr>
-                    )}
-                  </tbody>
-                </table>
+                        <p className="text-5xl font-bold text-white tabular-nums leading-none mt-2">{credits}</p>
+                        <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/10">
+                          <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Créditos</p>
+                          <span className="inline-flex items-center gap-1 text-[10px] text-emerald-400 font-bold">
+                            <Activity className="w-3 h-3" /> Live
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Metrics */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <MetricCard
+                    accent
+                    icon={<Coins className="w-4 h-4" />}
+                    title="Créditos"
+                    value={credits.toString()}
+                    subtitle="1 crédito = 1 licencia"
+                    trend="saldo"
+                    spark={[2,3,2,4,3,5,4]}
+                  />
+                  <MetricCard
+                    icon={<Key className="w-4 h-4" />}
+                    title="Generadas"
+                    value={licenses.length.toString()}
+                    subtitle="Total acumulado"
+                    trend={`+${licenses.length}`}
+                    spark={[1,2,2,3,4,5,6]}
+                  />
+                  <MetricCard
+                    icon={<Zap className="w-4 h-4" />}
+                    title="Activas"
+                    value={licenses.filter(l => l.status === 'active').length.toString()}
+                    subtitle="En uso por clientes"
+                    trend="live"
+                    spark={[3,4,3,5,4,6,5]}
+                  />
+                  <MetricCard
+                    icon={<Plus className="w-4 h-4" />}
+                    title="Pruebas"
+                    value={licenses.filter(l => l.type === 'test' || l.type === 'trial').length.toString()}
+                    subtitle="Trial gratuitas"
+                    trend="free"
+                    spark={[1,1,2,2,3,3,4]}
+                  />
+                </div>
+
+                {/* License Generation */}
+                <div className="relative rounded-3xl border border-white/[0.08] bg-gradient-to-br from-[#0A1224] via-[#0A101F] to-[#070C18] p-6 lg:p-8 overflow-hidden">
+                  <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary/20 rounded-full blur-3xl pointer-events-none" />
+                  <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-accent/15 rounded-full blur-3xl pointer-events-none" />
+                  <div className="relative">
+                    <div className="flex items-end justify-between flex-wrap gap-4 mb-8">
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <div className="w-1 h-5 bg-gradient-to-b from-primary to-accent rounded-full" />
+                          <h2 className="text-xl font-bold text-white tracking-tight">Generar Nueva Licencia</h2>
+                        </div>
+                        <p className="text-muted-foreground text-sm">Las pruebas son gratis e ilimitadas. Cada licencia por días cuesta <span className="text-white font-semibold">1 crédito</span>.</p>
+                      </div>
+                      <div className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-white/[0.03] border border-white/10 text-xs text-muted-foreground">
+                        <Coins className="w-4 h-4 text-primary" />
+                        <span><span className="text-white font-bold tabular-nums">{credits}</span> créditos disponibles</span>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                      <LicenseTypeCard
+                        icon={<Zap className="w-6 h-6" />}
+                        title="Prueba Gratis"
+                        description="15 minutos · Gratis e ilimitada"
+                        badge="GRATIS"
+                        badgeColor="emerald"
+                        disabled={!isActivated}
+                        onClick={() => openGenerateDialog('test')}
+                      />
+                      <LicenseTypeCard
+                        icon={<CalendarDays className="w-6 h-6" />}
+                        title="1 Día"
+                        description="Acceso por 24 horas · 1 crédito"
+                        badge="1 CRÉDITO"
+                        badgeColor="primary"
+                        disabled={!isActivated}
+                        onClick={() => openGenerateDialog('1day')}
+                      />
+                      <LicenseTypeCard
+                        icon={<CalendarDays className="w-6 h-6" />}
+                        title="7 Días"
+                        description="Acceso por 1 semana · 1 crédito"
+                        badge="1 CRÉDITO"
+                        badgeColor="primary"
+                        disabled={!isActivated}
+                        onClick={() => openGenerateDialog('7days')}
+                      />
+                      <LicenseTypeCard
+                        icon={<CalendarDays className="w-6 h-6" />}
+                        title="30 Días"
+                        description="Acceso por 1 mes · 1 crédito"
+                        badge="1 CRÉDITO"
+                        badgeColor="primary"
+                        featured
+                        disabled={!isActivated}
+                        onClick={() => openGenerateDialog('30days')}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Recent Licenses */}
+                <div className="rounded-3xl border border-white/[0.08] bg-[#0A101F]/80 backdrop-blur overflow-hidden">
+                  <div className="p-6 flex items-center justify-between border-b border-white/5">
+                    <div>
+                      <h2 className="text-lg font-bold text-white tracking-tight">Licencias Recientes</h2>
+                      <p className="text-xs text-muted-foreground mt-0.5">Historial de las 10 claves más recientes</p>
+                    </div>
+                    <Button 
+                      variant="ghost" 
+                      onClick={() => setCurrentView('licenses')}
+                      className="text-xs text-primary hover:text-primary/80 hover:bg-primary/10"
+                    >
+                      Ver todas →
+                    </Button>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse">
+                      <thead>
+                        <tr className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] bg-white/[0.015]">
+                          <th className="px-4 py-3 sm:px-6">Cliente</th>
+                          <th className="px-4 py-3 sm:px-6">Tipo</th>
+                          <th className="px-4 py-3 sm:px-6">Código</th>
+                          <th className="px-4 py-3 sm:px-6">Estado</th>
+                          <th className="px-4 py-3 sm:px-6 text-right">Fecha</th>
+                        </tr>
+                      </thead>
+                      <tbody className="text-sm">
+                        {fetchingLicenses ? (
+                          <tr><td colSpan={5} className="p-12 text-center text-muted-foreground text-xs uppercase tracking-widest">Cargando datos…</td></tr>
+                        ) : licenses.length > 0 ? (
+                          licenses.slice(0, 10).map((l) => (
+                            <LicenseRow
+                              key={l.id}
+                              customerName={l.customer_name}
+                              customerPhone={l.customer_phone}
+                              type={l.type.toUpperCase()}
+                              code={l.code}
+                              status={l.status}
+                              date={new Date(l.created_at).toLocaleDateString()}
+                            />
+                          ))
+                        ) : (
+                          <tr><td colSpan={5} className="p-12 text-center">
+                            <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                              <Key className="w-8 h-8 opacity-30" />
+                              <p className="text-xs uppercase tracking-widest">Aún no has generado licencias</p>
+                            </div>
+                          </td></tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {currentView === 'licenses' && (
+              <div className="space-y-6">
+                <div className="flex items-center justify-between gap-4 flex-wrap">
+                  <div>
+                    <h1 className="text-2xl font-bold text-white tracking-tight">Todas las Licencias</h1>
+                    <p className="text-sm text-muted-foreground">Listado completo de claves generadas por tu cuenta.</p>
+                  </div>
+                  <Button
+                    onClick={() => openGenerateDialog('30days')}
+                    disabled={!isActivated}
+                    className="h-10 rounded-xl bg-primary text-white hover:bg-primary/90 font-semibold text-xs uppercase tracking-wider gap-2 px-4"
+                  >
+                    <Plus className="w-4 h-4" /> Nueva Licencia
+                  </Button>
+                </div>
+
+                <div className="rounded-3xl border border-white/[0.08] bg-[#0A101F]/80 backdrop-blur overflow-hidden">
+                  <div className="p-6 border-b border-white/5">
+                    <span className="text-xs text-muted-foreground px-3 py-1 rounded-full bg-white/[0.03] border border-white/10">
+                      {licenses.length} licencias emitidas
+                    </span>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse">
+                      <thead>
+                        <tr className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] bg-white/[0.015]">
+                          <th className="px-4 py-3 sm:px-6">Cliente</th>
+                          <th className="px-4 py-3 sm:px-6">Tipo</th>
+                          <th className="px-4 py-3 sm:px-6">Código</th>
+                          <th className="px-4 py-3 sm:px-6">Estado</th>
+                          <th className="px-4 py-3 sm:px-6 text-right">Fecha</th>
+                        </tr>
+                      </thead>
+                      <tbody className="text-sm">
+                        {fetchingLicenses ? (
+                          <tr><td colSpan={5} className="p-12 text-center text-muted-foreground text-xs uppercase tracking-widest">Cargando datos…</td></tr>
+                        ) : licenses.length > 0 ? (
+                          licenses.map((l) => (
+                            <LicenseRow
+                              key={l.id}
+                              customerName={l.customer_name}
+                              customerPhone={l.customer_phone}
+                              type={l.type.toUpperCase()}
+                              code={l.code}
+                              status={l.status}
+                              date={new Date(l.created_at).toLocaleDateString()}
+                            />
+                          ))
+                        ) : (
+                          <tr><td colSpan={5} className="p-12 text-center">
+                            <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                              <Key className="w-8 h-8 opacity-30" />
+                              <p className="text-xs uppercase tracking-widest">No hay licencias registradas</p>
+                            </div>
+                          </td></tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
+
+            {currentView === 'customers' && (
+              <div className="space-y-6">
+                <div>
+                  <h1 className="text-2xl font-bold text-white tracking-tight">Mis Clientes</h1>
+                  <p className="text-sm text-muted-foreground">Listado de personas que han adquirido tus licencias.</p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {uniqueCustomers.length > 0 ? (
+                    uniqueCustomers.map((c, i) => (
+                      <Card key={i} className="bg-[#0A101F] border-white/[0.08] text-white">
+                        <CardHeader className="pb-2">
+                          <CardTitle className="text-base flex items-center gap-2">
+                            <Users className="w-4 h-4 text-primary" />
+                            {c.name}
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="space-y-2">
+                            <div className="flex justify-between text-xs">
+                              <span className="text-muted-foreground">Celular:</span>
+                              <span>{c.phone || 'N/A'}</span>
+                            </div>
+                            <div className="flex justify-between text-xs">
+                              <span className="text-muted-foreground">Licencias:</span>
+                              <Badge variant="secondary" className="h-5 text-[10px]">{c.licensesCount}</Badge>
+                            </div>
+                            <div className="flex justify-between text-xs">
+                              <span className="text-muted-foreground">Última compra:</span>
+                              <span>{new Date(c.lastActive).toLocaleDateString()}</span>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))
+                  ) : (
+                    <div className="col-span-full p-12 text-center rounded-3xl border border-dashed border-white/10">
+                      <Users className="w-12 h-12 text-muted-foreground/30 mx-auto mb-4" />
+                      <p className="text-muted-foreground">Aún no tienes clientes registrados.</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {currentView === 'settings' && (
+              <div className="space-y-6">
+                <div>
+                  <h1 className="text-2xl font-bold text-white tracking-tight">Configuración de Cuenta</h1>
+                  <p className="text-sm text-muted-foreground">Gestiona tus datos y credenciales de API.</p>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <Card className="bg-[#0A101F] border-white/[0.08] text-white">
+                    <CardHeader>
+                      <CardTitle className="text-lg flex items-center gap-2">
+                        <Key className="w-5 h-5 text-primary" />
+                        Token de API Reseller
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <p className="text-xs text-muted-foreground">
+                        Este token es necesario para las operaciones automáticas. Si no tienes uno, contacta al superadministrador.
+                      </p>
+                      <div className="bg-[#02060E] border border-white/10 rounded-lg p-3 flex items-center justify-between gap-3">
+                        <code className="text-primary font-mono text-xs break-all">
+                          {apiToken || 'No asignado'}
+                        </code>
+                        {apiToken && (
+                          <Button size="icon" variant="ghost" onClick={() => {
+                            navigator.clipboard.writeText(apiToken);
+                            toast.success("Token copiado");
+                          }} className="shrink-0 text-white hover:bg-white/5">
+                            <Copy className="w-4 h-4" />
+                          </Button>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="bg-[#0A101F] border-white/[0.08] text-white">
+                    <CardHeader>
+                      <CardTitle className="text-lg flex items-center gap-2">
+                        <Users className="w-5 h-5 text-primary" />
+                        Perfil de Usuario
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="space-y-1">
+                        <Label className="text-muted-foreground text-[10px] uppercase">Email</Label>
+                        <p className="text-sm font-medium">{profile?.email}</p>
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-muted-foreground text-[10px] uppercase">Rol</Label>
+                        <p className="text-sm font-medium uppercase tracking-wider text-primary">{profile?.role}</p>
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-muted-foreground text-[10px] uppercase">Estado de activación</Label>
+                        <Badge className={isActivated ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'}>
+                          {isActivated ? 'ACTIVO' : 'PENDIENTE'}
+                        </Badge>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+            )}
+
+            {currentView === 'support' && (
+              <div className="space-y-6">
+                <div>
+                  <h1 className="text-2xl font-bold text-white tracking-tight">Soporte Técnico</h1>
+                  <p className="text-sm text-muted-foreground">¿Necesitas ayuda o recargar créditos? Estamos aquí para ayudarte.</p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <a href="https://wa.me/YOUR_PHONE" target="_blank" rel="noreferrer" className="block group">
+                    <Card className="bg-[#0A101F] border-white/[0.08] text-white group-hover:border-primary/40 transition-all">
+                      <CardContent className="pt-6 flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400">
+                          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.438 9.889-9.886.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                        </div>
+                        <div>
+                          <p className="font-bold">WhatsApp</p>
+                          <p className="text-xs text-muted-foreground">Soporte directo vía chat</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </a>
+
+                  <a href="mailto:support@lovable.app" className="block group">
+                    <Card className="bg-[#0A101F] border-white/[0.08] text-white group-hover:border-primary/40 transition-all">
+                      <CardContent className="pt-6 flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                          <LifeBuoy className="w-6 h-6" />
+                        </div>
+                        <div>
+                          <p className="font-bold">Email</p>
+                          <p className="text-xs text-muted-foreground">Consultas y asistencia técnica</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </a>
+                </div>
+              </div>
+            )}
 
             <ExtensionDownloadCard />
 
