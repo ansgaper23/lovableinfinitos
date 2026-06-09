@@ -33,7 +33,7 @@ export const ResellerDashboard = () => {
   const [nameDialogOpen, setNameDialogOpen] = useState(false);
   const [pendingType, setPendingType] = useState<string | null>(null);
   const [licenseName, setLicenseName] = useState("");
-  const [resultDialogOpen, setResultDialogOpen] = useState(false);
+  const [customerPhone, setCustomerPhone] = useState("");
   const [generatedCode, setGeneratedCode] = useState("");
   const [copied, setCopied] = useState(false);
   const [apiToken, setApiToken] = useState<string | null>(null);
