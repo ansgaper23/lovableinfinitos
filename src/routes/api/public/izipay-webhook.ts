@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createHmac, timingSafeEqual } from "crypto";
 
-const RESELLER_BASE = "https://ynvrijkuampxpsmshftm.supabase.co/functions/v1/reseller-api";
+const RESELLER_BASE = "https://itsgcyiyemstpfafxrpq.supabase.co/functions/v1/reseller-api";
 
 async function generateLicense(displayName: string, days: number) {
   const token = process.env.RESELLER_API_KEY;

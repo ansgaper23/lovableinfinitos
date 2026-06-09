@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 
-const BASE_URL = "https://ynvrijkuampxpsmshftm.supabase.co/functions/v1/reseller-api";
+const BASE_URL = "https://itsgcyiyemstpfafxrpq.supabase.co/functions/v1/reseller-api";
 
 async function assertSuperadmin(supabase: any, userId: string) {
   const { data: prof, error } = await supabase
@@ -144,7 +144,7 @@ export const assignLicenseToUser = createServerFn({ method: "POST" })
       .maybeSingle();
     const displayName = (data.displayName || targetProf?.email?.split("@")[0] || "Usuario").slice(0, 60);
 
-    const res = await fetch("https://ynvrijkuampxpsmshftm.supabase.co/functions/v1/reseller-api/generate-license", {
+    const res = await fetch("https://itsgcyiyemstpfafxrpq.supabase.co/functions/v1/reseller-api/generate-license", {
       method: "POST",
       headers: { "x-api-token": token, "Content-Type": "application/json" },
       body: JSON.stringify({ display_name: displayName, days: data.days }),
