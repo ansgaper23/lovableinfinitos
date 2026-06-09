@@ -75,6 +75,8 @@ export const ResellerDashboard = () => {
         type: r.type,
         status: r.expires_at && new Date(r.expires_at) < new Date() ? 'expired' : 'active',
         created_at: r.created_at,
+        customer_name: r.customer_name,
+        customer_phone: r.customer_phone,
       }));
       setLicenses(mapped);
     } catch (error: any) {
