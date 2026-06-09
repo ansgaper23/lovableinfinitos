@@ -301,7 +301,7 @@ export const ResellerDashboard = () => {
                   </p>
                   <div className="flex flex-wrap items-center gap-2 mt-5">
                     <Button
-                      onClick={() => isActivated && openGenerateDialog('monthly')}
+                      onClick={() => isActivated && openGenerateDialog('30days')}
                       disabled={!isActivated}
                       className="h-10 rounded-xl bg-white text-black hover:bg-white/90 font-semibold text-xs uppercase tracking-wider gap-2 px-4"
                     >
