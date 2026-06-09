@@ -241,10 +241,7 @@ export const Dashboard = () => {
             </div>
             <Button
               variant="ghost"
-              onClick={async () => {
-                await supabase.auth.signOut();
-                navigate({ to: "/" });
-              }}
+              onClick={handleSignOut}
               className="rounded-full h-9 px-3 text-zinc-400 hover:text-white hover:bg-white/10"
             >
               <LogOut className="w-4 h-4 sm:mr-2" />
