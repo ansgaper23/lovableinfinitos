@@ -53,7 +53,7 @@ export const createIzipayPayment = createServerFn({ method: "POST" })
 
     // Llamar a Izipay CreatePayment
     const auth = Buffer.from(`${username}:${password}`).toString("base64");
-    const res = await fetch(`${IZIPAY_ENDPOINT}/api/V4/Charge/CreatePayment`, {
+    const res = await fetch(`${IZIPAY_ENDPOINT}/api-payment/V4/Charge/CreatePayment`, {
       method: "POST",
       headers: {
         Authorization: `Basic ${auth}`,
@@ -72,7 +72,14 @@ export const createIzipayPayment = createServerFn({ method: "POST" })
       }),
     });
 
-    const json: any = await res.json();
+    const text = await res.text();
+    let json: any;
+    try {
+      json = JSON.parse(text);
+    } catch {
+      console.error("Izipay non-JSON response:", res.status, text.slice(0, 500));
+      throw new Error(`Izipay devolvió una respuesta inválida (HTTP ${res.status}). Verifica IZIPAY_USERNAME / IZIPAY_PASSWORD.`);
+    }
     if (!res.ok || json.status !== "SUCCESS") {
       console.error("Izipay error:", json);
       throw new Error(json?.answer?.errorMessage || "Error al crear pago");
