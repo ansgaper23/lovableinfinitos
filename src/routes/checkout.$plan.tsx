@@ -101,15 +101,23 @@ function CheckoutPage() {
         });
 
         await KR.onSubmit(async (payment: any) => {
-          // El form ya POSTea a /api/public/izipay-webhook
-          // Aquí solo manejamos la UI
           if (payment?.clientAnswer?.orderStatus === "PAID") {
             setSuccess(true);
             toast.success("¡Pago confirmado! Activando tu licencia...");
-            // Poll order status hasta que el webhook procese
+            // Notificar al webhook con kr-answer + kr-hash firmados
+            try {
+              const fd = new FormData();
+              fd.append("kr-answer", payment.rawClientAnswer);
+              fd.append("kr-hash", payment.hash);
+              fd.append("kr-hash-algorithm", payment.hashAlgorithm || "sha256_hmac");
+              fd.append("kr-hash-key", payment.hashKey || "password");
+              await fetch("/api/public/izipay-webhook", { method: "POST", body: fd });
+            } catch (e) {
+              console.error("webhook notify failed", e);
+            }
             pollOrderStatus(res.orderId);
           }
-          return false; // evita redirect automático de KR
+          return false;
         });
 
         await KR.addForm("#kr-form-container");
