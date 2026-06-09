@@ -71,14 +71,26 @@ export const Route = createFileRoute("/api/public/izipay-webhook")({
         }
 
         const orderStatus = answer?.orderStatus;
-        const orderId: string | undefined = answer?.orderDetails?.orderId;
-        const metadata = answer?.orderDetails?.metadata || {};
+        const orderId: string | undefined =
+          answer?.orderDetails?.orderId ?? answer?.transactions?.[0]?.orderDetails?.orderId;
+        const metadata =
+          answer?.transactions?.[0]?.metadata ??
+          answer?.metadata ??
+          answer?.orderDetails?.metadata ??
+          {};
         const userId: string | undefined = metadata.user_id;
         const planId: string | undefined = metadata.plan_id;
         const days = Number(metadata.days || 0);
 
         if (!orderId || !userId || !planId || !days) {
-          console.error("Izipay webhook: metadata incompleta", { orderId, userId, planId, days });
+          console.error("Izipay webhook: metadata incompleta", {
+            orderId,
+            userId,
+            planId,
+            days,
+            answerKeys: Object.keys(answer || {}),
+            answer: JSON.stringify(answer).slice(0, 2000),
+          });
           return new Response("Missing metadata", { status: 400 });
         }
 
