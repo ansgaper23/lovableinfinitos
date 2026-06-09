@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { memo, useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   LayoutDashboard,
   Zap,
@@ -61,24 +61,41 @@ interface LicenseRow {
   lifetime: boolean | null;
 }
 
-function useCountdown(expiresAt: string | null) {
-  const [now, setNow] = useState(() => Date.now());
-  useEffect(() => {
-    if (!expiresAt) return;
-    const id = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(id);
-  }, [expiresAt]);
+function computeCountdown(expiresAt: string | null, now: number) {
   if (!expiresAt) return null;
   const diff = new Date(expiresAt).getTime() - now;
-  if (diff <= 0) return { expired: true, label: "Expirada" };
+  if (diff <= 0) return { expired: true as const, label: "Expirada" };
   const s = Math.floor(diff / 1000);
   return {
-    expired: false,
+    expired: false as const,
     label: `${Math.floor(s / 86400)}d ${Math.floor((s % 86400) / 3600)}h ${Math.floor(
       (s % 3600) / 60,
     )}m ${s % 60}s`,
   };
 }
+
+function useCountdown(expiresAt: string | null) {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (!expiresAt) return;
+    // Stop ticking once expired to avoid useless renders.
+    if (new Date(expiresAt).getTime() - Date.now() <= 0) return;
+    const id = setInterval(() => {
+      const next = Date.now();
+      setNow(next);
+      if (new Date(expiresAt).getTime() - next <= 0) clearInterval(id);
+    }, 1000);
+    return () => clearInterval(id);
+  }, [expiresAt]);
+  return computeCountdown(expiresAt, now);
+}
+
+// Isolated ticker so the parent card does not re-render every second.
+const CountdownLabel = memo(({ expiresAt }: { expiresAt: string }) => {
+  const c = useCountdown(expiresAt);
+  return <>{c?.label ?? "—"}</>;
+});
+CountdownLabel.displayName = "CountdownLabel";
 
 type TabKey = "inicio" | "planes" | "llaves" | "extension" | "extras" | "tutoriales" | "ayuda";
 
@@ -124,11 +141,11 @@ export const Dashboard = () => {
     };
   }, [user?.id]);
 
-  const trial = licenses.find((l) => l.type === "trial") || null;
-  const assigned = licenses.find((l) => l.type !== "trial") || null;
+  const trial = useMemo(() => licenses.find((l) => l.type === "trial") || null, [licenses]);
+  const assigned = useMemo(() => licenses.find((l) => l.type !== "trial") || null, [licenses]);
   const statusActive = !!assigned || !!trial;
 
-  const handleGenerateTrial = async () => {
+  const handleGenerateTrial = useCallback(async () => {
     setIsGenerating(true);
     try {
       await genTrial({ data: { displayName } });
@@ -139,7 +156,13 @@ export const Dashboard = () => {
     } finally {
       setIsGenerating(false);
     }
-  };
+  }, [genTrial, displayName, user?.id]);
+
+  const handleSignOut = useCallback(async () => {
+    await supabase.auth.signOut();
+    navigate({ to: "/" });
+  }, [navigate]);
+
 
   if (loading) {
     return (
@@ -160,10 +183,7 @@ export const Dashboard = () => {
           Tu cuenta ha sido bloqueada. Contacta con soporte para más información.
         </p>
         <Button
-          onClick={async () => {
-            await supabase.auth.signOut();
-            navigate({ to: "/" });
-          }}
+          onClick={handleSignOut}
           variant="outline"
           className="rounded-full h-11 px-6 border-white/10 bg-white/5 hover:bg-white/10"
         >
@@ -173,7 +193,7 @@ export const Dashboard = () => {
     );
   }
 
-  const tabs: { key: TabKey; label: string; icon: ReactNode }[] = [
+  const tabs = useMemo<{ key: TabKey; label: string; icon: ReactNode }[]>(() => [
     { key: "inicio", label: "Inicio", icon: <LayoutDashboard className="w-4 h-4" /> },
     { key: "planes", label: "Planes", icon: <CreditCard className="w-4 h-4" /> },
     { key: "llaves", label: "Mis Llaves", icon: <Key className="w-4 h-4" /> },
@@ -181,7 +201,7 @@ export const Dashboard = () => {
     { key: "extras", label: "Extras", icon: <Layers className="w-4 h-4" /> },
     { key: "tutoriales", label: "Tutoriales", icon: <GraduationCap className="w-4 h-4" /> },
     { key: "ayuda", label: "Ayuda", icon: <LifeBuoy className="w-4 h-4" /> },
-  ];
+  ], []);
 
   return (
     <div className="min-h-screen bg-[#06060a] text-white font-sans relative overflow-x-hidden">
@@ -221,10 +241,7 @@ export const Dashboard = () => {
             </div>
             <Button
               variant="ghost"
-              onClick={async () => {
-                await supabase.auth.signOut();
-                navigate({ to: "/" });
-              }}
+              onClick={handleSignOut}
               className="rounded-full h-9 px-3 text-zinc-400 hover:text-white hover:bg-white/10"
             >
               <LogOut className="w-4 h-4 sm:mr-2" />
@@ -569,22 +586,23 @@ const LlavesTab = ({
   </section>
 );
 
-const LicenseRowCard = ({ lic }: { lic: LicenseRow }) => {
-  const countdown = useCountdown(lic.expires_at);
+const LicenseRowCard = memo(({ lic }: { lic: LicenseRow }) => {
   const [copied, setCopied] = useState(false);
   const isLifetime = !lic.expires_at;
-  const isExpired = !isLifetime && !!countdown?.expired;
+  // Cheap snapshot check; the live ticker lives inside <CountdownLabel/> below
+  // so this card itself does NOT re-render every second.
+  const isExpired = !isLifetime && new Date(lic.expires_at as string).getTime() <= Date.now();
   const typeLabel = lic.type === "trial" ? "Prueba" : lic.type === "assigned" ? "Asignada" : "De pago";
   const typeTone =
     lic.type === "trial"
       ? "border-amber-400/30 bg-amber-500/10 text-amber-300"
       : "border-violet-400/30 bg-violet-500/10 text-violet-300";
 
-  const copy = async () => {
+  const copy = useCallback(async () => {
     await navigator.clipboard.writeText(lic.license_key);
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
-  };
+  }, [lic.license_key]);
 
   return (
     <div className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5">
@@ -627,15 +645,19 @@ const LicenseRowCard = ({ lic }: { lic: LicenseRow }) => {
       </div>
       <p className="text-[10px] font-bold tracking-widest text-zinc-500 uppercase mt-3 flex items-center gap-2">
         <Clock className="w-3 h-3" />
-        {isLifetime
-          ? "Sin vencimiento"
-          : isExpired
-            ? `Expiró: ${new Date(lic.expires_at as string).toLocaleString()}`
-            : `Tiempo restante: ${countdown?.label ?? "—"}`}
+        {isLifetime ? (
+          "Sin vencimiento"
+        ) : isExpired ? (
+          `Expiró: ${new Date(lic.expires_at as string).toLocaleString()}`
+        ) : (
+          <>Tiempo restante: <CountdownLabel expiresAt={lic.expires_at as string} /></>
+        )}
       </p>
     </div>
   );
-};
+});
+LicenseRowCard.displayName = "LicenseRowCard";
+
 
 /* -------------------- TAB: EXTENSIÓN -------------------- */
 const ExtensionTab = () => {
@@ -871,13 +893,14 @@ const ExtrasTab = ({
 );
 
 /* -------------------- SHARED -------------------- */
-const Header = ({ eyebrow, title, sub }: { eyebrow: string; title: string; sub?: string }) => (
+const Header = memo(({ eyebrow, title, sub }: { eyebrow: string; title: string; sub?: string }) => (
   <div>
     <p className="text-[10px] font-bold tracking-[0.25em] text-violet-300/70 uppercase mb-2">{eyebrow}</p>
     <h2 className="text-2xl sm:text-3xl font-bold tracking-tight mb-1">{title}</h2>
     {sub && <p className="text-zinc-400 text-sm">{sub}</p>}
   </div>
-);
+));
+Header.displayName = "Header";
 
 const toneMap = {
   violet: { bg: "bg-violet-500/10", border: "border-violet-400/20", text: "text-violet-300" },
@@ -885,7 +908,7 @@ const toneMap = {
   emerald: { bg: "bg-emerald-500/10", border: "border-emerald-400/20", text: "text-emerald-300" },
 } as const;
 
-const StatCard = ({
+const StatCard = memo(({
   label,
   value,
   hint,
@@ -913,7 +936,8 @@ const StatCard = ({
       <p className={`text-xs font-semibold uppercase tracking-widest ${t.text}`}>{hint}</p>
     </div>
   );
-};
+});
+StatCard.displayName = "StatCard";
 
 /* -------------------- TAB: TUTORIALES -------------------- */
 const TUTORIALS = [
