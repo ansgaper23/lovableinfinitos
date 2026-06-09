@@ -513,18 +513,31 @@ export const ResellerDashboard = () => {
               Asigna un nombre para identificar al cliente o destino de esta clave.
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-2 py-2">
-            <Label htmlFor="license-name">Nombre / Cliente</Label>
-            <Input
-              id="license-name"
-              autoFocus
-              value={licenseName}
-              onChange={(e) => setLicenseName(e.target.value)}
-              onKeyDown={(e) => { if (e.key === 'Enter') generateLicense(); }}
-              placeholder="Ej: Juan Pérez"
-              maxLength={50}
-              className="bg-[#02060E] border-white/10 text-white"
-            />
+          <div className="space-y-4 py-2">
+            <div className="space-y-2">
+              <Label htmlFor="license-name">Nombre del Cliente</Label>
+              <Input
+                id="license-name"
+                autoFocus
+                value={licenseName}
+                onChange={(e) => setLicenseName(e.target.value)}
+                placeholder="Ej: Juan Pérez"
+                maxLength={50}
+                className="bg-[#02060E] border-white/10 text-white"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="customer-phone">Celular (Opcional)</Label>
+              <Input
+                id="customer-phone"
+                value={customerPhone}
+                onChange={(e) => setCustomerPhone(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter' && licenseName.trim()) generateLicense(); }}
+                placeholder="Ej: +51 987654321"
+                maxLength={20}
+                className="bg-[#02060E] border-white/10 text-white"
+              />
+            </div>
           </div>
           <DialogFooter>
             <Button variant="ghost" onClick={() => setNameDialogOpen(false)} disabled={isGenerating}>
