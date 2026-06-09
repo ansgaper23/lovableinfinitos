@@ -437,29 +437,32 @@ const InicioTab = ({
 
 /* -------------------- TAB: PLANES -------------------- */
 const PlanesTab = () => {
+  const navigate = useNavigate();
   const plans = [
     {
+      planId: "basico",
       name: "Plan Básico",
       duration: "1 Día",
-      price: "$5.99",
+      price: "S/ 22.50",
       icon: <Flame className="w-5 h-5" />,
       tone: "violet" as const,
       features: ["Lovable ilimitado por 1 día", "Sin consumo de créditos", "Acceso inmediato", "Soporte por WhatsApp"],
     },
     {
+      planId: "pro",
       name: "Plan Pro",
       duration: "7 Días",
-      price: "$13.99",
+      price: "S/ 52.50",
       popular: true,
       icon: <Star className="w-5 h-5" />,
       tone: "fuchsia" as const,
       features: ["Lovable ilimitado por 7 días", "Sin consumo de créditos", "Acceso inmediato", "Soporte 24/7", "Guía de prompts"],
     },
     {
+      planId: "premium",
       name: "Plan Premium",
       duration: "30 Días",
-      price: "$18.99",
-      oldPrice: "$35.00",
+      price: "S/ 71.50",
       icon: <Crown className="w-5 h-5" />,
       tone: "pink" as const,
       features: ["Lovable ilimitado por 30 días", "Sin consumo de créditos", "Acceso inmediato", "Soporte VIP", "Actualizaciones garantizadas"],
@@ -500,7 +503,6 @@ const PlanesTab = () => {
             <p className="text-[10px] font-bold tracking-widest text-zinc-500 uppercase mb-4">{p.duration}</p>
             <div className="flex items-baseline gap-2 mb-5">
               <span className="text-4xl font-bold tracking-tight">{p.price}</span>
-              {p.oldPrice && <span className="text-sm text-zinc-500 line-through">{p.oldPrice}</span>}
             </div>
             <ul className="space-y-2 mb-6">
               {p.features.map((f) => (
@@ -511,12 +513,7 @@ const PlanesTab = () => {
               ))}
             </ul>
             <Button
-              onClick={() =>
-                window.open(
-                  `https://wa.me/51936467898?text=Hola,%20quiero%20el%20${encodeURIComponent(p.name)}`,
-                  "_blank",
-                )
-              }
+              onClick={() => navigate({ to: "/checkout/$plan", params: { plan: p.planId } })}
               className={`w-full rounded-full h-11 font-semibold ${
                 p.popular
                   ? "bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 shadow-lg shadow-violet-600/30"
