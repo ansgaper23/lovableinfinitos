@@ -134,11 +134,10 @@ export const ResellerDashboard = () => {
       let apiResp;
       if (isTest) {
         apiResp = await resellerApi.generateTrial(apiToken, name, 15);
-      } else if (type.toLowerCase() === 'lifetime') {
-        apiResp = await resellerApi.generateLicense(apiToken, name, 0, true);
       } else {
-        // monthly = 30 días por defecto
-        apiResp = await resellerApi.generateLicense(apiToken, name, 30, false);
+        const dayMap: Record<string, number> = { '1day': 1, '7days': 7, '30days': 30 };
+        const days = dayMap[type] ?? 30;
+        apiResp = await resellerApi.generateLicense(apiToken, name, days, false);
       }
 
       if (!apiResp?.license_key) {
