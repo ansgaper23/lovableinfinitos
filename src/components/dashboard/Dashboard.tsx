@@ -22,7 +22,23 @@ import {
   Flame,
   Crown,
   Star,
+  GraduationCap,
+  PlayCircle,
+  HelpCircle,
+  MessageCircle,
+  Mail,
+  FileText,
+  ChevronRight,
+  Search,
+  BookOpen,
 } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Input } from "@/components/ui/input";
 
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
