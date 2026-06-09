@@ -226,6 +226,8 @@ export const ResellerDashboard = () => {
               <ResellerNavItem icon={<History className="w-4 h-4" />} label="Historial" />
               <ResellerNavItem icon={<Users className="w-4 h-4" />} label="Clientes" />
               <ResellerNavItem icon={<Wallet className="w-4 h-4" />} label="Financiero" />
+              <ResellerNavItem icon={<GraduationCap className="w-4 h-4" />} label="Tutoriales" />
+              <ResellerNavItem icon={<HelpCircle className="w-4 h-4" />} label="Centro de Ayuda" />
             </nav>
 
             <p className="text-[9px] font-bold text-muted-foreground/60 uppercase tracking-[0.2em] px-4 mt-8 mb-3">Cuenta</p>
