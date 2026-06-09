@@ -1095,7 +1095,7 @@ const AyudaTab = () => {
         sub="Encuentra respuestas, documentación de errores y formas de contacto."
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <HelpContactCard
           icon={<MessageCircle className="w-5 h-5" />}
           title="WhatsApp"
@@ -1103,14 +1103,6 @@ const AyudaTab = () => {
           action="Escribir ahora"
           href="https://wa.me/51936467898?text=Hola,%20necesito%20soporte"
           tone="emerald"
-        />
-        <HelpContactCard
-          icon={<Mail className="w-5 h-5" />}
-          title="Correo electrónico"
-          desc="soporte@lovableinfinito.com"
-          action="Enviar correo"
-          href="mailto:soporte@lovableinfinito.com"
-          tone="violet"
         />
         <HelpContactCard
           icon={<BookOpen className="w-5 h-5" />}
