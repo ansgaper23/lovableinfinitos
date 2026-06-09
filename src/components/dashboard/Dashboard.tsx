@@ -179,6 +179,8 @@ export const Dashboard = () => {
     { key: "llaves", label: "Mis Llaves", icon: <Key className="w-4 h-4" /> },
     { key: "extension", label: "Extensión", icon: <Download className="w-4 h-4" /> },
     { key: "extras", label: "Extras", icon: <Layers className="w-4 h-4" /> },
+    { key: "tutoriales", label: "Tutoriales", icon: <GraduationCap className="w-4 h-4" /> },
+    { key: "ayuda", label: "Ayuda", icon: <HelpCircle className="w-4 h-4" /> },
   ];
 
   return (
