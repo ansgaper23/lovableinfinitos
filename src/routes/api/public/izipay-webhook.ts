@@ -6,6 +6,22 @@ const RESELLER_BASE = "https://ynvrijkuampxpsmshftm.supabase.co/functions/v1/res
 async function generateLicense(displayName: string, days: number) {
   const token = process.env.RESELLER_API_KEY;
   if (!token) throw new Error("RESELLER_API_KEY no configurada");
+
+  // Modo TEST: si la contraseña de Izipay empieza con "testpassword_",
+  // generamos una licencia de PRUEBA (trial, 15 min) en vez de una real.
+  const isTestMode = (process.env.IZIPAY_PASSWORD || "").startsWith("testpassword_");
+
+  if (isTestMode) {
+    const res = await fetch(`${RESELLER_BASE}/generate-trial`, {
+      method: "POST",
+      headers: { "x-api-token": token, "Content-Type": "application/json" },
+      body: JSON.stringify({ display_name: `${displayName} (TEST)`, minutes: 15, seconds: 0 }),
+    });
+    const json: any = await res.json();
+    if (!res.ok) throw new Error(json?.message || "Error generando licencia de prueba");
+    return { ...json, _isTest: true };
+  }
+
   const res = await fetch(`${RESELLER_BASE}/generate-license`, {
     method: "POST",
     headers: { "x-api-token": token, "Content-Type": "application/json" },
