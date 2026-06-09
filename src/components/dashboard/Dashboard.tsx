@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { memo, useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   LayoutDashboard,
   Zap,
@@ -61,24 +61,41 @@ interface LicenseRow {
   lifetime: boolean | null;
 }
 
-function useCountdown(expiresAt: string | null) {
-  const [now, setNow] = useState(() => Date.now());
-  useEffect(() => {
-    if (!expiresAt) return;
-    const id = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(id);
-  }, [expiresAt]);
+function computeCountdown(expiresAt: string | null, now: number) {
   if (!expiresAt) return null;
   const diff = new Date(expiresAt).getTime() - now;
-  if (diff <= 0) return { expired: true, label: "Expirada" };
+  if (diff <= 0) return { expired: true as const, label: "Expirada" };
   const s = Math.floor(diff / 1000);
   return {
-    expired: false,
+    expired: false as const,
     label: `${Math.floor(s / 86400)}d ${Math.floor((s % 86400) / 3600)}h ${Math.floor(
       (s % 3600) / 60,
     )}m ${s % 60}s`,
   };
 }
+
+function useCountdown(expiresAt: string | null) {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (!expiresAt) return;
+    // Stop ticking once expired to avoid useless renders.
+    if (new Date(expiresAt).getTime() - Date.now() <= 0) return;
+    const id = setInterval(() => {
+      const next = Date.now();
+      setNow(next);
+      if (new Date(expiresAt).getTime() - next <= 0) clearInterval(id);
+    }, 1000);
+    return () => clearInterval(id);
+  }, [expiresAt]);
+  return computeCountdown(expiresAt, now);
+}
+
+// Isolated ticker so the parent card does not re-render every second.
+const CountdownLabel = memo(({ expiresAt }: { expiresAt: string }) => {
+  const c = useCountdown(expiresAt);
+  return <>{c?.label ?? "—"}</>;
+});
+CountdownLabel.displayName = "CountdownLabel";
 
 type TabKey = "inicio" | "planes" | "llaves" | "extension" | "extras" | "tutoriales" | "ayuda";
 
