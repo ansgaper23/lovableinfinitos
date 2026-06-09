@@ -908,7 +908,7 @@ const toneMap = {
   emerald: { bg: "bg-emerald-500/10", border: "border-emerald-400/20", text: "text-emerald-300" },
 } as const;
 
-const StatCard = ({
+const StatCard = memo(({
   label,
   value,
   hint,
@@ -936,7 +936,8 @@ const StatCard = ({
       <p className={`text-xs font-semibold uppercase tracking-widest ${t.text}`}>{hint}</p>
     </div>
   );
-};
+});
+StatCard.displayName = "StatCard";
 
 /* -------------------- TAB: TUTORIALES -------------------- */
 const TUTORIALS = [
