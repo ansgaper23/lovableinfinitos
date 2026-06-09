@@ -327,7 +327,7 @@ export const ResellerDashboard = () => {
                       <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">Online</span>
                     </span>
                   </div>
-                  <h1 className="text-3xl lg:text-4xl font-bold text-white tracking-tight leading-tight">
+                  <h1 className="text-2xl lg:text-4xl font-bold text-white tracking-tight leading-tight">
                     Hola,{' '}
                     <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
                       {profile?.email?.split('@')[0] || 'Reseller'}
