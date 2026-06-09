@@ -734,18 +734,18 @@ const LicenseRow = ({ customerName, customerPhone, type, code, status, date }: {
   const isExpired = status === 'expired';
   return (
     <tr className="border-t border-white/[0.04] hover:bg-white/[0.02] transition-colors group">
-      <td className="px-6 py-4">
+      <td className="px-4 py-4 sm:px-6">
         <div className="flex flex-col">
-          <span className="text-white font-medium">{customerName || '—'}</span>
-          {customerPhone && <span className="text-[10px] text-muted-foreground">{customerPhone}</span>}
+          <span className="text-white font-medium whitespace-nowrap">{customerName || '—'}</span>
+          {customerPhone && <span className="text-[10px] text-muted-foreground whitespace-nowrap">{customerPhone}</span>}
         </div>
       </td>
-      <td className="px-6 py-4">
-        <span className="text-[10px] font-bold text-primary uppercase tracking-widest px-2 py-1 rounded-md bg-primary/10 border border-primary/20">{type}</span>
+      <td className="px-4 py-4 sm:px-6">
+        <span className="text-[10px] font-bold text-primary uppercase tracking-widest px-2 py-1 rounded-md bg-primary/10 border border-primary/20 whitespace-nowrap">{type}</span>
       </td>
-      <td className="px-6 py-4 font-mono text-white/80 text-xs">{code}</td>
-      <td className="px-6 py-4">
-        <span className={`inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md border ${
+      <td className="px-4 py-4 sm:px-6 font-mono text-white/80 text-xs whitespace-nowrap">{code}</td>
+      <td className="px-4 py-4 sm:px-6">
+        <span className={`inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md border whitespace-nowrap ${
           isActive ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
           : isExpired ? 'text-amber-400 bg-amber-500/10 border-amber-500/20'
           : 'text-red-400 bg-red-500/10 border-red-500/20'
@@ -754,7 +754,7 @@ const LicenseRow = ({ customerName, customerPhone, type, code, status, date }: {
           {isActive ? 'Activa' : isExpired ? 'Expirada' : 'Inactiva'}
         </span>
       </td>
-      <td className="px-6 py-4 text-right text-muted-foreground text-xs tabular-nums">{date}</td>
+      <td className="px-4 py-4 sm:px-6 text-right text-muted-foreground text-xs tabular-nums whitespace-nowrap">{date}</td>
     </tr>
   );
 };
