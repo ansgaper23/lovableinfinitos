@@ -18,6 +18,7 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ComoFuncionaRouteImport } from './routes/como-funciona'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiPublicIzipayWebhookRouteImport } from './routes/api/public/izipay-webhook'
 
 const SuperadminRoute = SuperadminRouteImport.update({
   id: '/superadmin',
@@ -64,6 +65,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicIzipayWebhookRoute = ApiPublicIzipayWebhookRouteImport.update({
+  id: '/api/public/izipay-webhook',
+  path: '/api/public/izipay-webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -75,6 +81,7 @@ export interface FileRoutesByFullPath {
   '/precios': typeof PreciosRoute
   '/reseller': typeof ResellerRoute
   '/superadmin': typeof SuperadminRoute
+  '/api/public/izipay-webhook': typeof ApiPublicIzipayWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -86,6 +93,7 @@ export interface FileRoutesByTo {
   '/precios': typeof PreciosRoute
   '/reseller': typeof ResellerRoute
   '/superadmin': typeof SuperadminRoute
+  '/api/public/izipay-webhook': typeof ApiPublicIzipayWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -98,6 +106,7 @@ export interface FileRoutesById {
   '/precios': typeof PreciosRoute
   '/reseller': typeof ResellerRoute
   '/superadmin': typeof SuperadminRoute
+  '/api/public/izipay-webhook': typeof ApiPublicIzipayWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -111,6 +120,7 @@ export interface FileRouteTypes {
     | '/precios'
     | '/reseller'
     | '/superadmin'
+    | '/api/public/izipay-webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -122,6 +132,7 @@ export interface FileRouteTypes {
     | '/precios'
     | '/reseller'
     | '/superadmin'
+    | '/api/public/izipay-webhook'
   id:
     | '__root__'
     | '/'
@@ -133,6 +144,7 @@ export interface FileRouteTypes {
     | '/precios'
     | '/reseller'
     | '/superadmin'
+    | '/api/public/izipay-webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -145,6 +157,7 @@ export interface RootRouteChildren {
   PreciosRoute: typeof PreciosRoute
   ResellerRoute: typeof ResellerRoute
   SuperadminRoute: typeof SuperadminRoute
+  ApiPublicIzipayWebhookRoute: typeof ApiPublicIzipayWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -212,6 +225,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/izipay-webhook': {
+      id: '/api/public/izipay-webhook'
+      path: '/api/public/izipay-webhook'
+      fullPath: '/api/public/izipay-webhook'
+      preLoaderRoute: typeof ApiPublicIzipayWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -225,6 +245,7 @@ const rootRouteChildren: RootRouteChildren = {
   PreciosRoute: PreciosRoute,
   ResellerRoute: ResellerRoute,
   SuperadminRoute: SuperadminRoute,
+  ApiPublicIzipayWebhookRoute: ApiPublicIzipayWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
