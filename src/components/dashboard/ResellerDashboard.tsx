@@ -294,7 +294,7 @@ export const ResellerDashboard = () => {
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(168,85,247,0.08),transparent_55%)] pointer-events-none" />
           <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:48px_48px] [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_80%)] pointer-events-none" />
 
-          <div className="relative max-w-7xl mx-auto p-6 lg:p-8 space-y-6">
+          <div className="relative max-w-7xl mx-auto p-4 lg:p-8 space-y-6">
             {/* Preview banner for non-activated users */}
             {!isActivated && (
               <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 flex items-center gap-3">
