@@ -80,7 +80,7 @@ function useCountdown(expiresAt: string | null) {
   };
 }
 
-type TabKey = "inicio" | "planes" | "llaves" | "extension" | "extras";
+type TabKey = "inicio" | "planes" | "llaves" | "extension" | "extras" | "tutoriales" | "ayuda";
 
 export const Dashboard = () => {
   const { user, profile, loading } = useAuth(true);
