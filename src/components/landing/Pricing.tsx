@@ -120,14 +120,15 @@ export const Pricing = () => {
                 </ul>
                 
                 <Link
-                  to="/auth"
+                  to="/checkout/$plan"
+                  params={{ plan: plan.id }}
                   className={`block w-full py-5 rounded-none font-black uppercase tracking-widest text-center transition-all duration-300 transform ${
                     plan.popular
                       ? "bg-primary text-primary-foreground hover:shadow-[0_0_30px_rgba(var(--color-primary),0.4)]"
                       : "bg-primary text-primary-foreground hover:shadow-[0_0_30px_rgba(var(--color-primary),0.4)]"
                   }`}
                 >
-                  Activar Acceso
+                  Pagar Ahora
                 </Link>
               </CardContent>
             </Card>
