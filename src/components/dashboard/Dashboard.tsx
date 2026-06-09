@@ -141,11 +141,11 @@ export const Dashboard = () => {
     };
   }, [user?.id]);
 
-  const trial = licenses.find((l) => l.type === "trial") || null;
-  const assigned = licenses.find((l) => l.type !== "trial") || null;
+  const trial = useMemo(() => licenses.find((l) => l.type === "trial") || null, [licenses]);
+  const assigned = useMemo(() => licenses.find((l) => l.type !== "trial") || null, [licenses]);
   const statusActive = !!assigned || !!trial;
 
-  const handleGenerateTrial = async () => {
+  const handleGenerateTrial = useCallback(async () => {
     setIsGenerating(true);
     try {
       await genTrial({ data: { displayName } });
@@ -156,7 +156,13 @@ export const Dashboard = () => {
     } finally {
       setIsGenerating(false);
     }
-  };
+  }, [genTrial, displayName, user?.id]);
+
+  const handleSignOut = useCallback(async () => {
+    await supabase.auth.signOut();
+    navigate({ to: "/" });
+  }, [navigate]);
+
 
   if (loading) {
     return (
