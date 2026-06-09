@@ -993,7 +993,7 @@ const VideoPlayer = memo(({ videoUrl, title, duration }: { videoUrl: string; tit
       <div className="absolute inset-0 bg-black/40" />
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="w-16 h-16 rounded-full bg-white/90 backdrop-blur flex items-center justify-center shadow-2xl group-hover/play:scale-110 transition">
-          <PlayCircle className="w-10 h-10 text-violet-600" fill="currentColor" />
+          <Play className="w-8 h-8 text-gray-900" fill="currentColor" />
         </div>
       </div>
       <span className="absolute bottom-2 right-2 rounded-md bg-black/70 backdrop-blur px-2 py-0.5 text-[10px] font-bold text-white">
