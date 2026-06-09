@@ -488,11 +488,11 @@ export const ResellerDashboard = () => {
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] bg-white/[0.015]">
-                      <th className="px-6 py-3">Cliente</th>
-                      <th className="px-6 py-3">Tipo</th>
-                      <th className="px-6 py-3">Código</th>
-                      <th className="px-6 py-3">Estado</th>
-                      <th className="px-6 py-3 text-right">Fecha</th>
+                      <th className="px-4 py-3 sm:px-6">Cliente</th>
+                      <th className="px-4 py-3 sm:px-6">Tipo</th>
+                      <th className="px-4 py-3 sm:px-6">Código</th>
+                      <th className="px-4 py-3 sm:px-6">Estado</th>
+                      <th className="px-4 py-3 sm:px-6 text-right">Fecha</th>
                     </tr>
                   </thead>
                   <tbody className="text-sm">
