@@ -203,6 +203,27 @@ export const ResellerDashboard = () => {
     }
   };
 
+  const revokeLicense = async (licenseId: string, licenseKey: string) => {
+    if (!apiToken) return;
+    try {
+      // Intentar revocar en la API externa primero
+      await resellerApi.revokeLicense(apiToken, licenseKey);
+      
+      // Eliminar de nuestra DB local
+      const { error } = await supabase
+        .from("reseller_licenses")
+        .delete()
+        .eq("id", licenseId);
+        
+      if (error) throw error;
+      
+      toast.success("Licencia revocada y eliminada");
+      fetchLicenses();
+    } catch (error: any) {
+      toast.error("Error al revocar: " + error.message);
+    }
+  };
+
   const copyCode = async () => {
     try {
       await navigator.clipboard.writeText(generatedCode);
@@ -542,12 +563,14 @@ export const ResellerDashboard = () => {
                               <LicenseRow
                                 key={l.id}
                                 customerName={l.customer_name}
-                                customerPhone={l.customer_phone}
-                                type={l.type.toUpperCase()}
-                                code={l.code}
-                                status={l.status}
-                                date={new Date(l.created_at).toLocaleDateString()}
-                              />
+                              customerPhone={l.customer_phone}
+                              type={l.type.toUpperCase()}
+                              code={l.code}
+                              status={l.status}
+                              date={new Date(l.created_at).toLocaleDateString()}
+                              onRevoke={revokeLicense}
+                              id={l.id}
+                            />
                             ))
                           ) : (
                             <tr><td colSpan={5} className="p-12 text-center">
@@ -607,12 +630,14 @@ export const ResellerDashboard = () => {
                               <LicenseRow
                                 key={l.id}
                                 customerName={l.customer_name}
-                                customerPhone={l.customer_phone}
-                                type={l.type.toUpperCase()}
-                                code={l.code}
-                                status={l.status}
-                                date={new Date(l.created_at).toLocaleDateString()}
-                              />
+                               customerPhone={l.customer_phone}
+                               type={l.type.toUpperCase()}
+                               code={l.code}
+                               status={l.status}
+                               date={new Date(l.created_at).toLocaleDateString()}
+                               onRevoke={revokeLicense}
+                               id={l.id}
+                             />
                             ))
                           ) : (
                             <tr><td colSpan={5} className="p-12 text-center">
@@ -1056,9 +1081,17 @@ const LicenseTypeCard = ({ icon, title, description, badge, badgeColor = 'primar
   </div>
 );
 
-const LicenseRow = ({ customerName, customerPhone, type, code, status, date }: { customerName?: string | null, customerPhone?: string | null, type: string, code: string, status: string | null, date: string }) => {
+const LicenseRow = ({ id, customerName, customerPhone, type, code, status, date, onRevoke }: { id: string, customerName?: string | null, customerPhone?: string | null, type: string, code: string, status: string | null, date: string, onRevoke: (id: string, code: string) => void }) => {
   const isActive = status === 'active';
   const isExpired = status === 'expired';
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleRevoke = async () => {
+    setIsDeleting(true);
+    await onRevoke(id, code);
+    setIsDeleting(false);
+  };
+
   return (
     <tr className="border-t border-white/[0.04] hover:bg-white/[0.02] transition-colors group">
       <td className="px-4 py-4 sm:px-6">
@@ -1081,7 +1114,21 @@ const LicenseRow = ({ customerName, customerPhone, type, code, status, date }: {
           {isActive ? 'Activa' : isExpired ? 'Expirada' : 'Inactiva'}
         </span>
       </td>
-      <td className="px-4 py-4 sm:px-6 text-right text-muted-foreground text-xs tabular-nums whitespace-nowrap">{date}</td>
+      <td className="px-4 py-4 sm:px-6 text-right whitespace-nowrap">
+        <div className="flex items-center justify-end gap-3">
+          <span className="text-muted-foreground text-xs tabular-nums">{date}</span>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={handleRevoke}
+            disabled={isDeleting}
+            className="h-8 w-8 text-zinc-500 hover:text-red-400 hover:bg-red-400/10"
+            title="Eliminar y Revocar"
+          >
+            {isDeleting ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+          </Button>
+        </div>
+      </td>
     </tr>
   );
 };
