@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { LayoutDashboard, Key, ClipboardList, History, Users, Wallet, Settings, LifeBuoy, Zap, Plus, CalendarDays, LogOut, Coins, Copy, Check, Sparkles, TrendingUp, ArrowUpRight, Activity, Menu, X } from "lucide-react";
+import { LayoutDashboard, Key, ClipboardList, History, Users, Wallet, Settings, LifeBuoy, Zap, Plus, CalendarDays, LogOut, Coins, Copy, Check, Sparkles, TrendingUp, ArrowUpRight, Activity, Menu, X, Trash2, RefreshCw } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
