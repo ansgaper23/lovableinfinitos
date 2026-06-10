@@ -465,41 +465,43 @@ export const SuperAdminDashboard = () => {
                 </div>
               </CardHeader>
               <CardContent className="p-0">
-                <div className="hidden md:block overflow-x-auto">
-                  <table className="w-full text-left text-sm">
-                    <thead>
-                      <tr className="border-y border-zinc-800 bg-zinc-950/50">
-                        <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">Usuario</th>
-                        <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">Rol</th>
-                        <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">Prueba</th>
-                        <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">Licencias</th>
-                        <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">Créditos</th>
-                        <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">IP</th>
-                        <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">Registro</th>
-                        <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide text-right">Acciones</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {fetchingUsers ? (
-                        <tr><td colSpan={8} className="p-8 text-center text-zinc-500 text-xs">Cargando...</td></tr>
-                      ) : filteredUsers.length > 0 ? (
-                        filteredUsers.map((u) => (
-                        <UserRow
-                            key={u.id}
-                            user={u}
-                            onRecharge={() => { setRechargeTarget(u); setRechargeAmount("10"); }}
-                            onToggleActivation={() => handleToggleActivation(u)}
-                            onAssignLicense={() => { setAssignTarget(u); setAssignDays(7); setAssignedResult(null); }}
-                            onBlockToggle={() => handleBlockToggle(u)}
-                            onDelete={() => setDeleteTarget(u)}
-                            toggling={togglingUserId === u.id}
-                          />
-                        ))
-                      ) : (
-                        <tr><td colSpan={8} className="p-8 text-center text-zinc-500 text-xs">Sin resultados</td></tr>
-                      )}
-                    </tbody>
-                  </table>
+                <div className="hidden md:block overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+                  <div className="min-w-[900px]">
+                    <table className="w-full text-left text-sm">
+                      <thead>
+                        <tr className="border-y border-zinc-800 bg-zinc-950/50">
+                          <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">Usuario</th>
+                          <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">Rol</th>
+                          <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">Prueba</th>
+                          <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">Licencias</th>
+                          <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">Créditos</th>
+                          <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">IP</th>
+                          <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide">Registro</th>
+                          <th className="px-4 py-2.5 text-[11px] font-medium text-zinc-500 uppercase tracking-wide text-right">Acciones</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {fetchingUsers ? (
+                          <tr><td colSpan={8} className="p-8 text-center text-zinc-500 text-xs">Cargando...</td></tr>
+                        ) : filteredUsers.length > 0 ? (
+                          filteredUsers.map((u) => (
+                          <UserRow
+                              key={u.id}
+                              user={u}
+                              onRecharge={() => { setRechargeTarget(u); setRechargeAmount("10"); }}
+                              onToggleActivation={() => handleToggleActivation(u)}
+                              onAssignLicense={() => { setAssignTarget(u); setAssignDays(7); setAssignedResult(null); }}
+                              onBlockToggle={() => handleBlockToggle(u)}
+                              onDelete={() => setDeleteTarget(u)}
+                              toggling={togglingUserId === u.id}
+                            />
+                          ))
+                        ) : (
+                          <tr><td colSpan={8} className="p-8 text-center text-zinc-500 text-xs">Sin resultados</td></tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
 
                 <div className="md:hidden divide-y divide-zinc-800">
