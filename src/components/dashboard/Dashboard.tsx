@@ -161,6 +161,7 @@ export const Dashboard = () => {
       await genTrial({ data: { displayName } });
       toast.success("¡Licencia de prueba generada!");
       if (user) await refetchLicenses(user.id);
+      setActiveTab("llaves");
     } catch (e: any) {
       toast.error(e.message || "Error al generar la prueba");
     } finally {
