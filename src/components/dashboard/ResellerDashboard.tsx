@@ -1009,7 +1009,7 @@ const MetricCard = ({ title, value, subtitle, icon, accent = false, trend, spark
             </svg>
           )}
         </div>
-        <p className="text-[11px] text-muted-foreground mt-2">{subtitle}</p>
+        <p className="text-[11px] text-zinc-400 mt-2">{subtitle}</p>
       </div>
     </div>
   );
@@ -1041,7 +1041,7 @@ const LicenseTypeCard = ({ icon, title, description, badge, badgeColor = 'primar
     </div>
     <div className="relative flex-1">
       <h3 className="text-base font-bold text-white tracking-tight mb-1">{title}</h3>
-      <p className="text-xs text-muted-foreground mb-6">{description}</p>
+      <p className="text-xs text-zinc-400 mb-6">{description}</p>
     </div>
     <Button onClick={onClick} disabled={disabled} className={`relative w-full font-semibold h-11 rounded-xl transition-all group/btn disabled:opacity-40 disabled:cursor-not-allowed ${
       featured
@@ -1064,7 +1064,7 @@ const LicenseRow = ({ customerName, customerPhone, type, code, status, date }: {
       <td className="px-4 py-4 sm:px-6">
         <div className="flex flex-col">
           <span className="text-white font-medium whitespace-nowrap">{customerName || '—'}</span>
-          {customerPhone && <span className="text-[10px] text-muted-foreground whitespace-nowrap">{customerPhone}</span>}
+          {customerPhone && <span className="text-[10px] text-zinc-400 whitespace-nowrap">{customerPhone}</span>}
         </div>
       </td>
       <td className="px-4 py-4 sm:px-6">

@@ -450,7 +450,7 @@ export const SuperAdminDashboard = () => {
               <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-4">
                 <div>
                   <CardTitle className="text-sm font-semibold">Usuarios</CardTitle>
-                  <CardDescription className="text-xs text-zinc-500">
+                  <CardDescription className="text-xs text-zinc-400">
                     {users.length} registrados
                   </CardDescription>
                 </div>
@@ -969,7 +969,7 @@ const UserRow = (props: UserActionProps) => {
           </div>
           <div className="min-w-0">
             <p className="text-sm text-white truncate">{name}</p>
-            <p className="text-xs text-zinc-500 truncate">{user.email}</p>
+            <p className="text-xs text-zinc-400 truncate">{user.email}</p>
           </div>
         </div>
       </td>
@@ -995,7 +995,7 @@ const UserRow = (props: UserActionProps) => {
           {user.signup_ip || "—"}
         </span>
       </td>
-      <td className="px-4 py-3 text-xs text-zinc-500">
+      <td className="px-4 py-3 text-xs text-zinc-400">
         {new Date(user.created_at).toLocaleDateString()}
       </td>
       <td className="px-4 py-3 text-right">
