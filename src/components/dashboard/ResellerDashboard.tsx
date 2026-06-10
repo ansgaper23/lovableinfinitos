@@ -522,42 +522,44 @@ export const ResellerDashboard = () => {
                       Ver todas →
                     </Button>
                   </div>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
-                      <thead>
-                        <tr className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] bg-white/[0.015]">
-                          <th className="px-4 py-3 sm:px-6">Cliente</th>
-                          <th className="px-4 py-3 sm:px-6">Tipo</th>
-                          <th className="px-4 py-3 sm:px-6">Código</th>
-                          <th className="px-4 py-3 sm:px-6">Estado</th>
-                          <th className="px-4 py-3 sm:px-6 text-right">Fecha</th>
-                        </tr>
-                      </thead>
-                      <tbody className="text-sm">
-                        {fetchingLicenses ? (
-                          <tr><td colSpan={5} className="p-12 text-center text-muted-foreground text-xs uppercase tracking-widest">Cargando datos…</td></tr>
-                        ) : licenses.length > 0 ? (
-                          licenses.slice(0, 10).map((l) => (
-                            <LicenseRow
-                              key={l.id}
-                              customerName={l.customer_name}
-                              customerPhone={l.customer_phone}
-                              type={l.type.toUpperCase()}
-                              code={l.code}
-                              status={l.status}
-                              date={new Date(l.created_at).toLocaleDateString()}
-                            />
-                          ))
-                        ) : (
-                          <tr><td colSpan={5} className="p-12 text-center">
-                            <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                              <Key className="w-8 h-8 opacity-30" />
-                              <p className="text-xs uppercase tracking-widest">Aún no has generado licencias</p>
-                            </div>
-                          </td></tr>
-                        )}
-                      </tbody>
-                    </table>
+                  <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+                    <div className="min-w-[600px]">
+                      <table className="w-full text-left border-collapse">
+                        <thead>
+                          <tr className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] bg-white/[0.015]">
+                            <th className="px-4 py-3 sm:px-6">Cliente</th>
+                            <th className="px-4 py-3 sm:px-6">Tipo</th>
+                            <th className="px-4 py-3 sm:px-6">Código</th>
+                            <th className="px-4 py-3 sm:px-6">Estado</th>
+                            <th className="px-4 py-3 sm:px-6 text-right">Fecha</th>
+                          </tr>
+                        </thead>
+                        <tbody className="text-sm">
+                          {fetchingLicenses ? (
+                            <tr><td colSpan={5} className="p-12 text-center text-muted-foreground text-xs uppercase tracking-widest">Cargando datos…</td></tr>
+                          ) : licenses.length > 0 ? (
+                            licenses.slice(0, 10).map((l) => (
+                              <LicenseRow
+                                key={l.id}
+                                customerName={l.customer_name}
+                                customerPhone={l.customer_phone}
+                                type={l.type.toUpperCase()}
+                                code={l.code}
+                                status={l.status}
+                                date={new Date(l.created_at).toLocaleDateString()}
+                              />
+                            ))
+                          ) : (
+                            <tr><td colSpan={5} className="p-12 text-center">
+                              <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                                <Key className="w-8 h-8 opacity-30" />
+                                <p className="text-xs uppercase tracking-widest">Aún no has generado licencias</p>
+                              </div>
+                            </td></tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
               </>
@@ -585,42 +587,44 @@ export const ResellerDashboard = () => {
                       {licenses.length} licencias emitidas
                     </span>
                   </div>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
-                      <thead>
-                        <tr className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] bg-white/[0.015]">
-                          <th className="px-4 py-3 sm:px-6">Cliente</th>
-                          <th className="px-4 py-3 sm:px-6">Tipo</th>
-                          <th className="px-4 py-3 sm:px-6">Código</th>
-                          <th className="px-4 py-3 sm:px-6">Estado</th>
-                          <th className="px-4 py-3 sm:px-6 text-right">Fecha</th>
-                        </tr>
-                      </thead>
-                      <tbody className="text-sm">
-                        {fetchingLicenses ? (
-                          <tr><td colSpan={5} className="p-12 text-center text-muted-foreground text-xs uppercase tracking-widest">Cargando datos…</td></tr>
-                        ) : licenses.length > 0 ? (
-                          licenses.map((l) => (
-                            <LicenseRow
-                              key={l.id}
-                              customerName={l.customer_name}
-                              customerPhone={l.customer_phone}
-                              type={l.type.toUpperCase()}
-                              code={l.code}
-                              status={l.status}
-                              date={new Date(l.created_at).toLocaleDateString()}
-                            />
-                          ))
-                        ) : (
-                          <tr><td colSpan={5} className="p-12 text-center">
-                            <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                              <Key className="w-8 h-8 opacity-30" />
-                              <p className="text-xs uppercase tracking-widest">No hay licencias registradas</p>
-                            </div>
-                          </td></tr>
-                        )}
-                      </tbody>
-                    </table>
+                  <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+                    <div className="min-w-[600px]">
+                      <table className="w-full text-left border-collapse">
+                        <thead>
+                          <tr className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] bg-white/[0.015]">
+                            <th className="px-4 py-3 sm:px-6">Cliente</th>
+                            <th className="px-4 py-3 sm:px-6">Tipo</th>
+                            <th className="px-4 py-3 sm:px-6">Código</th>
+                            <th className="px-4 py-3 sm:px-6">Estado</th>
+                            <th className="px-4 py-3 sm:px-6 text-right">Fecha</th>
+                          </tr>
+                        </thead>
+                        <tbody className="text-sm">
+                          {fetchingLicenses ? (
+                            <tr><td colSpan={5} className="p-12 text-center text-muted-foreground text-xs uppercase tracking-widest">Cargando datos…</td></tr>
+                          ) : licenses.length > 0 ? (
+                            licenses.map((l) => (
+                              <LicenseRow
+                                key={l.id}
+                                customerName={l.customer_name}
+                                customerPhone={l.customer_phone}
+                                type={l.type.toUpperCase()}
+                                code={l.code}
+                                status={l.status}
+                                date={new Date(l.created_at).toLocaleDateString()}
+                              />
+                            ))
+                          ) : (
+                            <tr><td colSpan={5} className="p-12 text-center">
+                              <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                                <Key className="w-8 h-8 opacity-30" />
+                                <p className="text-xs uppercase tracking-widest">No hay licencias registradas</p>
+                              </div>
+                            </td></tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
               </div>
