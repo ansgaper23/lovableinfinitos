@@ -19,9 +19,9 @@ export const Footer = () => {
 
           <nav className="flex flex-wrap justify-center gap-12 text-sm font-black uppercase tracking-widest text-muted-foreground">
             <a href="#inicio" className="hover:text-primary transition-colors hover:text-glow">Inicio</a>
-            <a href="/precios" className="hover:text-primary transition-colors hover:text-glow">Planes</a>
-            <a href="/faq" className="hover:text-primary transition-colors hover:text-glow">FAQ</a>
-            <a href="/legal" className="hover:text-primary transition-colors hover:text-glow">Legal</a>
+            <a href="#precios" className="hover:text-primary transition-colors hover:text-glow">Planes</a>
+            <a href="#faq" className="hover:text-primary transition-colors hover:text-glow">FAQ</a>
+            <a href="#legal" className="hover:text-primary transition-colors hover:text-glow">Legal</a>
           </nav>
 
           <div className="text-right flex flex-col items-center md:items-end gap-2">

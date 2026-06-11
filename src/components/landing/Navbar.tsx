@@ -31,17 +31,17 @@ export const Navbar = () => {
             </NavigationMenuItem>
             <NavigationMenuItem>
               <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-                <Link to="/como-funciona">Cómo Funciona</Link>
+                <a href="#como-funciona">Cómo Funciona</a>
               </NavigationMenuLink>
             </NavigationMenuItem>
             <NavigationMenuItem>
               <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-                <Link to="/precios">Precios</Link>
+                <a href="#precios">Precios</a>
               </NavigationMenuLink>
             </NavigationMenuItem>
             <NavigationMenuItem>
               <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-                <Link to="/faq">FAQ</Link>
+                <a href="#faq">FAQ</a>
               </NavigationMenuLink>
             </NavigationMenuItem>
           </NavigationMenuList>
