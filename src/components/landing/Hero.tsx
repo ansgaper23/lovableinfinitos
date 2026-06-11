@@ -8,6 +8,9 @@ export const Hero = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
+    // Force scroll to top on mount
+    window.scrollTo(0, 0);
+    
     const options = {
       root: null,
       rootMargin: "0px",
@@ -39,6 +42,7 @@ export const Hero = () => {
       }
     };
   }, []);
+
 
   return (
     <section id="inicio" className="pt-40 pb-16 md:pt-56 md:pb-32 px-4 overflow-hidden relative">
