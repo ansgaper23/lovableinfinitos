@@ -130,7 +130,7 @@ export const Auth = () => {
         friendly = "✉️ Solo se aceptan correos de Gmail o Hotmail/Outlook.";
       } else if (msg.includes("email inválido") || msg.includes("invalid email") || msg.includes("email_address_invalid")) {
         friendly = "✉️ El correo ingresado no es válido. Revisa el formato.";
-      } else if (msg.includes("ya está registrado") || msg.includes("already registered") || msg.includes("user_already_exists")) {
+      } else if (msg.includes("ya está registrado") || msg.includes("already registered") || msg.includes("user_already_exists") || msg.includes("este correo ya está registrado")) {
         friendly = "⚠️ Este correo ya está registrado. Inicia sesión en su lugar.";
       } else if (msg.includes("email not confirmed") || msg.includes("no está confirmado")) {
         friendly = "📩 Tu correo aún no está confirmado. Revisa tu bandeja de entrada.";
