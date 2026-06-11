@@ -104,6 +104,7 @@ export const Hero = () => {
                 loop 
                 playsInline
                 controls
+                preload="none"
               >
                 <source src="https://ia801400.us.archive.org/33/items/guia-rapido-lovablefre/guia%20rapido%20lovablefre.ia.mp4?cnt=0" type="video/mp4" />
                 Tu navegador no soporta el video.
