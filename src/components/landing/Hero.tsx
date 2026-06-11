@@ -1,8 +1,13 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, lazy, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Zap, Shield, Globe } from "lucide-react";
 import { Link } from "@tanstack/react-router";
+
+// Iconos cargados de forma diferida para mejorar el FCP
+const ZapIcon = lazy(() => import("lucide-react").then(m => ({ default: m.Zap })));
+const ShieldIcon = lazy(() => import("lucide-react").then(m => ({ default: m.Shield })));
+const GlobeIcon = lazy(() => import("lucide-react").then(m => ({ default: m.Globe })));
+const ArrowRightIcon = lazy(() => import("lucide-react").then(m => ({ default: m.ArrowRight })));
 
 export const Hero = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -52,7 +57,7 @@ export const Hero = () => {
       <div className="absolute bottom-10 left-[5%] w-96 h-96 bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
       
       <div className="container mx-auto text-center relative z-10">
-        <Badge variant="outline" className="mb-6 py-1.5 px-4 border-primary/30 bg-primary/10 text-primary animate-fade-in backdrop-blur-sm neon-border">
+        <Badge variant="outline" className="mb-6 py-1.5 px-4 border-primary/30 bg-primary/10 text-primary opacity-0 animate-fade-in backdrop-blur-sm neon-border" style={{ animationFillMode: 'forwards' }}>
           <span className="relative flex h-2 w-2 mr-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
@@ -69,19 +74,19 @@ export const Hero = () => {
           Rompe las barreras de <span className="text-foreground font-bold border-b-2 border-primary/50">Lovable</span>. Créditos infinitos, sin fricción, optimizado para la comunidad de builders.
         </p>
         
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-16 animate-fade-in" style={{ animationDelay: "0.2s" }}>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-16 opacity-0 animate-fade-in" style={{ animationDelay: "0.2s", animationFillMode: 'forwards' }}>
           <Button size="lg" className="h-16 px-10 text-xl font-black italic tracking-tighter uppercase gap-3 shadow-[0_0_30px_rgba(var(--color-primary),0.4)] hover:shadow-[0_0_50px_rgba(var(--color-primary),0.6)] w-full sm:w-auto rounded-none transition-all duration-300 transform hover:-translate-y-1" asChild>
             <a href="#precios">
-              VER PLANES <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+              VER PLANES <Suspense fallback={null}><ArrowRightIcon className="w-6 h-6 group-hover:translate-x-1 transition-transform" /></Suspense>
             </a>
           </Button>
           <Button size="lg" className="h-16 px-10 text-xl font-black italic tracking-tighter uppercase w-full sm:w-auto rounded-none bg-primary text-primary-foreground hover:shadow-[0_0_30px_rgba(var(--color-primary),0.4)] transition-all" asChild>
-            <Link to="/auth">VER DEMO <Zap className="w-5 h-5 ml-2" /></Link>
+            <Link to="/auth">VER DEMO <Suspense fallback={null}><ZapIcon className="w-5 h-5 ml-2" /></Suspense></Link>
           </Button>
         </div>
 
         {/* Video Demo Mockup */}
-        <div className="max-w-4xl mx-auto mb-20 animate-fade-in" style={{ animationDelay: "0.4s" }}>
+        <div className="max-w-4xl mx-auto mb-20 opacity-0 animate-fade-in" style={{ animationDelay: "0.4s", animationFillMode: 'forwards' }}>
           <div className="relative group">
             {/* Browser Mockup Header */}
             <div className="bg-[#1A1A1A] border-x border-t border-white/10 rounded-t-xl p-3 flex items-center gap-2">
@@ -91,7 +96,7 @@ export const Hero = () => {
                 <div className="w-3 h-3 rounded-full bg-[#27C93F]" />
               </div>
               <div className="mx-auto bg-white/5 rounded-md px-4 py-1 flex items-center gap-2 max-w-[200px] md:max-w-md w-full">
-                <Globe className="w-3 h-3 text-muted-foreground" />
+                <Suspense fallback={null}><GlobeIcon className="w-3 h-3 text-muted-foreground" /></Suspense>
                 <span className="text-[10px] text-muted-foreground truncate font-mono uppercase tracking-widest">lovablefree.xyz/guia-rapida</span>
               </div>
             </div>
@@ -129,21 +134,21 @@ export const Hero = () => {
         <div className="hidden md:grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto pt-8 border-t border-border/50">
           <div className="flex flex-col items-center gap-2">
             <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-2">
-              <Zap className="w-6 h-6" />
+              <Suspense fallback={null}><ZapIcon className="w-6 h-6" /></Suspense>
             </div>
             <h3 className="font-bold text-lg text-primary">Créditos Infinitos</h3>
             <p className="text-sm text-muted-foreground text-center">Construye sin mirar el contador de créditos.</p>
           </div>
           <div className="flex flex-col items-center gap-2">
             <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-2">
-              <Shield className="w-6 h-6" />
+              <Suspense fallback={null}><ShieldIcon className="w-6 h-6" /></Suspense>
             </div>
             <h3 className="font-bold text-lg text-primary">Acceso Inmediato</h3>
             <p className="text-sm text-muted-foreground text-center">Configuración en menos de 5 minutos.</p>
           </div>
           <div className="flex flex-col items-center gap-2">
             <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-2">
-              <Globe className="w-6 h-6" />
+              <Suspense fallback={null}><GlobeIcon className="w-6 h-6" /></Suspense>
             </div>
             <h3 className="font-bold text-lg text-primary">Soporte 24/7</h3>
             <p className="text-sm text-muted-foreground text-center">Asistencia personalizada por WhatsApp en español.</p>

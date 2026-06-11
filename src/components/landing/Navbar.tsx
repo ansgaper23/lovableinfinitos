@@ -1,10 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, navigationMenuTriggerStyle } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
-import { MessageCircle, LayoutDashboard } from "lucide-react";
+import { lazy, Suspense } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Link } from "@tanstack/react-router";
 import logoAsset from "@/assets/logo.png.asset.json";
+
+const MessageCircleIcon = lazy(() => import("lucide-react").then(m => ({ default: m.MessageCircle })));
+const LayoutDashboardIcon = lazy(() => import("lucide-react").then(m => ({ default: m.LayoutDashboard })));
 
 
 export const Navbar = () => {
@@ -52,7 +55,9 @@ export const Navbar = () => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <MessageCircle className="w-4 h-4" />
+              <Suspense fallback={null}>
+                <MessageCircleIcon className="w-4 h-4" />
+              </Suspense>
               Soporte
             </a>
           </Button>
@@ -71,7 +76,7 @@ const AuthButtons = () => {
     return (
       <Button variant="outline" className="hidden sm:flex font-black italic tracking-tighter uppercase gap-2 border-primary/50 text-primary" asChild>
         <Link to="/dashboard">
-          <LayoutDashboard className="w-4 h-4" />
+          <Suspense fallback={null}><LayoutDashboardIcon className="w-4 h-4" /></Suspense>
           Mi Panel
         </Link>
       </Button>
