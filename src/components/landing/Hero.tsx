@@ -107,11 +107,14 @@ export const Hero = () => {
                 ref={videoRef}
                 className="w-full h-full object-cover"
                 loop 
+                muted
+                autoPlay
                 playsInline
                 controls
-                preload="none"
+                preload="metadata"
+                poster="/__l5e/assets-v1/c7b1c220-28ef-4fb7-b368-30cca589d56c/logo.png"
               >
-                <source src="https://ia801400.us.archive.org/33/items/guia-rapido-lovablefre/guia%20rapido%20lovablefre.ia.mp4?cnt=0" type="video/mp4" />
+                <source src="https://ia801400.us.archive.org/33/items/guia-rapido-lovablefre/guia%20rapido%20lovablefre.ia.mp4" type="video/mp4" />
                 Tu navegador no soporta el video.
               </video>
               
