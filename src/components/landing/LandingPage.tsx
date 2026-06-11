@@ -11,7 +11,7 @@ const Pricing = lazy(() => import("@/components/landing/Pricing").then(m => ({ d
 const FAQ = lazy(() => import("@/components/landing/FAQ").then(m => ({ default: m.FAQ })));
 
 const SectionFallback = () => (
-  <div className="py-24 flex items-center justify-center">
+  <div className="py-24 flex items-center justify-center min-h-[400px]">
     <div className="h-8 w-8 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
   </div>
 );
