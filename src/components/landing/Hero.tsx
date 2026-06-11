@@ -43,9 +43,9 @@ export const Hero = () => {
   return (
     <section id="inicio" className="pt-40 pb-16 md:pt-56 md:pb-32 px-4 overflow-hidden relative">
       {/* Animated background elements */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-6xl h-full -z-10 opacity-50 blur-[120px] bg-[radial-gradient(circle_at_center,var(--color-primary),transparent_70%)] pointer-events-none" />
-      <div className="absolute top-20 right-[10%] w-64 h-64 bg-accent/20 rounded-full blur-[80px] animate-pulse pointer-events-none" />
-      <div className="absolute bottom-10 left-[5%] w-96 h-96 bg-primary/10 rounded-full blur-[100px] animate-float pointer-events-none" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-6xl h-full -z-10 opacity-30 blur-[120px] bg-[radial-gradient(circle_at_center,var(--color-primary),transparent_70%)] pointer-events-none" />
+      <div className="absolute top-20 right-[10%] w-64 h-64 bg-accent/10 rounded-full blur-[80px] pointer-events-none" />
+      <div className="absolute bottom-10 left-[5%] w-96 h-96 bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
       
       <div className="container mx-auto text-center relative z-10">
         <Badge variant="outline" className="mb-6 py-1.5 px-4 border-primary/30 bg-primary/10 text-primary animate-fade-in backdrop-blur-sm neon-border">
