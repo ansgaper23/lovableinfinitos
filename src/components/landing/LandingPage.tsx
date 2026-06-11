@@ -11,7 +11,7 @@ const Pricing = lazy(() => import("@/components/landing/Pricing").then(m => ({ d
 const FAQ = lazy(() => import("@/components/landing/FAQ").then(m => ({ default: m.FAQ })));
 
 const SectionFallback = () => (
-  <div className="py-24 flex items-center justify-center">
+  <div className="py-24 flex items-center justify-center min-h-[400px]">
     <div className="h-8 w-8 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
   </div>
 );
@@ -32,7 +32,7 @@ export const LandingPage = () => {
       </main>
 
       <footer className="py-24 px-4 border-t border-white/5 bg-background relative overflow-hidden">
-        <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
+        <div className="absolute bottom-0 left-0 w-full h-1 bg-primary/20" />
         <div className="container mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center gap-12">
             <div className="flex items-center gap-4 group">
@@ -56,7 +56,7 @@ export const LandingPage = () => {
 
             <div className="text-right flex flex-col items-center md:items-end gap-2">
               <p className="text-sm font-light text-muted-foreground uppercase tracking-widest">
-                © 2026 LOVABLE INFINITO PERÚ
+                © 2026 LOVABLE INFINITO
               </p>
               <div className="flex gap-4">
                 <div className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center hover:border-primary transition-colors cursor-pointer">

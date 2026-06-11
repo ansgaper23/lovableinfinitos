@@ -25,7 +25,7 @@ export const Pricing = () => {
       duration: "7 Días",
       price: "$13.99",
       pricePen: "S/ 52.50",
-      description: "La opción preferida por builders y freelancers en Perú.",
+      description: "La opción preferida por builders y freelancers.",
       features: [
         "Lovable ilimitado por 7 días",
         "Sin consumo de créditos oficiales",
@@ -58,7 +58,7 @@ export const Pricing = () => {
 
   return (
     <section id="precios" className="py-32 px-4 relative overflow-hidden bg-background">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,var(--color-primary),transparent_80%)] opacity-[0.03] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,var(--color-primary),transparent_80%)] opacity-[0.02] pointer-events-none" />
       
       <div className="container mx-auto relative z-10">
         <div className="text-center max-w-3xl mx-auto mb-20">
@@ -189,7 +189,7 @@ export const Pricing = () => {
             </div>
             <div className="mt-12 text-center pt-8 border-t">
               <p className="flex items-center justify-center gap-2 text-muted-foreground font-medium">
-                Hecho con <Heart className="w-4 h-4 text-red-500 fill-red-500" /> para builders de Perú
+                Hecho con <Heart className="w-4 h-4 text-red-500 fill-red-500" /> para builders
               </p>
             </div>
           </div>
