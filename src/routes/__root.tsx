@@ -106,6 +106,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: "https://ia801400.us.archive.org"
       },
       {
+        rel: "preload",
+        as: "style",
+        href: appCss
+      },
+      {
         rel: "stylesheet",
         href: appCss,
       },
