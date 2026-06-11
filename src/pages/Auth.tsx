@@ -171,48 +171,59 @@ export const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground dark font-sans flex items-center justify-center p-4 bg-[radial-gradient(circle_at_center,var(--color-primary),transparent_80%)] bg-opacity-[0.05]">
-      <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-20">
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-primary/20 blur-[100px] animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary/10 blur-[120px] animate-float" />
+    <div className="min-h-screen bg-background text-foreground dark font-sans flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Background Decorative Elements */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/20 blur-[120px] rounded-full animate-pulse" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-primary/10 blur-[150px] rounded-full animate-float" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,var(--color-primary),transparent_70%)] opacity-[0.03]" />
       </div>
 
-      <Card className="w-full max-w-md rounded-none border-white/5 bg-white/[0.02] backdrop-blur-xl relative z-10 overflow-hidden">
+      <Card className="w-full max-w-md border-white/10 bg-black/40 backdrop-blur-2xl relative z-10 overflow-hidden shadow-elegant rounded-2xl group transition-all duration-500 hover:border-primary/30">
+        {/* Top Gradient Bar */}
+        <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-primary/20 via-primary to-primary/20" />
+        
+        {/* Back Button */}
         <Link 
           to="/" 
-          className="absolute top-6 left-6 p-2 text-muted-foreground hover:text-primary transition-colors group z-20"
+          className="absolute top-6 left-6 p-2.5 rounded-xl bg-white/5 text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all group/back z-20 border border-white/5"
           title="Volver al inicio"
         >
-          <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+          <ArrowLeft className="w-4 h-4 group-hover/back:-translate-x-1 transition-transform" />
         </Link>
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent" />
-        <CardHeader className="text-center pt-10">
+
+        <CardHeader className="text-center pt-12 pb-6">
           <div className="flex justify-center mb-6">
-            <div className="w-12 h-12 bg-primary rounded-none flex items-center justify-center shadow-[0_0_20px_rgba(var(--color-primary),0.3)]">
-              <span className="text-primary-foreground font-black text-2xl italic">L</span>
+            <div className="relative group/logo">
+              <div className="absolute inset-0 bg-primary/40 blur-xl rounded-full scale-0 group-hover/logo:scale-150 transition-transform duration-700 opacity-0 group-hover/logo:opacity-100" />
+              <div className="w-16 h-16 bg-gradient-to-br from-primary to-primary/80 rounded-2xl flex items-center justify-center shadow-[0_0_30px_rgba(var(--color-primary),0.4)] relative z-10 transform transition-transform group-hover/logo:scale-110 group-hover/logo:rotate-3">
+                <span className="text-primary-foreground font-black text-3xl italic tracking-tighter">L</span>
+              </div>
             </div>
           </div>
-          <CardTitle className="text-3xl font-black italic tracking-tighter uppercase">
+          <CardTitle className="text-3xl font-black italic tracking-tighter uppercase text-glow">
             {isLogin ? "Iniciar Sesión" : "Crear Cuenta"}
           </CardTitle>
-          <CardDescription className="text-muted-foreground uppercase tracking-widest text-[10px] font-black mt-2">
+          <CardDescription className="text-muted-foreground uppercase tracking-[0.2em] text-[10px] font-black mt-2 opacity-70">
             Lovable Infinito — Elite Access
           </CardDescription>
         </CardHeader>
-        <CardContent>
+
+        <CardContent className="space-y-6">
           {signupSuccess && (
-            <div className="mb-6 p-4 border border-green-500/30 bg-green-500/10 rounded-none flex items-start gap-3">
+            <div className="p-4 border border-green-500/30 bg-green-500/5 rounded-xl flex items-start gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
               <Mail className="w-5 h-5 text-green-400 mt-0.5 shrink-0" />
               <div>
                 <p className="text-sm font-bold text-green-400 uppercase tracking-wider">¡Revisa tu correo!</p>
-                <p className="text-xs text-green-300/80 mt-1">
-                  Te enviamos un email de verificación. Haz clic en el link que te enviamos para activar tu cuenta. Luego podrás iniciar sesión.
+                <p className="text-xs text-green-300/80 mt-1 leading-relaxed">
+                  Te enviamos un email de verificación. Haz clic en el link para activar tu cuenta.
                 </p>
               </div>
             </div>
           )}
+          
           {errorMsg && (
-            <div className="mb-6 p-4 border border-red-500/40 bg-red-500/10 rounded-none flex items-start gap-3" role="alert">
+            <div className="p-4 border border-red-500/30 bg-red-500/5 rounded-xl flex items-start gap-3 animate-in fade-in slide-in-from-top-2 duration-300" role="alert">
               <AlertCircle className="w-5 h-5 text-red-400 mt-0.5 shrink-0" />
               <div className="flex-1">
                 <p className="text-sm font-bold text-red-400 uppercase tracking-wider">Error</p>
@@ -221,9 +232,9 @@ export const Auth = () => {
             </div>
           )}
 
-          <form onSubmit={handleAuth} className="space-y-6">
+          <form onSubmit={handleAuth} className="space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-xs font-black uppercase tracking-widest text-muted-foreground">Email</Label>
+              <Label htmlFor="email" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70 ml-1">Email Corporativo</Label>
               <Input 
                 id="email" 
                 type="email" 
@@ -231,42 +242,43 @@ export const Auth = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="rounded-none border-white/10 bg-white/5 focus:border-primary transition-colors h-12"
+                className="rounded-xl border-white/10 bg-white/[0.03] focus:border-primary/50 focus:bg-white/[0.06] transition-all h-12 px-4"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-xs font-black uppercase tracking-widest text-muted-foreground">Contraseña</Label>
+              <Label htmlFor="password" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70 ml-1">Contraseña</Label>
               <Input 
                 id="password" 
                 type="password" 
+                placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="rounded-none border-white/10 bg-white/5 focus:border-primary transition-colors h-12"
+                className="rounded-xl border-white/10 bg-white/[0.03] focus:border-primary/50 focus:bg-white/[0.06] transition-all h-12 px-4"
               />
             </div>
             <Button 
               type="submit" 
               disabled={loading}
-              className="w-full h-14 rounded-none font-black italic tracking-tighter uppercase text-lg shadow-[0_0_20px_rgba(var(--color-primary),0.3)] hover:shadow-[0_0_40px_rgba(var(--color-primary),0.5)] transition-all"
+              className="w-full h-12 rounded-xl font-black italic tracking-tighter uppercase text-base gradient-primary shadow-elegant hover:scale-[1.02] active:scale-[0.98] transition-all duration-300"
             >
               {loading ? "Procesando..." : isLogin ? "Entrar al Panel" : "Registrarme Ahora"}
             </Button>
           </form>
 
-          <div className="relative my-8">
+          <div className="relative py-2">
             <div className="absolute inset-0 flex items-center">
               <span className="w-full border-t border-white/5"></span>
             </div>
-            <div className="relative flex justify-center text-[10px] uppercase font-black tracking-widest">
-              <span className="bg-background/50 backdrop-blur-md px-4 text-muted-foreground">O continúa con</span>
+            <div className="relative flex justify-center text-[9px] uppercase font-black tracking-[0.2em]">
+              <span className="bg-[#050505] px-4 text-muted-foreground/50">O continúa con</span>
             </div>
           </div>
 
           <Button 
             variant="outline" 
             onClick={handleGoogleLogin}
-            className="w-full h-12 rounded-none border-white/10 bg-white/5 hover:bg-white/10 font-bold uppercase tracking-widest text-xs gap-3"
+            className="w-full h-12 rounded-xl border-white/10 bg-white/[0.03] hover:bg-white/[0.08] hover:border-white/20 font-bold uppercase tracking-widest text-[10px] gap-3 transition-all"
           >
             <svg className="w-4 h-4" viewBox="0 0 24 24">
               <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -274,13 +286,14 @@ export const Auth = () => {
               <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
               <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
             </svg>
-            Google
+            Google Identity
           </Button>
         </CardContent>
+
         <CardFooter className="justify-center pb-10">
           <button
             onClick={() => { setIsLogin(!isLogin); setSignupSuccess(false); setErrorMsg(null); }}
-            className="text-xs font-black uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors"
+            className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 hover:text-primary transition-colors py-2 px-4 rounded-lg hover:bg-primary/5"
           >
             {isLogin ? "¿No tienes cuenta? Regístrate" : "¿Ya tienes cuenta? Entra aquí"}
           </button>
