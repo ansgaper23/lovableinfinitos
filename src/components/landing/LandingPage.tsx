@@ -24,10 +24,12 @@ export const LandingPage = () => {
       <main>
         <Hero />
         <Suspense fallback={<SectionFallback />}>
-          <Stats />
-          <HowItWorks />
-          <Pricing />
-          <FAQ />
+          <div className="min-h-[2000px]">
+            <Stats />
+            <HowItWorks />
+            <Pricing />
+            <FAQ />
+          </div>
         </Suspense>
       </main>
 
