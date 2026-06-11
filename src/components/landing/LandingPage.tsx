@@ -22,11 +22,11 @@ export const LandingPage = () => {
       <AnnouncementBar />
       <Navbar />
       <main>
+        <Hero />
         <Suspense fallback={<SectionFallback />}>
-          <Pricing />
-          <Hero />
           <Stats />
           <HowItWorks />
+          <Pricing />
           <FAQ />
         </Suspense>
       </main>
