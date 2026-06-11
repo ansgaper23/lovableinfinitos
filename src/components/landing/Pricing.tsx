@@ -25,7 +25,7 @@ export const Pricing = () => {
       duration: "7 Días",
       price: "$13.99",
       pricePen: "S/ 52.50",
-      description: "La opción preferida por builders y freelancers en Perú.",
+      description: "La opción preferida por builders y freelancers.",
       features: [
         "Lovable ilimitado por 7 días",
         "Sin consumo de créditos oficiales",
@@ -189,7 +189,7 @@ export const Pricing = () => {
             </div>
             <div className="mt-12 text-center pt-8 border-t">
               <p className="flex items-center justify-center gap-2 text-muted-foreground font-medium">
-                Hecho con <Heart className="w-4 h-4 text-red-500 fill-red-500" /> para builders de Perú
+                Hecho con <Heart className="w-4 h-4 text-red-500 fill-red-500" /> para builders
               </p>
             </div>
           </div>
