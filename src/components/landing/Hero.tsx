@@ -1,4 +1,4 @@
-import { useEffect, useRef, lazy, Suspense } from "react";
+import { useEffect, useRef, lazy, Suspense, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "@tanstack/react-router";
@@ -10,6 +10,7 @@ const GlobeIcon = lazy(() => import("lucide-react").then(m => ({ default: m.Glob
 const ArrowRightIcon = lazy(() => import("lucide-react").then(m => ({ default: m.ArrowRight })));
 
 export const Hero = () => {
+  const [isVideoLoading, setIsVideoLoading] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -102,15 +103,22 @@ export const Hero = () => {
             </div>
             
             {/* Video Container */}
-            <div className="relative aspect-video bg-black border-x border-b border-white/10 rounded-b-xl overflow-hidden shadow-2xl">
+            <div className="relative aspect-video bg-black border-x border-b border-white/10 rounded-b-xl overflow-hidden shadow-2xl flex items-center justify-center">
+              {isVideoLoading && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 z-20 backdrop-blur-sm">
+                  <div className="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin mb-4" />
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary animate-pulse">Optimizando stream...</p>
+                </div>
+              )}
               <video 
                 ref={videoRef}
-                className="w-full h-full object-cover"
+                className={`w-full h-full object-cover transition-opacity duration-1000 ${isVideoLoading ? 'opacity-0' : 'opacity-100'}`}
                 loop 
                 muted
                 autoPlay
                 playsInline
                 controls
+                onLoadedData={() => setIsVideoLoading(false)}
                 preload="metadata"
                 poster="/__l5e/assets-v1/c7b1c220-28ef-4fb7-b368-30cca589d56c/logo.png"
               >
