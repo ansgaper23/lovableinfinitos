@@ -23,7 +23,7 @@ const steps = [
 
 export const HowItWorks = () => {
   return (
-    <section id="funcionamiento" className="py-32 px-4 relative overflow-hidden bg-background">
+    <section id="como-funciona" className="py-32 px-4 relative overflow-hidden bg-background">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-[radial-gradient(circle_at_center,var(--color-primary),transparent_70%)] opacity-[0.04] pointer-events-none" />
 
       <div className="container mx-auto relative z-10">
