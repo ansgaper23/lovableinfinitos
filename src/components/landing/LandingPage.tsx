@@ -56,7 +56,7 @@ export const LandingPage = () => {
 
             <div className="text-right flex flex-col items-center md:items-end gap-2">
               <p className="text-sm font-light text-muted-foreground uppercase tracking-widest">
-                © 2026 LOVABLE INFINITO PERÚ
+                © 2026 LOVABLE INFINITO
               </p>
               <div className="flex gap-4">
                 <div className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center hover:border-primary transition-colors cursor-pointer">
