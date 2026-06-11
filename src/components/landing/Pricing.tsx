@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Check, X, ShieldAlert, Rocket, Heart, TrendingUp, Zap, DollarSign, Users } from "lucide-react";
+import { Check, X, ShieldAlert, Rocket, Heart, TrendingUp, Zap, DollarSign, Users, Globe } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
 export const Pricing = () => {
@@ -142,6 +142,51 @@ export const Pricing = () => {
               </CardContent>
             </Card>
           ))}
+        </div>
+
+        {/* Video Demo Mockup */}
+        <div className="max-w-4xl mx-auto mb-32 animate-fade-in" style={{ animationDelay: "0.4s" }}>
+          <div className="relative group">
+            {/* Browser Mockup Header */}
+            <div className="bg-[#1A1A1A] border-x border-t border-white/10 rounded-t-xl p-3 flex items-center gap-2">
+              <div className="flex gap-1.5">
+                <div className="w-3 h-3 rounded-full bg-[#FF5F56]" />
+                <div className="w-3 h-3 rounded-full bg-[#FFBD2E]" />
+                <div className="w-3 h-3 rounded-full bg-[#27C93F]" />
+              </div>
+              <div className="mx-auto bg-white/5 rounded-md px-4 py-1 flex items-center gap-2 max-w-[200px] md:max-w-md w-full">
+                <Globe className="w-3 h-3 text-muted-foreground" />
+                <span className="text-[10px] text-muted-foreground truncate font-mono">lovablefree.xyz/demo</span>
+              </div>
+            </div>
+            
+            {/* Video Container */}
+            <div className="relative aspect-video bg-black border-x border-b border-white/10 rounded-b-xl overflow-hidden shadow-2xl">
+              <video 
+                className="w-full h-full object-cover"
+                autoPlay 
+                muted 
+                loop 
+                playsInline
+              >
+                <source src="https://ia801400.us.archive.org/33/items/guia-rapido-lovablefre/guia%20rapido%20lovablefre.ia.mp4?cnt=0" type="video/mp4" />
+                Tu navegador no soporta el video.
+              </video>
+              
+              {/* Overlay glow */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
+              <div className="absolute -inset-px rounded-xl border border-primary/20 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            </div>
+            
+            {/* Background Glow */}
+            <div className="absolute -inset-4 bg-primary/20 blur-3xl -z-10 opacity-0 group-hover:opacity-30 transition-opacity duration-700" />
+          </div>
+          
+          <div className="text-center mt-6">
+            <p className="text-sm text-muted-foreground italic font-medium">
+              Mira cómo activar tus créditos ilimitados en menos de 60 segundos ⚡
+            </p>
+          </div>
         </div>
 
         <div className="max-w-4xl mx-auto">
