@@ -32,7 +32,7 @@ export const LandingPage = () => {
       </main>
 
       <footer className="py-24 px-4 border-t border-white/5 bg-background relative overflow-hidden">
-        <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
+        <div className="absolute bottom-0 left-0 w-full h-1 bg-primary/20" />
         <div className="container mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center gap-12">
             <div className="flex items-center gap-4 group">
