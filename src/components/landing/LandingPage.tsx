@@ -25,7 +25,7 @@ export const LandingPage = () => {
       <main>
         <Hero />
         <Suspense fallback={<SectionFallback />}>
-          <div className="min-h-[2000px]">
+          <div className="min-h-screen">
             <Stats />
             <HowItWorks />
             <Pricing />

@@ -1,8 +1,8 @@
 export const AnnouncementBar = () => {
   return (
     <div className="fixed top-0 left-0 right-0 h-10 bg-primary/10 border-b border-primary/20 flex items-center overflow-hidden z-[60] backdrop-blur-md">
-      <div className="flex whitespace-nowrap animate-marquee">
-        {[...Array(10)].map((_, i) => (
+      <div className="flex whitespace-nowrap animate-marquee hover:[animation-play-state:paused] cursor-default">
+        {[...Array(20)].map((_, i) => (
           <div key={i} className="flex items-center gap-8 px-4">
             <span className="text-[10px] font-black tracking-[0.3em] text-primary uppercase italic">
               OFERTA DE LANZAMIENTO: 50% DCTO EN EL PLAN PRO
