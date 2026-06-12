@@ -2,6 +2,8 @@ import { useEffect, useRef, lazy, Suspense, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "@tanstack/react-router";
+import videoAsset from "@/assets/guia-lovable-demo.mp4.asset.json";
+import videoPosterAsset from "@/assets/video-poster.jpg.asset.json";
 
 // Iconos cargados de forma diferida para mejorar el FCP
 const ZapIcon = lazy(() => import("lucide-react").then(m => ({ default: m.Zap })));
@@ -11,6 +13,7 @@ const ArrowRightIcon = lazy(() => import("lucide-react").then(m => ({ default: m
 
 export const Hero = () => {
   const [isVideoLoading, setIsVideoLoading] = useState(true);
+  const [hasVideoError, setHasVideoError] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -104,25 +107,47 @@ export const Hero = () => {
             
             {/* Video Container */}
             <div className="relative aspect-video bg-black border-x border-b border-white/10 rounded-b-xl overflow-hidden shadow-2xl flex items-center justify-center">
-              {isVideoLoading && (
+              <img
+                src={videoPosterAsset.url}
+                alt="Vista previa de la guía rápida de Lovable Infinito"
+                className="absolute inset-0 h-full w-full object-cover"
+                loading="eager"
+                decoding="async"
+              />
+
+              {isVideoLoading && !hasVideoError && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 z-20 backdrop-blur-sm">
                   <div className="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin mb-4" />
-                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary animate-pulse">Optimizando stream...</p>
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary animate-pulse">Cargando demo...</p>
                 </div>
               )}
+
+              {hasVideoError && (
+                <a
+                  href={videoAsset.url}
+                  className="absolute inset-0 z-20 flex items-center justify-center bg-black/45 text-sm font-black uppercase tracking-[0.2em] text-primary backdrop-blur-[2px]"
+                >
+                  Abrir video
+                </a>
+              )}
+
               <video 
                 ref={videoRef}
-                className={`w-full h-full object-cover transition-opacity duration-1000 ${isVideoLoading ? 'opacity-0' : 'opacity-100'}`}
+                className={`relative z-10 w-full h-full object-cover transition-opacity duration-1000 ${isVideoLoading || hasVideoError ? 'opacity-0' : 'opacity-100'}`}
                 loop 
                 muted
                 autoPlay
                 playsInline
                 controls
-                onLoadedData={() => setIsVideoLoading(false)}
-                preload="metadata"
-                poster="/__l5e/assets-v1/c7b1c220-28ef-4fb7-b368-30cca589d56c/logo.png"
+                onCanPlay={() => setIsVideoLoading(false)}
+                onError={() => {
+                  setIsVideoLoading(false);
+                  setHasVideoError(true);
+                }}
+                preload="auto"
+                poster={videoPosterAsset.url}
               >
-                <source src="https://ia801400.us.archive.org/33/items/guia-rapido-lovablefre/guia%20rapido%20lovablefre.ia.mp4" type="video/mp4" />
+                <source src={videoAsset.url} type="video/mp4" />
                 Tu navegador no soporta el video.
               </video>
               
