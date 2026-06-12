@@ -77,7 +77,7 @@ export const Hero = () => {
           Rompe las barreras de <span className="text-foreground font-bold border-b-2 border-primary/50">Lovable</span>. Créditos infinitos, sin fricción, optimizado para la comunidad de builders.
         </p>
         
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-10 opacity-0 animate-fade-in" style={{ animationDelay: "0.2s", animationFillMode: 'forwards' }}>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-10">
           <Button size="lg" className="h-16 px-10 text-xl font-black italic tracking-tighter uppercase gap-3 shadow-[0_0_30px_rgba(var(--color-primary),0.4)] hover:shadow-[0_0_50px_rgba(var(--color-primary),0.6)] w-full sm:w-auto rounded-none transition-all duration-300 transform hover:-translate-y-1" asChild>
             <a href="#precios">
               VER PLANES <Suspense fallback={null}><ArrowRightIcon className="w-6 h-6 group-hover:translate-x-1 transition-transform" /></Suspense>
@@ -89,7 +89,7 @@ export const Hero = () => {
         </div>
 
         {/* Video Demo Mockup */}
-        <div className="max-w-4xl mx-auto mb-14 opacity-0 animate-fade-in" style={{ animationDelay: "0.4s", animationFillMode: 'forwards' }}>
+        <div className="max-w-4xl mx-auto mb-14">
           <div className="relative group">
             {/* Browser Mockup Header */}
             <div className="bg-[#1A1A1A] border-x border-t border-white/10 rounded-t-xl p-3 flex items-center gap-2">
