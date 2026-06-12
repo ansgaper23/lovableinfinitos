@@ -53,7 +53,7 @@ export const Hero = () => {
 
 
   return (
-    <section id="inicio" className="pt-40 pb-16 md:pt-56 md:pb-32 px-4 overflow-hidden relative">
+    <section id="inicio" className="pt-28 pb-12 md:pt-36 md:pb-20 px-4 overflow-hidden relative">
       {/* Animated background elements */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-6xl h-full -z-10 opacity-30 blur-[120px] bg-[radial-gradient(circle_at_center,var(--color-primary),transparent_70%)] pointer-events-none" />
       <div className="absolute top-20 right-[10%] w-64 h-64 bg-accent/10 rounded-full blur-[80px] pointer-events-none" />
@@ -68,16 +68,16 @@ export const Hero = () => {
           🚀 +200 Builders activos en LATAM
         </Badge>
         
-        <h1 className="text-5xl md:text-8xl font-black tracking-tighter mb-8 leading-tight italic">
+        <h1 className="text-5xl md:text-7xl font-black tracking-tighter mb-5 leading-tight italic">
           <span className="block bg-clip-text text-transparent bg-gradient-to-b from-white to-white/40">LIBERA TU</span>
           <span className="text-primary text-glow">POTENCIAL IA</span>
         </h1>
         
-        <p className="text-lg md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-12 leading-relaxed font-light">
+        <p className="text-lg md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-8 leading-relaxed font-light">
           Rompe las barreras de <span className="text-foreground font-bold border-b-2 border-primary/50">Lovable</span>. Créditos infinitos, sin fricción, optimizado para la comunidad de builders.
         </p>
         
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-16 opacity-0 animate-fade-in" style={{ animationDelay: "0.2s", animationFillMode: 'forwards' }}>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-10 opacity-0 animate-fade-in" style={{ animationDelay: "0.2s", animationFillMode: 'forwards' }}>
           <Button size="lg" className="h-16 px-10 text-xl font-black italic tracking-tighter uppercase gap-3 shadow-[0_0_30px_rgba(var(--color-primary),0.4)] hover:shadow-[0_0_50px_rgba(var(--color-primary),0.6)] w-full sm:w-auto rounded-none transition-all duration-300 transform hover:-translate-y-1" asChild>
             <a href="#precios">
               VER PLANES <Suspense fallback={null}><ArrowRightIcon className="w-6 h-6 group-hover:translate-x-1 transition-transform" /></Suspense>
@@ -89,7 +89,7 @@ export const Hero = () => {
         </div>
 
         {/* Video Demo Mockup */}
-        <div className="max-w-4xl mx-auto mb-20 opacity-0 animate-fade-in" style={{ animationDelay: "0.4s", animationFillMode: 'forwards' }}>
+        <div className="max-w-4xl mx-auto mb-14 opacity-0 animate-fade-in" style={{ animationDelay: "0.4s", animationFillMode: 'forwards' }}>
           <div className="relative group">
             {/* Browser Mockup Header */}
             <div className="bg-[#1A1A1A] border-x border-t border-white/10 rounded-t-xl p-3 flex items-center gap-2">
