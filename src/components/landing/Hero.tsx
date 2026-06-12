@@ -12,7 +12,6 @@ const GlobeIcon = lazy(() => import("lucide-react").then(m => ({ default: m.Glob
 const ArrowRightIcon = lazy(() => import("lucide-react").then(m => ({ default: m.ArrowRight })));
 
 export const Hero = () => {
-  const [isVideoLoading, setIsVideoLoading] = useState(true);
   const [hasVideoError, setHasVideoError] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -115,13 +114,6 @@ export const Hero = () => {
                 decoding="async"
               />
 
-              {isVideoLoading && !hasVideoError && (
-                <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 z-20 backdrop-blur-sm">
-                  <div className="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin mb-4" />
-                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary animate-pulse">Cargando demo...</p>
-                </div>
-              )}
-
               {hasVideoError && (
                 <a
                   href={videoAsset.url}
@@ -133,18 +125,16 @@ export const Hero = () => {
 
               <video 
                 ref={videoRef}
-                className={`relative z-10 w-full h-full object-cover transition-opacity duration-1000 ${isVideoLoading || hasVideoError ? 'opacity-0' : 'opacity-100'}`}
+                className={`relative z-10 w-full h-full object-cover transition-opacity duration-500 ${hasVideoError ? 'opacity-0' : 'opacity-100'}`}
                 loop 
                 muted
                 autoPlay
                 playsInline
                 controls
-                onCanPlay={() => setIsVideoLoading(false)}
                 onError={() => {
-                  setIsVideoLoading(false);
                   setHasVideoError(true);
                 }}
-                preload="auto"
+                preload="metadata"
                 poster={videoPosterAsset.url}
               >
                 <source src={videoAsset.url} type="video/mp4" />
