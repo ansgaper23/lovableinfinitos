@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Label } from "@/components/ui/label";
 import { ArrowLeft, CheckCircle, AlertCircle, Mail } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
+
 import { toast } from "sonner";
 import { useNavigate, Link } from "@tanstack/react-router";
 import { registerWithIpLimit } from "@/lib/signup.functions";
