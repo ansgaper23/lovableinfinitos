@@ -15,6 +15,9 @@ export const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
+  const [dialCode, setDialCode] = useState("+51");
+  const [countryCode, setCountryCode] = useState("PE");
   const [loading, setLoading] = useState(false);
   const [signupSuccess, setSignupSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -27,6 +30,20 @@ export const Auth = () => {
       }
     });
   }, [navigate]);
+
+  // Detect country from IP to pre-fill the phone prefix
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch("https://ipapi.co/json/", { signal: controller.signal })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => {
+        if (!j) return;
+        if (j.country_calling_code) setDialCode(j.country_calling_code);
+        if (j.country_code) setCountryCode(j.country_code);
+      })
+      .catch(() => { /* fallback silently to default */ });
+    return () => controller.abort();
+  }, []);
 
   const ALLOWED_DOMAINS = ["gmail.com", "googlemail.com", "hotmail.com", "outlook.com", "live.com", "hotmail.es", "outlook.es"];
   const DISPOSABLE_DOMAINS = new Set([
