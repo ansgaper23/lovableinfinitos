@@ -25,6 +25,7 @@ export const LandingPage = () => {
       <Navbar />
       <main>
         <Hero />
+        <Comparison />
         <Suspense fallback={<SectionFallback />}>
           <div className="min-h-screen">
             <Stats />
