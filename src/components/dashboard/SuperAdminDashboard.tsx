@@ -971,6 +971,17 @@ const UserRow = (props: UserActionProps) => {
           <div className="min-w-0">
             <p className="text-sm text-white truncate">{name}</p>
             <p className="text-xs text-zinc-400 truncate">{user.email}</p>
+            {user.phone && (
+              <a
+                href={`https://wa.me/${user.phone.replace(/[^0-9]/g, "")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[10px] font-mono text-green-400/80 hover:text-green-400 truncate block"
+                title="Abrir WhatsApp"
+              >
+                📱 {user.phone}
+              </a>
+            )}
           </div>
         </div>
       </td>
