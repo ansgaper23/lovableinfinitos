@@ -8,6 +8,13 @@ const TOO_MANY_ACCOUNTS_MESSAGE = "parece que tienes muchas cuentas y ningun pla
 const SignupSchema = z.object({
   email: z.string().email().max(255),
   password: z.string().min(6).max(128),
+  phone: z
+    .string()
+    .trim()
+    .max(25)
+    .regex(/^\+?[0-9\s\-()]{6,25}$/, "Número inválido")
+    .optional()
+    .or(z.literal("")),
 });
 
 const ResendSchema = z.object({
