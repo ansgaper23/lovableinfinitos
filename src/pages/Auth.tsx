@@ -265,6 +265,28 @@ export const Auth = () => {
                 className="rounded-xl border-white/10 bg-white/[0.03] focus:border-primary/50 focus:bg-white/[0.06] transition-all h-12 px-4"
               />
             </div>
+            {!isLogin && (
+              <div className="space-y-2">
+                <Label htmlFor="phone" className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/70 ml-1">
+                  Celular <span className="text-muted-foreground/40 normal-case tracking-normal font-normal">(opcional · para soporte por WhatsApp)</span>
+                </Label>
+                <div className="flex gap-2">
+                  <div className="flex items-center gap-1.5 px-3 h-12 rounded-xl border border-white/10 bg-white/[0.03] text-sm font-mono text-muted-foreground shrink-0">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-primary/70">{countryCode}</span>
+                    <span className="text-foreground">{dialCode}</span>
+                  </div>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    inputMode="tel"
+                    placeholder="987 654 321"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="rounded-xl border-white/10 bg-white/[0.03] focus:border-primary/50 focus:bg-white/[0.06] transition-all h-12 px-4 flex-1"
+                  />
+                </div>
+              </div>
+            )}
             <Button 
               type="submit" 
               disabled={loading}
