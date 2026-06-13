@@ -8,6 +8,13 @@ const TOO_MANY_ACCOUNTS_MESSAGE = "parece que tienes muchas cuentas y ningun pla
 const SignupSchema = z.object({
   email: z.string().email().max(255),
   password: z.string().min(6).max(128),
+  phone: z
+    .string()
+    .trim()
+    .max(25)
+    .regex(/^\+?[0-9\s\-()]{6,25}$/, "Número inválido")
+    .optional()
+    .or(z.literal("")),
 });
 
 const ResendSchema = z.object({
@@ -88,6 +95,17 @@ export const registerWithIpLimit = createServerFn({ method: "POST" })
         user_id: userId,
       });
       if (insertError) console.error("[signup] insert ip error", insertError);
+
+      // Save optional phone number on the profile (created by handle_new_user trigger)
+      const phone = (data.phone || "").trim();
+      if (phone) {
+        const normalized = phone.replace(/[\s\-()]/g, "");
+        const { error: phoneError } = await supabaseAdmin
+          .from("profiles")
+          .update({ phone: normalized })
+          .eq("id", userId);
+        if (phoneError) console.error("[signup] save phone error", phoneError);
+      }
     }
 
     return { success: true, userId, needsVerification: true };

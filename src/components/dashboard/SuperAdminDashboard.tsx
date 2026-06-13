@@ -45,6 +45,7 @@ interface ExtendedProfile extends Omit<Profile, 'reseller_api_token'> {
   licenses_assigned?: number;
   licenses_paid?: number;
   signup_ip?: string | null;
+  phone?: string | null;
 }
 
 export const SuperAdminDashboard = () => {
@@ -659,12 +660,7 @@ export const SuperAdminDashboard = () => {
           )}
 
           {activeTab === "stats" && (
-            <Card className="bg-zinc-900 border-zinc-800">
-              <CardHeader>
-                <CardTitle className="text-sm font-semibold">Estadísticas</CardTitle>
-                <CardDescription className="text-xs text-zinc-500">Próximamente</CardDescription>
-              </CardHeader>
-            </Card>
+            <StatsPanel users={users} licenses={licenses} />
           )}
 
           {activeTab === "system" && (
@@ -970,6 +966,17 @@ const UserRow = (props: UserActionProps) => {
           <div className="min-w-0">
             <p className="text-sm text-white truncate">{name}</p>
             <p className="text-xs text-zinc-400 truncate">{user.email}</p>
+            {user.phone && (
+              <a
+                href={`https://wa.me/${user.phone.replace(/[^0-9]/g, "")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[10px] font-mono text-green-400/80 hover:text-green-400 truncate block"
+                title="Abrir WhatsApp"
+              >
+                📱 {user.phone}
+              </a>
+            )}
           </div>
         </div>
       </td>
@@ -1018,6 +1025,16 @@ const UserCard = (props: UserActionProps) => {
           <div className="min-w-0">
             <p className="text-sm text-white truncate">{name}</p>
             <p className="text-xs text-zinc-500 truncate">{user.email}</p>
+            {user.phone && (
+              <a
+                href={`https://wa.me/${user.phone.replace(/[^0-9]/g, "")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[10px] font-mono text-green-400/80 hover:text-green-400 truncate block"
+              >
+                📱 {user.phone}
+              </a>
+            )}
           </div>
         </div>
         <Badge variant="outline" className={`text-[10px] shrink-0 ${roleStyles(user.role || "user")}`}>
@@ -1042,3 +1059,145 @@ const UserCard = (props: UserActionProps) => {
     </div>
   );
 };
+
+// ============================================================
+// Stats Panel
+// ============================================================
+const StatsPanel = ({ users, licenses }: { users: ExtendedProfile[]; licenses: any[] }) => {
+  const now = Date.now();
+  const DAY = 24 * 60 * 60 * 1000;
+
+  const totalUsers = users.length;
+  const byRole = users.reduce<Record<string, number>>((acc, u) => {
+    const r = u.role || "user";
+    acc[r] = (acc[r] || 0) + 1;
+    return acc;
+  }, {});
+  const withPhone = users.filter((u) => !!u.phone).length;
+  const phonePct = totalUsers > 0 ? Math.round((withPhone / totalUsers) * 100) : 0;
+
+  const signups7d = users.filter((u) => now - new Date(u.created_at).getTime() < 7 * DAY).length;
+  const signups30d = users.filter((u) => now - new Date(u.created_at).getTime() < 30 * DAY).length;
+  const signupsToday = users.filter((u) => {
+    const d = new Date(u.created_at);
+    const t = new Date();
+    return d.toDateString() === t.toDateString();
+  }).length;
+
+  const totalCredits = users.reduce((sum, u) => sum + (u.credits ?? 0), 0);
+
+  const totalLicenses = licenses.length;
+  const activeLicenses = licenses.filter((l) => l.status === "active").length;
+  const trialLicenses = licenses.filter((l) => l.type === "trial").length;
+  const paidLicenses = licenses.filter((l) => l.type !== "trial").length;
+  const lifetimeLicenses = licenses.filter((l) => l.lifetime).length;
+
+  // Signups by day for the last 14 days (mini bar chart)
+  const days: { label: string; count: number }[] = [];
+  for (let i = 13; i >= 0; i--) {
+    const day = new Date(now - i * DAY);
+    const key = day.toDateString();
+    const count = users.filter((u) => new Date(u.created_at).toDateString() === key).length;
+    days.push({ label: `${day.getDate()}/${day.getMonth() + 1}`, count });
+  }
+  const maxCount = Math.max(1, ...days.map((d) => d.count));
+
+  return (
+    <div className="space-y-6">
+      {/* Key metrics grid */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <StatCard label="Usuarios totales" value={totalUsers.toString()} icon={<Users className="w-4 h-4 text-blue-400" />} />
+        <StatCard label="Hoy" value={signupsToday.toString()} icon={<TrendingUp className="w-4 h-4 text-green-400" />} />
+        <StatCard label="Últimos 7 días" value={signups7d.toString()} icon={<Activity className="w-4 h-4 text-cyan-400" />} />
+        <StatCard label="Últimos 30 días" value={signups30d.toString()} icon={<Activity className="w-4 h-4 text-purple-400" />} />
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <StatCard label="Licencias totales" value={totalLicenses.toString()} icon={<Key className="w-4 h-4 text-amber-400" />} />
+        <StatCard label="Activas" value={activeLicenses.toString()} icon={<CheckCircle2 className="w-4 h-4 text-green-400" />} />
+        <StatCard label="De prueba" value={trialLicenses.toString()} icon={<Clock className="w-4 h-4 text-blue-400" />} />
+        <StatCard label="Pagas" value={paidLicenses.toString()} icon={<DollarSign className="w-4 h-4 text-emerald-400" />} />
+      </div>
+
+      {/* Signups chart */}
+      <Card className="bg-zinc-900 border-zinc-800">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm font-semibold">Registros últimos 14 días</CardTitle>
+          <CardDescription className="text-xs text-zinc-500">
+            Total: {days.reduce((s, d) => s + d.count, 0)} · Pico: {maxCount}/día
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-end gap-2 h-32">
+            {days.map((d, i) => (
+              <div key={i} className="flex-1 flex flex-col items-center gap-1.5 min-w-0">
+                <div className="text-[10px] tabular-nums text-zinc-400 font-mono">{d.count || ""}</div>
+                <div
+                  className="w-full bg-gradient-to-t from-primary/40 to-primary rounded-sm transition-all hover:opacity-80"
+                  style={{ height: `${(d.count / maxCount) * 100}%`, minHeight: d.count > 0 ? "4px" : "1px" }}
+                  title={`${d.label}: ${d.count} registros`}
+                />
+                <div className="text-[9px] text-zinc-600 font-mono truncate">{d.label}</div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Roles + extras */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card className="bg-zinc-900 border-zinc-800">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-semibold">Distribución por rol</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {(["user", "reseller", "superadmin", "blocked"] as const).map((r) => {
+              const count = byRole[r] || 0;
+              const pct = totalUsers ? Math.round((count / totalUsers) * 100) : 0;
+              return (
+                <div key={r} className="space-y-1">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className={`font-medium ${roleStyles(r).split(" ").find((c) => c.startsWith("text-"))}`}>
+                      {roleLabelOf(r)}
+                    </span>
+                    <span className="text-zinc-400 tabular-nums">{count} · {pct}%</span>
+                  </div>
+                  <div className="h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+                    <div className="h-full bg-primary/60 rounded-full" style={{ width: `${pct}%` }} />
+                  </div>
+                </div>
+              );
+            })}
+          </CardContent>
+        </Card>
+
+        <Card className="bg-zinc-900 border-zinc-800">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-semibold">Indicadores clave</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <MiniRow label="Usuarios con celular" value={`${withPhone} (${phonePct}%)`} icon="📱" />
+            <MiniRow label="Créditos totales en circulación" value={totalCredits.toString()} icon="💳" />
+            <MiniRow label="Licencias vitalicias" value={lifetimeLicenses.toString()} icon="♾️" />
+            <MiniRow
+              label="Conversión a licencia"
+              value={`${totalUsers > 0 ? Math.round((users.filter(u => (u.licenses_paid ?? 0) > 0).length / totalUsers) * 100) : 0}%`}
+              icon="📈"
+            />
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+};
+
+
+const MiniRow = ({ label, value, icon }: { label: string; value: string; icon: string }) => (
+  <div className="flex items-center justify-between text-xs">
+    <span className="text-zinc-400 flex items-center gap-2">
+      <span>{icon}</span>
+      <span>{label}</span>
+    </span>
+    <span className="text-white font-mono tabular-nums">{value}</span>
+  </div>
+);

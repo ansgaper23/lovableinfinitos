@@ -15,6 +15,9 @@ export const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
+  const [dialCode, setDialCode] = useState("+51");
+  const [countryCode, setCountryCode] = useState("PE");
   const [loading, setLoading] = useState(false);
   const [signupSuccess, setSignupSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -27,6 +30,20 @@ export const Auth = () => {
       }
     });
   }, [navigate]);
+
+  // Detect country from IP to pre-fill the phone prefix
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch("https://ipapi.co/json/", { signal: controller.signal })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => {
+        if (!j) return;
+        if (j.country_calling_code) setDialCode(j.country_calling_code);
+        if (j.country_code) setCountryCode(j.country_code);
+      })
+      .catch(() => { /* fallback silently to default */ });
+    return () => controller.abort();
+  }, []);
 
   const ALLOWED_DOMAINS = ["gmail.com", "googlemail.com", "hotmail.com", "outlook.com", "live.com", "hotmail.es", "outlook.es"];
   const DISPOSABLE_DOMAINS = new Set([
@@ -92,10 +109,17 @@ export const Auth = () => {
         toast.success("¡Bienvenido de nuevo!");
         navigate({ to: "/dashboard" });
       } else {
-        await registerWithIpLimit({ data: { email, password } });
+        const trimmedPhone = phone.trim();
+        const fullPhone = trimmedPhone
+          ? `${dialCode}${trimmedPhone.replace(/[\s\-()]/g, "")}`
+          : "";
+        await registerWithIpLimit({
+          data: { email, password, phone: fullPhone || undefined },
+        });
         setSignupSuccess(true);
         setIsLogin(true);
         setPassword("");
+        setPhone("");
         toast.success("Registro exitoso. Revisa tu correo para verificar tu cuenta.");
       }
     } catch (error: any) {
@@ -241,6 +265,28 @@ export const Auth = () => {
                 className="rounded-xl border-white/10 bg-white/[0.03] focus:border-primary/50 focus:bg-white/[0.06] transition-all h-12 px-4"
               />
             </div>
+            {!isLogin && (
+              <div className="space-y-2">
+                <Label htmlFor="phone" className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/70 ml-1">
+                  Celular <span className="text-muted-foreground/40 normal-case tracking-normal font-normal">(opcional · para soporte por WhatsApp)</span>
+                </Label>
+                <div className="flex gap-2">
+                  <div className="flex items-center gap-1.5 px-3 h-12 rounded-xl border border-white/10 bg-white/[0.03] text-sm font-mono text-muted-foreground shrink-0">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-primary/70">{countryCode}</span>
+                    <span className="text-foreground">{dialCode}</span>
+                  </div>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    inputMode="tel"
+                    placeholder="987 654 321"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="rounded-xl border-white/10 bg-white/[0.03] focus:border-primary/50 focus:bg-white/[0.06] transition-all h-12 px-4 flex-1"
+                  />
+                </div>
+              </div>
+            )}
             <Button 
               type="submit" 
               disabled={loading}
