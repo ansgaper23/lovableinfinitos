@@ -1191,19 +1191,6 @@ const StatsPanel = ({ users, licenses }: { users: ExtendedProfile[]; licenses: a
   );
 };
 
-const StatCard = ({
-  label, value, icon: Icon, accent,
-}: { label: string; value: number; icon: any; accent: string }) => (
-  <Card className="bg-zinc-900 border-zinc-800">
-    <CardContent className="p-4">
-      <div className="flex items-center justify-between mb-2">
-        <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">{label}</span>
-        <Icon className={`w-4 h-4 ${accent}`} />
-      </div>
-      <div className="text-2xl font-bold tabular-nums text-white">{value.toLocaleString()}</div>
-    </CardContent>
-  </Card>
-);
 
 const MiniRow = ({ label, value, icon }: { label: string; value: string; icon: string }) => (
   <div className="flex items-center justify-between text-xs">
