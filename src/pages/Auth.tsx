@@ -109,10 +109,17 @@ export const Auth = () => {
         toast.success("¡Bienvenido de nuevo!");
         navigate({ to: "/dashboard" });
       } else {
-        await registerWithIpLimit({ data: { email, password } });
+        const trimmedPhone = phone.trim();
+        const fullPhone = trimmedPhone
+          ? `${dialCode}${trimmedPhone.replace(/[\s\-()]/g, "")}`
+          : "";
+        await registerWithIpLimit({
+          data: { email, password, phone: fullPhone || undefined },
+        });
         setSignupSuccess(true);
         setIsLogin(true);
         setPassword("");
+        setPhone("");
         toast.success("Registro exitoso. Revisa tu correo para verificar tu cuenta.");
       }
     } catch (error: any) {
