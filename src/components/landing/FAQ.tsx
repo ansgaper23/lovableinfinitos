@@ -75,7 +75,7 @@ export const FAQ = () => {
       category: "producto",
       question: "¿Funciona con mi cuenta actual de Lovable o necesito una nueva?",
       answer:
-        "Te entregamos acceso a un panel propio configurado por nosotros, listo para usar desde el minuto uno. No necesitas tu cuenta oficial ni mezclar credenciales: simplemente entras al panel y empiezas a construir.",
+        "Sí, funciona perfectamente con tu cuenta actual de Lovable, ya sea la gratuita o el plan Pro. No necesitas crear una cuenta nueva ni migrar tus proyectos: te conectas con tu cuenta de siempre y empiezas a usar los créditos ilimitados desde el primer minuto.",
     },
 
     // --- SOPORTE ---
