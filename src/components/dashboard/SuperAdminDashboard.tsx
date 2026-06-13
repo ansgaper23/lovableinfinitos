@@ -660,12 +660,7 @@ export const SuperAdminDashboard = () => {
           )}
 
           {activeTab === "stats" && (
-            <Card className="bg-zinc-900 border-zinc-800">
-              <CardHeader>
-                <CardTitle className="text-sm font-semibold">Estadísticas</CardTitle>
-                <CardDescription className="text-xs text-zinc-500">Próximamente</CardDescription>
-              </CardHeader>
-            </Card>
+            <StatsPanel users={users} licenses={licenses} />
           )}
 
           {activeTab === "system" && (
