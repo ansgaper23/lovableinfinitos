@@ -90,16 +90,14 @@ export const Pricing = () => {
                   Más Recomendado
                 </div>
               )}
-              <CardContent className="p-10">
-                {plan.badge && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
-                    <div className="relative inline-flex items-center gap-1.5 px-4 py-1.5 bg-destructive text-destructive-foreground text-[10px] font-black uppercase tracking-[0.15em] whitespace-nowrap shadow-[0_8px_24px_-6px_hsl(var(--destructive)/0.6)] rounded-full">
-                      <Flame className="w-3 h-3" />
-                      <span>-46% · Oferta Limitada</span>
-                      <span className="absolute inset-0 rounded-full bg-destructive/40 blur-md -z-10 animate-pulse" />
-                    </div>
-                  </div>
-                )}
+              {plan.badge && (
+                <div className="absolute top-0 left-0 right-0 z-10 flex items-center justify-center gap-1.5 py-1.5 bg-gradient-to-r from-destructive/80 via-destructive to-destructive/80 text-destructive-foreground text-[10px] font-black uppercase tracking-[0.2em] shadow-lg">
+                  <Flame className="w-3 h-3" />
+                  <span>-46% · Oferta Limitada</span>
+                </div>
+              )}
+              <CardContent className={`p-10 ${plan.badge ? "pt-14" : ""}`}>
+
                 <div className="flex justify-between items-start mb-6">
                   <div>
                     <h3 className="text-2xl font-black italic tracking-tighter text-white">{plan.name}</h3>
