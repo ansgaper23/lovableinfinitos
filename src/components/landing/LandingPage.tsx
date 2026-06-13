@@ -2,6 +2,7 @@ import { lazy, Suspense } from "react";
 import { Navbar } from "@/components/landing/Navbar";
 import { AnnouncementBar } from "@/components/landing/AnnouncementBar";
 import { Hero } from "@/components/landing/Hero";
+import { Comparison } from "@/components/landing/Comparison";
 
 // Below-the-fold: split into separate chunks to shrink the initial JS payload
 // and improve LCP/TTI on the landing page.
