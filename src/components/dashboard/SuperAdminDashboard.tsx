@@ -1106,17 +1106,17 @@ const StatsPanel = ({ users, licenses }: { users: ExtendedProfile[]; licenses: a
     <div className="space-y-6">
       {/* Key metrics grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <StatCard label="Usuarios totales" value={totalUsers} icon={Users} accent="text-blue-400" />
-        <StatCard label="Hoy" value={signupsToday} icon={TrendingUp} accent="text-green-400" />
-        <StatCard label="Últimos 7 días" value={signups7d} icon={Activity} accent="text-cyan-400" />
-        <StatCard label="Últimos 30 días" value={signups30d} icon={Activity} accent="text-purple-400" />
+        <StatCard label="Usuarios totales" value={totalUsers.toString()} icon={<Users className="w-4 h-4 text-blue-400" />} />
+        <StatCard label="Hoy" value={signupsToday.toString()} icon={<TrendingUp className="w-4 h-4 text-green-400" />} />
+        <StatCard label="Últimos 7 días" value={signups7d.toString()} icon={<Activity className="w-4 h-4 text-cyan-400" />} />
+        <StatCard label="Últimos 30 días" value={signups30d.toString()} icon={<Activity className="w-4 h-4 text-purple-400" />} />
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <StatCard label="Licencias totales" value={totalLicenses} icon={Key} accent="text-amber-400" />
-        <StatCard label="Activas" value={activeLicenses} icon={CheckCircle2} accent="text-green-400" />
-        <StatCard label="De prueba" value={trialLicenses} icon={Clock} accent="text-blue-400" />
-        <StatCard label="Pagas" value={paidLicenses} icon={DollarSign} accent="text-emerald-400" />
+        <StatCard label="Licencias totales" value={totalLicenses.toString()} icon={<Key className="w-4 h-4 text-amber-400" />} />
+        <StatCard label="Activas" value={activeLicenses.toString()} icon={<CheckCircle2 className="w-4 h-4 text-green-400" />} />
+        <StatCard label="De prueba" value={trialLicenses.toString()} icon={<Clock className="w-4 h-4 text-blue-400" />} />
+        <StatCard label="Pagas" value={paidLicenses.toString()} icon={<DollarSign className="w-4 h-4 text-emerald-400" />} />
       </div>
 
       {/* Signups chart */}
