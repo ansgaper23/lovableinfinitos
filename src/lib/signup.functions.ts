@@ -95,6 +95,17 @@ export const registerWithIpLimit = createServerFn({ method: "POST" })
         user_id: userId,
       });
       if (insertError) console.error("[signup] insert ip error", insertError);
+
+      // Save optional phone number on the profile (created by handle_new_user trigger)
+      const phone = (data.phone || "").trim();
+      if (phone) {
+        const normalized = phone.replace(/[\s\-()]/g, "");
+        const { error: phoneError } = await supabaseAdmin
+          .from("profiles")
+          .update({ phone: normalized })
+          .eq("id", userId);
+        if (phoneError) console.error("[signup] save phone error", phoneError);
+      }
     }
 
     return { success: true, userId, needsVerification: true };
