@@ -193,19 +193,16 @@ export const ResellerDashboard = () => {
   };
 
   const revokeLicense = async (licenseId: string, licenseKey: string) => {
-    if (!apiToken) return;
     try {
-      // Intentar revocar en la API externa primero
-      await resellerApi.revokeLicense(apiToken, licenseKey);
-      
-      // Eliminar de nuestra DB local
+      await resellerRevokeLicense({ data: { licenseKey } });
+
       const { error } = await supabase
         .from("reseller_licenses")
         .delete()
         .eq("id", licenseId);
-        
+
       if (error) throw error;
-      
+
       toast.success("Licencia revocada y eliminada");
       fetchLicenses();
     } catch (error: any) {
