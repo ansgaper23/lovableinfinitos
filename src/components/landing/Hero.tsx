@@ -131,7 +131,6 @@ export const Hero = () => {
                 ref={videoRef}
                 className={`relative z-10 w-full h-full object-cover transition-opacity duration-500 ${hasVideoError ? 'opacity-0' : 'opacity-100'}`}
                 loop 
-                muted
                 autoPlay
                 playsInline
                 controls
