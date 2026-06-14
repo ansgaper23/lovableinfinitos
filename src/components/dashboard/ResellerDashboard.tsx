@@ -152,14 +152,14 @@ export const ResellerDashboard = () => {
         creditConsumed = true;
       }
 
-      // Llamada real a la API del proveedor
+      // Llamada vía server function (token API en el servidor)
       let apiResp;
       if (isTest) {
-        apiResp = await resellerApi.generateTrial(apiToken, name, 15);
+        apiResp = await resellerGenerateTrial({ data: { displayName: name, minutes: 15 } });
       } else {
         const dayMap: Record<string, number> = { '1day': 1, '7days': 7, '30days': 30 };
         const days = dayMap[type] ?? 30;
-        apiResp = await resellerApi.generateLicense(apiToken, name, days, false);
+        apiResp = await resellerGenerateLicense({ data: { displayName: name, days } });
       }
 
       if (!apiResp?.license_key) {
