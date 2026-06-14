@@ -85,8 +85,8 @@ export const ResellerDashboard = () => {
     if (user) {
       fetchLicenses();
       fetchCredits();
-      fetchApiToken();
     }
+
   }, [user?.id]);
 
   const uniqueCustomers = useMemo(() => {
