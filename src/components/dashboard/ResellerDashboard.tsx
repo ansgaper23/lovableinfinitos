@@ -38,7 +38,7 @@ export const ResellerDashboard = () => {
   const [resultDialogOpen, setResultDialogOpen] = useState(false);
   const [generatedCode, setGeneratedCode] = useState("");
   const [copied, setCopied] = useState(false);
-  const [apiToken, setApiToken] = useState<string | null>(null);
+  // El token API se gestiona en el servidor; no se expone al cliente.
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [currentView, setCurrentView] = useState('panel');
