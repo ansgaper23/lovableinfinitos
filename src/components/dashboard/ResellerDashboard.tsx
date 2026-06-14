@@ -53,15 +53,7 @@ export const ResellerDashboard = () => {
     setCredits(data?.credits ?? 0);
   };
 
-  const fetchApiToken = async () => {
-    if (!user) return;
-    const { data } = await supabase
-      .from("profiles")
-      .select("reseller_api_token")
-      .eq("id", user.id)
-      .maybeSingle();
-    setApiToken(data?.reseller_api_token ?? null);
-  };
+  // Token API gestionado por el servidor; no se descarga al cliente.
 
   const fetchLicenses = async () => {
     if (!user) return;
