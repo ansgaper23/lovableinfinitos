@@ -776,23 +776,18 @@ export const ResellerDashboard = () => {
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <p className="text-xs text-muted-foreground">
-                        Este token es necesario para las operaciones automáticas. Si no tienes uno, contacta al superadministrador.
+                        Por seguridad, el token de API se gestiona automáticamente desde el servidor.
+                        No necesitas configurarlo: las licencias se generan directamente desde este panel.
                       </p>
-                      <div className="bg-[#02060E] border border-white/10 rounded-lg p-3 flex items-center justify-between gap-3">
-                        <code className="text-primary font-mono text-xs break-all">
-                          {apiToken || 'No asignado'}
-                        </code>
-                        {apiToken && (
-                          <Button size="icon" variant="ghost" onClick={() => {
-                            navigator.clipboard.writeText(apiToken);
-                            toast.success("Token copiado");
-                          }} className="shrink-0 text-white hover:bg-white/5">
-                            <Copy className="w-4 h-4" />
-                          </Button>
-                        )}
+                      <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-lg p-3 flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                        <span className="text-xs text-emerald-400 font-semibold uppercase tracking-wider">
+                          API conectada y lista
+                        </span>
                       </div>
                     </CardContent>
                   </Card>
+
 
                   <Card className="bg-[#0A101F] border-white/[0.08] text-white">
                     <CardHeader>
