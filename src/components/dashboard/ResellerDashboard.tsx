@@ -132,10 +132,6 @@ export const ResellerDashboard = () => {
       return;
     }
 
-    if (!apiToken) {
-      toast.error("Tu cuenta no tiene un token de API. Contacta al superadmin.");
-      return;
-    }
 
     if (!isTest && credits < 1) {
       toast.error("Sin créditos. Contacta al superadmin para recargar.");
