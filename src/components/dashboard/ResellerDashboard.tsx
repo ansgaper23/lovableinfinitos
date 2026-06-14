@@ -12,6 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { resellerApi } from "@/services/resellerApi";
+import { resellerGenerateTrial, resellerGenerateLicense, resellerRevokeLicense } from "@/lib/reseller.functions";
 import { ExtensionDownloadCard } from "./ExtensionDownloadCard";
 
 interface License {
@@ -37,7 +38,7 @@ export const ResellerDashboard = () => {
   const [resultDialogOpen, setResultDialogOpen] = useState(false);
   const [generatedCode, setGeneratedCode] = useState("");
   const [copied, setCopied] = useState(false);
-  const [apiToken, setApiToken] = useState<string | null>(null);
+  // El token API se gestiona en el servidor; no se expone al cliente.
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [currentView, setCurrentView] = useState('panel');
@@ -52,15 +53,7 @@ export const ResellerDashboard = () => {
     setCredits(data?.credits ?? 0);
   };
 
-  const fetchApiToken = async () => {
-    if (!user) return;
-    const { data } = await supabase
-      .from("profiles")
-      .select("reseller_api_token")
-      .eq("id", user.id)
-      .maybeSingle();
-    setApiToken(data?.reseller_api_token ?? null);
-  };
+  // Token API gestionado por el servidor; no se descarga al cliente.
 
   const fetchLicenses = async () => {
     if (!user) return;
@@ -92,8 +85,8 @@ export const ResellerDashboard = () => {
     if (user) {
       fetchLicenses();
       fetchCredits();
-      fetchApiToken();
     }
+
   }, [user?.id]);
 
   const uniqueCustomers = useMemo(() => {
@@ -139,10 +132,6 @@ export const ResellerDashboard = () => {
       return;
     }
 
-    if (!apiToken) {
-      toast.error("Tu cuenta no tiene un token de API. Contacta al superadmin.");
-      return;
-    }
 
     if (!isTest && credits < 1) {
       toast.error("Sin créditos. Contacta al superadmin para recargar.");
@@ -163,14 +152,14 @@ export const ResellerDashboard = () => {
         creditConsumed = true;
       }
 
-      // Llamada real a la API del proveedor
+      // Llamada vía server function (token API en el servidor)
       let apiResp;
       if (isTest) {
-        apiResp = await resellerApi.generateTrial(apiToken, name, 15);
+        apiResp = await resellerGenerateTrial({ data: { displayName: name, minutes: 15 } });
       } else {
         const dayMap: Record<string, number> = { '1day': 1, '7days': 7, '30days': 30 };
         const days = dayMap[type] ?? 30;
-        apiResp = await resellerApi.generateLicense(apiToken, name, days, false);
+        apiResp = await resellerGenerateLicense({ data: { displayName: name, days } });
       }
 
       if (!apiResp?.license_key) {
@@ -204,19 +193,16 @@ export const ResellerDashboard = () => {
   };
 
   const revokeLicense = async (licenseId: string, licenseKey: string) => {
-    if (!apiToken) return;
     try {
-      // Intentar revocar en la API externa primero
-      await resellerApi.revokeLicense(apiToken, licenseKey);
-      
-      // Eliminar de nuestra DB local
+      await resellerRevokeLicense({ data: { licenseKey } });
+
       const { error } = await supabase
         .from("reseller_licenses")
         .delete()
         .eq("id", licenseId);
-        
+
       if (error) throw error;
-      
+
       toast.success("Licencia revocada y eliminada");
       fetchLicenses();
     } catch (error: any) {
@@ -790,23 +776,18 @@ export const ResellerDashboard = () => {
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <p className="text-xs text-muted-foreground">
-                        Este token es necesario para las operaciones automáticas. Si no tienes uno, contacta al superadministrador.
+                        Por seguridad, el token de API se gestiona automáticamente desde el servidor.
+                        No necesitas configurarlo: las licencias se generan directamente desde este panel.
                       </p>
-                      <div className="bg-[#02060E] border border-white/10 rounded-lg p-3 flex items-center justify-between gap-3">
-                        <code className="text-primary font-mono text-xs break-all">
-                          {apiToken || 'No asignado'}
-                        </code>
-                        {apiToken && (
-                          <Button size="icon" variant="ghost" onClick={() => {
-                            navigator.clipboard.writeText(apiToken);
-                            toast.success("Token copiado");
-                          }} className="shrink-0 text-white hover:bg-white/5">
-                            <Copy className="w-4 h-4" />
-                          </Button>
-                        )}
+                      <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-lg p-3 flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                        <span className="text-xs text-emerald-400 font-semibold uppercase tracking-wider">
+                          API conectada y lista
+                        </span>
                       </div>
                     </CardContent>
                   </Card>
+
 
                   <Card className="bg-[#0A101F] border-white/[0.08] text-white">
                     <CardHeader>
