@@ -12,6 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { resellerApi } from "@/services/resellerApi";
+import { resellerGenerateTrial, resellerGenerateLicense, resellerRevokeLicense } from "@/lib/reseller.functions";
 import { ExtensionDownloadCard } from "./ExtensionDownloadCard";
 
 interface License {
