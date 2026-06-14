@@ -2,7 +2,7 @@ import { useEffect, useRef, lazy, Suspense, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "@tanstack/react-router";
-import videoAsset from "@/assets/guia-lovable-demo.mp4.asset.json";
+import videoAsset from "@/assets/hero-video.mp4.asset.json";
 import videoPosterAsset from "@/assets/video-poster.jpg.asset.json";
 
 // Iconos cargados de forma diferida para mejorar el FCP
