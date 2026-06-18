@@ -180,7 +180,10 @@ export const SuperAdminDashboard = () => {
   };
 
   useEffect(() => {
-    if (user) loadUsersWithCredits();
+    if (user) {
+      loadUsersWithCredits();
+      fetchLicenses();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
 
