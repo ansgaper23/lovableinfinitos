@@ -817,12 +817,12 @@ export const SuperAdminDashboard = () => {
           </DialogHeader>
           {!assignedResult ? (
             <div className="space-y-4 py-2">
-              <label className="text-xs text-zinc-400">Duración</label>
+              <label className="text-xs text-zinc-400">Duración predeterminada</label>
               <div className="grid grid-cols-4 gap-2">
                 {[1, 7, 30, 60].map((d) => (
                   <button
                     key={d}
-                    onClick={() => setAssignDays(d as 1 | 7 | 30 | 60)}
+                    onClick={() => setAssignDays(d)}
                     className={`rounded-md border h-14 flex flex-col items-center justify-center transition-colors ${
                       assignDays === d
                         ? "border-destructive bg-destructive/15 text-white"
@@ -833,6 +833,21 @@ export const SuperAdminDashboard = () => {
                     <span className="text-[10px] text-zinc-500">{d === 1 ? "día" : "días"}</span>
                   </button>
                 ))}
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs text-zinc-400">O días personalizados (1 - 3650)</label>
+                <input
+                  type="number"
+                  min={1}
+                  max={3650}
+                  value={assignDays}
+                  onChange={(e) => {
+                    const v = parseInt(e.target.value, 10);
+                    if (!Number.isNaN(v)) setAssignDays(Math.max(1, Math.min(3650, v)));
+                  }}
+                  className="w-full h-10 rounded-md border border-zinc-800 bg-zinc-950 px-3 text-sm text-white focus:outline-none focus:border-destructive"
+                  placeholder="Ej: 31, 45, 90..."
+                />
               </div>
             </div>
           ) : (
