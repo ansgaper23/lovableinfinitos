@@ -4,7 +4,7 @@ import {
   LogOut, Search, MoreVertical, CheckCircle2, XCircle, 
   TrendingUp, DollarSign, Key, RefreshCw, Trash2, ShieldCheck, 
   Clock, Plus, CreditCard, Activity, Zap, Globe, AlertCircle,
-  Menu, X
+  Menu, X, Copy, Check
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -63,6 +63,8 @@ export const SuperAdminDashboard = () => {
   const [keyType, setKeyType] = useState<"trial" | "days" | "lifetime">("days");
   const [keyDisplayName, setKeyDisplayName] = useState("");
   const [keyDays, setKeyDays] = useState("30");
+  const [generatedKey, setGeneratedKey] = useState<string | null>(null);
+  const [copiedKey, setCopiedKey] = useState(false);
   
   const [licenses, setLicenses] = useState<any[]>([]);
   const [isLoadingLicenses, setIsLoadingLicenses] = useState(false);
@@ -242,7 +244,9 @@ export const SuperAdminDashboard = () => {
       }
 
       if (result.success) {
-        toast.success(`Llave generada: ${result.license_key}`);
+        toast.success("Licencia generada correctamente");
+        setGeneratedKey(result.license_key);
+        setCopiedKey(false);
         if (user) {
           await supabase.from("reseller_licenses").insert({
             user_id: user.id,
@@ -579,6 +583,33 @@ export const SuperAdminDashboard = () => {
                     {isGeneratingKey ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : <Key className="w-4 h-4 mr-2" />}
                     Generar
                   </Button>
+                  {generatedKey && (
+                    <div className="mt-3 space-y-2">
+                      <p className="text-xs text-green-500 font-medium">Licencia generada</p>
+                      <div className="flex items-center gap-2">
+                        <code className="flex-1 font-mono text-xs break-all bg-zinc-950 px-3 py-2 border border-zinc-800 rounded-md text-zinc-200">
+                          {generatedKey}
+                        </code>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 shrink-0 text-zinc-400 hover:text-white"
+                          onClick={async () => {
+                            try {
+                              await navigator.clipboard.writeText(generatedKey);
+                              setCopiedKey(true);
+                              toast.success("Licencia copiada");
+                              setTimeout(() => setCopiedKey(false), 2000);
+                            } catch {
+                              toast.error("No se pudo copiar");
+                            }
+                          }}
+                        >
+                          {copiedKey ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
 
