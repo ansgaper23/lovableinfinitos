@@ -63,6 +63,8 @@ export const SuperAdminDashboard = () => {
   const [keyType, setKeyType] = useState<"trial" | "days" | "lifetime">("days");
   const [keyDisplayName, setKeyDisplayName] = useState("");
   const [keyDays, setKeyDays] = useState("30");
+  const [generatedKey, setGeneratedKey] = useState<string | null>(null);
+  const [copiedKey, setCopiedKey] = useState(false);
   
   const [licenses, setLicenses] = useState<any[]>([]);
   const [isLoadingLicenses, setIsLoadingLicenses] = useState(false);
