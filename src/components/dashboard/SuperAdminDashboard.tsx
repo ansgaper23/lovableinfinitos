@@ -244,7 +244,9 @@ export const SuperAdminDashboard = () => {
       }
 
       if (result.success) {
-        toast.success(`Llave generada: ${result.license_key}`);
+        toast.success("Licencia generada correctamente");
+        setGeneratedKey(result.license_key);
+        setCopiedKey(false);
         if (user) {
           await supabase.from("reseller_licenses").insert({
             user_id: user.id,
