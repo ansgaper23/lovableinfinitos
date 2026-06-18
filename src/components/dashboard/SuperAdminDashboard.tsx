@@ -640,21 +640,20 @@ export const SuperAdminDashboard = () => {
                   ) : (
                     <div className="divide-y divide-zinc-800 max-h-[500px] overflow-y-auto">
                       {licenses.map((lic) => (
-                        <div key={lic.id} className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 text-sm hover:bg-zinc-950/50">
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
+                        <div key={lic.id} className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-3 text-sm hover:bg-zinc-950/50">
+                          <div className="flex-1 min-w-0 space-y-2">
+                            <div className="flex items-center gap-2">
                               <Key className="w-3 h-3 text-destructive shrink-0" />
                               <span className="font-mono text-[11px] sm:text-xs text-zinc-200 truncate">{lic.license_key}</span>
                             </div>
                             <div className="flex flex-col gap-0.5 min-w-0">
                               <div className="flex items-center gap-2 text-[11px] sm:text-xs text-zinc-500">
                                 <span className="truncate">{lic.display_name || "S/N"}</span>
-                                <span>·</span>
-                                <span className="shrink-0">{lic.lifetime ? "Vitalicia" : lic.expires_at ? new Date(lic.expires_at).toLocaleDateString() : "N/A"}</span>
                               </div>
                               {lic.customer_phone && (
                                 <span className="text-[10px] text-zinc-600 truncate">{lic.customer_phone}</span>
                               )}
+                              <LicenseExpirationBar lic={lic} />
                             </div>
                           </div>
                           <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-3">
