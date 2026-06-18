@@ -1106,14 +1106,13 @@ function formatTimeLeft(ms: number): string {
 }
 
 function getLicenseExpirationProgress(lic: any): { percent: number; remainingMs: number; text: string } {
-  if (lic.lifetime) return { percent: 0, remainingMs: Infinity, text: "Vitalicia" };
+  if (lic.lifetime) return { percent: 100, remainingMs: Infinity, text: "Vitalicia" };
   const created = new Date(lic.created_at).getTime();
   const expires = new Date(lic.expires_at).getTime();
   const now = Date.now();
   const total = expires - created;
-  const elapsed = now - created;
   const remaining = expires - now;
-  const percent = total > 0 ? Math.min(100, Math.max(0, (elapsed / total) * 100)) : 0;
+  const percent = total > 0 ? Math.min(100, Math.max(0, (remaining / total) * 100)) : 0;
   return { percent, remainingMs: remaining, text: formatTimeLeft(remaining) };
 }
 
