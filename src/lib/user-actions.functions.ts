@@ -123,7 +123,7 @@ export const assignLicenseToUser = createServerFn({ method: "POST" })
     z
       .object({
         targetUserId: z.string().uuid(),
-        days: z.union([z.literal(1), z.literal(7), z.literal(30), z.literal(60)]),
+        days: z.number().int().min(1).max(3650),
         displayName: displayNameSchema,
       })
       .parse(input)
