@@ -298,14 +298,28 @@ export const Auth = () => {
 
         </CardContent>
 
-        <CardFooter className="justify-center pb-10">
+        <div className="flex gap-0 mb-6 px-6 -mt-2">
           <button
-            onClick={() => { setIsLogin(!isLogin); setSignupSuccess(false); setErrorMsg(null); }}
-            className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 hover:text-primary transition-colors py-2 px-4 rounded-lg hover:bg-primary/5"
+            onClick={() => { setIsLogin(true); setSignupSuccess(false); setErrorMsg(null); }}
+            className={`flex-1 py-3 rounded-l-xl text-xs font-black uppercase tracking-widest transition-all border ${
+              isLogin
+                ? "bg-white/10 text-foreground border-white/20 shadow-inner"
+                : "bg-white/[0.03] text-muted-foreground/60 border-white/10 hover:text-muted-foreground hover:bg-white/[0.05]"
+            }`}
           >
-            {isLogin ? "¿No tienes cuenta? Regístrate" : "¿Ya tienes cuenta? Entra aquí"}
+            Iniciar sesión
           </button>
-        </CardFooter>
+          <button
+            onClick={() => { setIsLogin(false); setSignupSuccess(false); setErrorMsg(null); }}
+            className={`flex-1 py-3 rounded-r-xl text-xs font-black uppercase tracking-widest transition-all border-l-0 border ${
+              !isLogin
+                ? "bg-white/10 text-foreground border-white/20 shadow-inner"
+                : "bg-white/[0.03] text-muted-foreground/60 border-white/10 hover:text-muted-foreground hover:bg-white/[0.05]"
+            }`}
+          >
+            Crear cuenta
+          </button>
+        </div>
       </Card>
     </div>
   );
