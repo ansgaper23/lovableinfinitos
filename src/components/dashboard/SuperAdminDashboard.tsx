@@ -303,6 +303,25 @@ export const SuperAdminDashboard = () => {
     );
   }, [users, searchTerm]);
 
+  const licenseCounts = useMemo(() => {
+    let active = 0, expired = 0;
+    for (const lic of licenses) {
+      if (lic.lifetime) { active++; continue; }
+      const isExp = lic.expires_at ? new Date(lic.expires_at).getTime() < Date.now() : false;
+      if (isExp) expired++; else active++;
+    }
+    return { all: licenses.length, active, expired };
+  }, [licenses]);
+
+  const filteredLicenses = useMemo(() => {
+    if (licenseFilter === "all") return licenses;
+    return licenses.filter((lic) => {
+      if (lic.lifetime) return licenseFilter === "active";
+      const isExp = lic.expires_at ? new Date(lic.expires_at).getTime() < Date.now() : false;
+      return licenseFilter === "active" ? !isExp : isExp;
+    });
+  }, [licenses, licenseFilter]);
+
   if (loading) {
     return <div className="min-h-screen bg-background flex items-center justify-center text-white">Cargando...</div>;
   }
