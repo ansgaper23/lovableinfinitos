@@ -1094,6 +1094,60 @@ const UserCard = (props: UserActionProps) => {
   );
 };
 
+function formatTimeLeft(ms: number): string {
+  if (ms <= 0) return "Expirado";
+  const seconds = Math.floor(ms / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+  const h = hours % 24;
+  const m = minutes % 60;
+  if (days > 0) return `${days}d ${h}h ${m}m`;
+  return `${h}h ${m}m`;
+}
+
+function getLicenseExpirationProgress(lic: any): { percent: number; remainingMs: number; text: string } {
+  if (lic.lifetime) return { percent: 0, remainingMs: Infinity, text: "Vitalicia" };
+  const created = new Date(lic.created_at).getTime();
+  const expires = new Date(lic.expires_at).getTime();
+  const now = Date.now();
+  const total = expires - created;
+  const elapsed = now - created;
+  const remaining = expires - now;
+  const percent = total > 0 ? Math.min(100, Math.max(0, (elapsed / total) * 100)) : 0;
+  return { percent, remainingMs: remaining, text: formatTimeLeft(remaining) };
+}
+
+const LicenseExpirationBar = ({ lic }: { lic: any }) => {
+  const progress = getLicenseExpirationProgress(lic);
+  const isExpired = progress.remainingMs <= 0;
+  const isLifetime = lic.lifetime;
+
+  return (
+    <div className="w-full">
+      <div className="flex items-center justify-between mb-1.5">
+        <div className="flex items-center gap-1.5">
+          <Clock className="w-3 h-3 text-zinc-500" />
+          <span className="text-[11px] text-zinc-400">
+            {isLifetime ? "Plan vitalicio" : isExpired ? "Plan expirado" : "Plano expira em"}
+          </span>
+        </div>
+        <span className={`text-[11px] font-semibold ${isLifetime ? "text-zinc-400" : isExpired ? "text-zinc-500" : "text-orange-500"}`}>
+          {progress.text}
+        </span>
+      </div>
+      {!isLifetime && (
+        <div className="w-full h-1.5 rounded-full bg-zinc-800 overflow-hidden">
+          <div
+            className={`h-full rounded-full transition-all ${isExpired ? "bg-zinc-600" : "bg-gradient-to-r from-violet-500 to-blue-400"}`}
+            style={{ width: `${progress.percent}%` }}
+          />
+        </div>
+      )}
+    </div>
+  );
+};
+
 // ============================================================
 // Stats Panel
 // ============================================================
