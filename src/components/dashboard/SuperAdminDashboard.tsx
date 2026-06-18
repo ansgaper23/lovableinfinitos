@@ -124,7 +124,7 @@ export const SuperAdminDashboard = () => {
   };
 
   const [assignTarget, setAssignTarget] = useState<ExtendedProfile | null>(null);
-  const [assignDays, setAssignDays] = useState<1 | 7 | 30 | 60>(7);
+  const [assignDays, setAssignDays] = useState<number>(7);
   const [isAssigning, setIsAssigning] = useState(false);
   const [assignedResult, setAssignedResult] = useState<{ license_key: string; expires_at: string | null } | null>(null);
 
