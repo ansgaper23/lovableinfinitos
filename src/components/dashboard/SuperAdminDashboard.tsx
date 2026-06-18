@@ -4,7 +4,7 @@ import {
   LogOut, Search, MoreVertical, CheckCircle2, XCircle, 
   TrendingUp, DollarSign, Key, RefreshCw, Trash2, ShieldCheck, 
   Clock, Plus, CreditCard, Activity, Zap, Globe, AlertCircle,
-  Menu, X
+  Menu, X, Copy, Check
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
