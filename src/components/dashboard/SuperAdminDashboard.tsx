@@ -583,6 +583,33 @@ export const SuperAdminDashboard = () => {
                     {isGeneratingKey ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : <Key className="w-4 h-4 mr-2" />}
                     Generar
                   </Button>
+                  {generatedKey && (
+                    <div className="mt-3 space-y-2">
+                      <p className="text-xs text-green-500 font-medium">Licencia generada</p>
+                      <div className="flex items-center gap-2">
+                        <code className="flex-1 font-mono text-xs break-all bg-zinc-950 px-3 py-2 border border-zinc-800 rounded-md text-zinc-200">
+                          {generatedKey}
+                        </code>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 shrink-0 text-zinc-400 hover:text-white"
+                          onClick={async () => {
+                            try {
+                              await navigator.clipboard.writeText(generatedKey);
+                              setCopiedKey(true);
+                              toast.success("Licencia copiada");
+                              setTimeout(() => setCopiedKey(false), 2000);
+                            } catch {
+                              toast.error("No se pudo copiar");
+                            }
+                          }}
+                        >
+                          {copiedKey ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
 
