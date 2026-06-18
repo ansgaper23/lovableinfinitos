@@ -12,6 +12,11 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  // Force Nitro to build for Vercel when deploying outside Lovable.
+  // Inside Lovable builds this is overridden back to Cloudflare automatically.
+  nitro: {
+    preset: "vercel",
+  },
   vite: {
     build: {
       chunkSizeWarningLimit: 1000,
