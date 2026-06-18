@@ -239,6 +239,30 @@ export const Auth = () => {
               </div>
             </div>
           )}
+          <div className="flex gap-0">
+            <button
+              type="button"
+              onClick={() => { setIsLogin(true); setSignupSuccess(false); setErrorMsg(null); }}
+              className={`flex-1 py-3 rounded-l-xl text-xs font-black uppercase tracking-widest transition-all border ${
+                isLogin
+                  ? "bg-white/10 text-foreground border-white/20 shadow-inner"
+                  : "bg-white/[0.03] text-muted-foreground/60 border-white/10 hover:text-muted-foreground hover:bg-white/[0.05]"
+              }`}
+            >
+              Iniciar sesión
+            </button>
+            <button
+              type="button"
+              onClick={() => { setIsLogin(false); setSignupSuccess(false); setErrorMsg(null); }}
+              className={`flex-1 py-3 rounded-r-xl text-xs font-black uppercase tracking-widest transition-all border-l-0 border ${
+                !isLogin
+                  ? "bg-white/10 text-foreground border-white/20 shadow-inner"
+                  : "bg-white/[0.03] text-muted-foreground/60 border-white/10 hover:text-muted-foreground hover:bg-white/[0.05]"
+              }`}
+            >
+              Crear cuenta
+            </button>
+          </div>
 
           <form onSubmit={handleAuth} className="space-y-5">
             <div className="space-y-2">
