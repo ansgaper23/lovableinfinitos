@@ -54,6 +54,7 @@ export const SuperAdminDashboard = () => {
   const [fetchingUsers, setFetchingUsers] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState<"summary" | "users" | "keys" | "stats" | "system">("summary");
+  const [licenseFilter, setLicenseFilter] = useState<"all" | "active" | "expired">("all");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   
   // Reseller states
