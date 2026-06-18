@@ -653,13 +653,37 @@ export const SuperAdminDashboard = () => {
                   </Button>
                 </CardHeader>
                 <CardContent className="p-0">
+                  <div className="flex items-center gap-2 px-4 pt-2 pb-1 border-b border-zinc-800">
+                    {([
+                      { key: "all" as const, label: "Todas" },
+                      { key: "active" as const, label: "Activas" },
+                      { key: "expired" as const, label: "Vencidas" },
+                    ]).map((f) => (
+                      <button
+                        key={f.key}
+                        onClick={() => setLicenseFilter(f.key)}
+                        className={`text-xs px-3 py-1.5 rounded-md transition-colors ${
+                          licenseFilter === f.key
+                            ? "bg-zinc-800 text-white font-medium"
+                            : "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50"
+                        }`}
+                      >
+                        {f.label}{" "}
+                        <span className="ml-1 text-zinc-500 tabular-nums">
+                          {f.key === "all" ? licenseCounts.all : f.key === "active" ? licenseCounts.active : licenseCounts.expired}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
                   {isLoadingLicenses ? (
                     <div className="p-6 text-center text-xs text-zinc-500">Cargando...</div>
-                  ) : licenses.length === 0 ? (
-                    <div className="p-6 text-center text-xs text-zinc-500">Sin licencias</div>
+                  ) : filteredLicenses.length === 0 ? (
+                    <div className="p-6 text-center text-xs text-zinc-500">
+                      {licenses.length === 0 ? "Sin licencias" : "Sin licencias en esta categoría"}
+                    </div>
                   ) : (
                     <div className="divide-y divide-zinc-800 max-h-[500px] overflow-y-auto">
-                      {licenses.map((lic) => (
+                      {filteredLicenses.map((lic) => (
                         <div key={lic.id} className="p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center gap-3 text-sm hover:bg-zinc-950/50">
                           <div className="flex-1 min-w-0 space-y-2">
                             <div className="flex items-center gap-2">
