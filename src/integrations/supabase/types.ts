@@ -235,7 +235,124 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      _lovable_export_enums: {
+        Row: {
+          ddl_sql: string | null
+          enum_name: unknown
+          enum_values: string | null
+          schema_name: unknown
+        }
+        Relationships: []
+      }
+      _lovable_export_foreign_keys: {
+        Row: {
+          column_name: unknown
+          ddl_sql: string | null
+          delete_rule: string | null
+          foreign_column_name: unknown
+          foreign_table_name: unknown
+          foreign_table_schema: unknown
+          table_name: unknown
+          table_schema: unknown
+          update_rule: string | null
+        }
+        Relationships: []
+      }
+      _lovable_export_functions: {
+        Row: {
+          arguments: string | null
+          ddl_sql: string | null
+          function_name: unknown
+          is_security_definer: boolean | null
+          language: unknown
+          return_type: string | null
+          schema_name: unknown
+        }
+        Relationships: []
+      }
+      _lovable_export_indexes: {
+        Row: {
+          ddl_sql: string | null
+          index_name: unknown
+          schema_name: unknown
+          table_name: unknown
+        }
+        Relationships: []
+      }
+      _lovable_export_manifest: {
+        Row: {
+          table_name: unknown
+        }
+        Relationships: []
+      }
+      _lovable_export_policies: {
+        Row: {
+          cmd: string | null
+          ddl_sql: string | null
+          permissive: string | null
+          policyname: unknown
+          qual: string | null
+          roles_list: string | null
+          schemaname: unknown
+          tablename: unknown
+          with_check: string | null
+        }
+        Relationships: []
+      }
+      _lovable_export_table_columns: {
+        Row: {
+          character_maximum_length: number | null
+          column_default: string | null
+          column_name: unknown
+          data_type: string | null
+          formatted_type: unknown
+          is_nullable: string | null
+          is_primary_key: boolean | null
+          numeric_precision: number | null
+          numeric_scale: number | null
+          ordinal_position: number | null
+          table_name: unknown
+          table_schema: unknown
+          udt_name: unknown
+        }
+        Relationships: []
+      }
+      _lovable_export_triggers: {
+        Row: {
+          ddl_sql: string | null
+          schema_name: unknown
+          table_name: unknown
+          trigger_name: unknown
+        }
+        Relationships: []
+      }
+      _lovable_export_vault_secrets: {
+        Row: {
+          created_at: string | null
+          decrypted_secret: string | null
+          description: string | null
+          id: string | null
+          name: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          decrypted_secret?: never
+          description?: string | null
+          id?: never
+          name?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          decrypted_secret?: never
+          description?: string | null
+          id?: never
+          name?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       add_credits: {
@@ -267,12 +384,12 @@ export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -296,11 +413,11 @@ export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -321,11 +438,11 @@ export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -346,11 +463,11 @@ export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -363,11 +480,11 @@ export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
