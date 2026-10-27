@@ -165,7 +165,7 @@ export const Hero = () => {
                   <img
                     src="/images/banner_hero.png"
                     alt="Banner Hero - FlowPro Lovable Créditos Ilimitados"
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover/image:scale-[1.02]"
+                    className="w-full h-full object-cover object-top transition-transform duration-700 group-hover/image:scale-[1.02]"
                     loading="eager"
                     decoding="async"
                   />
