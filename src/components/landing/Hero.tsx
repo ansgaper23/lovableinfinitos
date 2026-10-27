@@ -51,7 +51,6 @@ export const Hero = () => {
     };
   }, []);
 
-
   return (
     <section id="inicio" className="pt-28 pb-12 md:pt-36 md:pb-20 px-4 overflow-hidden relative">
       {/* Animated background elements */}
@@ -65,22 +64,27 @@ export const Hero = () => {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
           </span>
-          🚀 +200 Builders activos en LATAM
+          🚀 +200 Builders activos en Perú y LATAM
         </Badge>
         
-        <h1 className="text-5xl md:text-7xl font-black tracking-tighter mb-5 leading-tight italic">
-          <span className="block bg-clip-text text-transparent bg-gradient-to-b from-white to-white/40">LIBERA TU</span>
-          <span className="text-primary text-glow">POTENCIAL IA</span>
+        <h1 className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tighter mb-5 leading-tight italic">
+          <span className="block text-2xl sm:text-3xl md:text-4xl text-primary font-bold not-italic tracking-normal mb-2">
+            ¿Sin créditos en Lovable?
+          </span>
+          <span className="block bg-clip-text text-transparent bg-gradient-to-b from-white to-white/60">
+            CONSTRUYE SIN LÍMITES
+          </span>
+          <span className="text-primary text-glow">CON CRÉDITOS ILIMITADOS</span>
         </h1>
         
-        <p className="text-lg md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-8 leading-relaxed font-light">
-          Rompe las barreras de <span className="text-foreground font-bold border-b-2 border-primary/50">Lovable</span>. Créditos infinitos, sin fricción, optimizado para la comunidad de builders.
+        <p className="text-base sm:text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-8 leading-relaxed font-light">
+          Rompe las barreras de gasto en <span className="text-foreground font-bold border-b-2 border-primary/50">Lovable</span>. Acceso ilimitado, sin cuotas por mensaje, con soporte en español y pago en <span className="text-white font-medium">Soles (S/)</span>.
         </p>
         
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
-          <Button size="lg" className="h-16 px-12 text-xl font-black italic tracking-tighter uppercase gap-3 shadow-[0_0_30px_rgba(var(--color-primary),0.4)] hover:shadow-[0_0_50px_rgba(var(--color-primary),0.6)] w-full sm:w-auto rounded-none transition-all duration-300 transform hover:-translate-y-1 bg-primary text-primary-foreground" asChild>
+          <Button size="lg" className="h-14 sm:h-16 px-8 sm:px-12 text-lg sm:text-xl font-black italic tracking-tighter uppercase gap-3 shadow-[0_0_30px_rgba(var(--color-primary),0.4)] hover:shadow-[0_0_50px_rgba(var(--color-primary),0.6)] w-full sm:w-auto rounded-xl transition-all duration-300 transform hover:-translate-y-1 bg-primary text-primary-foreground" asChild>
             <a href="#precios">
-              VER PLANES <Suspense fallback={null}><ArrowRightIcon className="w-6 h-6" /></Suspense>
+              VER PLANES DESDE S/ 39 <Suspense fallback={null}><ArrowRightIcon className="w-6 h-6" /></Suspense>
             </a>
           </Button>
           <Link
@@ -88,7 +92,7 @@ export const Hero = () => {
             className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors py-3 border-b border-transparent hover:border-primary/40"
           >
             <Suspense fallback={null}><ZapIcon className="w-4 h-4" /></Suspense>
-            Ver demo en vivo
+            Acceder al Panel
           </Link>
         </div>
 
@@ -104,7 +108,7 @@ export const Hero = () => {
               </div>
               <div className="mx-auto bg-white/5 rounded-md px-4 py-1 flex items-center gap-2 max-w-[200px] md:max-w-md w-full">
                 <Suspense fallback={null}><GlobeIcon className="w-3 h-3 text-muted-foreground" /></Suspense>
-                <span className="text-[10px] text-muted-foreground truncate font-mono uppercase tracking-widest">lovablefree.xyz/guia-rapida</span>
+                <span className="text-[10px] text-muted-foreground truncate font-mono uppercase tracking-widest">lovableilimitado.com/demo</span>
               </div>
             </div>
             
@@ -112,7 +116,7 @@ export const Hero = () => {
             <div className="relative aspect-video bg-black border-x border-b border-white/10 rounded-b-xl overflow-hidden shadow-2xl flex items-center justify-center">
               <img
                 src={videoPosterAsset.url}
-                alt="Vista previa de la guía rápida de Lovable Infinito"
+                alt="Vista previa de la guía rápida de Lovable Ilimitado"
                 className="absolute inset-0 h-full w-full object-cover"
                 loading="eager"
                 decoding="async"
@@ -155,7 +159,7 @@ export const Hero = () => {
           
           <div className="text-center mt-6">
             <p className="text-sm text-muted-foreground italic font-medium uppercase tracking-widest">
-              Mira cómo activar tus créditos ilimitados en menos de 60 segundos ⚡
+              Aprende a activar tus créditos ilimitados en menos de 60 segundos ⚡
             </p>
           </div>
         </div>
@@ -166,21 +170,21 @@ export const Hero = () => {
               <Suspense fallback={null}><ZapIcon className="w-6 h-6" /></Suspense>
             </div>
             <h3 className="font-bold text-lg text-primary">Créditos Infinitos</h3>
-            <p className="text-sm text-muted-foreground text-center">Construye sin mirar el contador de créditos.</p>
+            <p className="text-sm text-muted-foreground text-center">Construye prototipos y apps completas sin mirar el contador.</p>
           </div>
           <div className="flex flex-col items-center gap-2">
             <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-2">
               <Suspense fallback={null}><ShieldIcon className="w-6 h-6" /></Suspense>
             </div>
             <h3 className="font-bold text-lg text-primary">Acceso Inmediato</h3>
-            <p className="text-sm text-muted-foreground text-center">Configuración en menos de 5 minutos.</p>
+            <p className="text-sm text-muted-foreground text-center">Entrega de licencia y activación en menos de 3 minutos.</p>
           </div>
           <div className="flex flex-col items-center gap-2">
             <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-2">
               <Suspense fallback={null}><GlobeIcon className="w-6 h-6" /></Suspense>
             </div>
-            <h3 className="font-bold text-lg text-primary">Soporte 24/7</h3>
-            <p className="text-sm text-muted-foreground text-center">Asistencia personalizada por WhatsApp en español.</p>
+            <h3 className="font-bold text-lg text-primary">Soporte 24/7 en Español</h3>
+            <p className="text-sm text-muted-foreground text-center">Asistencia directa por WhatsApp para resolver cualquier consulta.</p>
           </div>
         </div>
       </div>

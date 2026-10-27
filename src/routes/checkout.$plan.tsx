@@ -24,7 +24,7 @@ declare global {
 export const Route = createFileRoute("/checkout/$plan")({
   head: () => ({
     meta: [
-      { title: "Checkout — Lovable Infinito" },
+      { title: "Checkout — Lovable Ilimitado" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
@@ -55,12 +55,12 @@ function CheckoutPage() {
     }
     if (authLoading || !user || initRef.current) return;
 
-    // Modo TEST: solo el superadmin puede pagar. Las demás cuentas son
+    // Modo TEST: solo el superadmin puede pagar directamente vía pasarela de prueba. Las demás cuentas son
     // redirigidas a WhatsApp con el plan seleccionado.
     if (user.email !== "jorge968122@gmail.com") {
       initRef.current = true;
       const msg = encodeURIComponent(
-        `Hola, quiero adquirir el plan ${plan.name} ($${plan.priceUsd.toFixed(2)} USD / S/ ${plan.pricePen.toFixed(2)} PEN) de Lovable Infinito.`
+        `Hola, quiero adquirir el ${plan.name} por S/ ${plan.pricePen.toFixed(2)} PEN (${plan.duration}) de Lovable Ilimitado.`
       );
       window.location.replace(`https://wa.me/51936467898?text=${msg}`);
       return;
@@ -97,7 +97,7 @@ function CheckoutPage() {
           });
         }
 
-        // Cargar tema neon (opcional, pero mejora la UI)
+        // Cargar tema neon
         if (!document.querySelector(`script[src="${KR_THEME_JS}"]`)) {
           const themeScript = document.createElement("script");
           themeScript.src = KR_THEME_JS;
@@ -116,7 +116,6 @@ function CheckoutPage() {
           if (payment?.clientAnswer?.orderStatus === "PAID") {
             setSuccess(true);
             toast.success("¡Pago confirmado! Activando tu licencia...");
-            // Notificar al webhook con kr-answer + kr-hash firmados
             try {
               const fd = new FormData();
               fd.append("kr-answer", payment.rawClientAnswer);
@@ -197,29 +196,29 @@ function CheckoutPage() {
             </p>
             <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-6 space-y-4">
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Precio</span>
-                <span className="font-semibold">${plan.priceUsd.toFixed(2)} USD</span>
+                <span className="text-muted-foreground">Moneda</span>
+                <span className="font-semibold text-primary">Soles (PEN)</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Equivalente</span>
+                <span className="text-muted-foreground">Referencial USD</span>
                 <span className="text-muted-foreground">
-                  ≈ S/ {plan.pricePen.toFixed(2)} PEN
+                  ≈ ${plan.priceUsd.toFixed(2)} USD
                 </span>
               </div>
               <div className="border-t border-white/10 pt-4 flex justify-between items-end">
-                <span className="font-bold">Total</span>
+                <span className="font-bold">Total a pagar</span>
                 <div className="text-right">
-                  <span className="text-2xl font-black tracking-tighter">
-                    ${plan.priceUsd.toFixed(2)} USD
+                  <span className="text-3xl font-black tracking-tighter text-white">
+                    S/ {plan.pricePen.toFixed(2)}
                   </span>
-                  <p className="text-xs text-muted-foreground">
-                    ≈ S/ {plan.pricePen.toFixed(2)} PEN
+                  <p className="text-xs text-muted-foreground font-mono">
+                    ≈ ${plan.priceUsd.toFixed(2)} USD
                   </p>
                 </div>
               </div>
               <div className="flex items-center gap-2 text-xs text-muted-foreground pt-2">
                 <ShieldCheck className="w-4 h-4 text-primary" />
-                <span>Pago seguro procesado por Izipay</span>
+                <span>Pago seguro procesado por Izipay / Yape / Tarjetas</span>
               </div>
             </div>
           </div>
@@ -234,14 +233,14 @@ function CheckoutPage() {
               {loading && !error && (
                 <div className="flex flex-col items-center justify-center py-20 gap-4 text-muted-foreground">
                   <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                  <p className="text-sm">Cargando formulario de pago...</p>
+                  <p className="text-sm">Cargando pasarela de pago seguro...</p>
                 </div>
               )}
               {success && (
                 <div className="flex flex-col items-center justify-center py-12 gap-4">
                   <CheckCircle2 className="w-12 h-12 text-primary" />
                   <p className="text-sm text-muted-foreground">
-                    Confirmando pago y generando licencia...
+                    Confirmando pago y activando tu licencia...
                   </p>
                 </div>
               )}
@@ -252,7 +251,7 @@ function CheckoutPage() {
               />
             </div>
             <p className="text-xs text-muted-foreground mt-4 text-center">
-              Aceptamos Visa, Mastercard, American Express y Diners.
+              Aceptamos Visa, Mastercard, American Express, Diners, Yape y Plin vía pasarela.
             </p>
           </div>
         </div>

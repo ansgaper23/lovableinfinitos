@@ -1,45 +1,81 @@
-// Catálogo de planes – fuente única de verdad
-export type PlanId = "basico" | "pro" | "premium";
+// Catálogo de planes – fuente única de verdad según plan.md
+export type PlanId = "diario" | "semanal" | "quincenal" | "basico" | "pro" | "premium";
 
 export interface PlanInfo {
   id: PlanId;
   name: string;
   duration: string;
   days: number;
+  pricePen: number; // S/
   priceUsd: number;
-  pricePen: number; // S/. — tipo de cambio fijo 3.75
   amountCents: number; // céntimos de PEN para Izipay
+  popular?: boolean;
 }
 
-export const PLANS: Record<PlanId, PlanInfo> = {
+export const PLANS: Record<string, PlanInfo> = {
+  diario: {
+    id: "diario",
+    name: "Plan Diario",
+    duration: "24 Horas",
+    days: 1,
+    pricePen: 39.0,
+    priceUsd: 10.5,
+    amountCents: 3900,
+  },
+  semanal: {
+    id: "semanal",
+    name: "Plan Semanal",
+    duration: "7 Días",
+    days: 7,
+    pricePen: 79.0,
+    priceUsd: 21.0,
+    amountCents: 7900,
+    popular: true,
+  },
+  quincenal: {
+    id: "quincenal",
+    name: "Plan Quincenal",
+    duration: "15 Días",
+    days: 15,
+    pricePen: 149.0,
+    priceUsd: 39.5,
+    amountCents: 14900,
+  },
+  // Retrocompatibilidad con ids previos
   basico: {
     id: "basico",
-    name: "Plan Básico",
-    duration: "1 Día",
+    name: "Plan Diario",
+    duration: "24 Horas",
     days: 1,
-    priceUsd: 5.99,
-    pricePen: 22.5,
-    amountCents: 2250,
+    pricePen: 39.0,
+    priceUsd: 10.5,
+    amountCents: 3900,
   },
   pro: {
     id: "pro",
-    name: "Plan Pro",
+    name: "Plan Semanal",
     duration: "7 Días",
     days: 7,
-    priceUsd: 13.99,
-    pricePen: 52.5,
-    amountCents: 5250,
+    pricePen: 79.0,
+    priceUsd: 21.0,
+    amountCents: 7900,
+    popular: true,
   },
   premium: {
     id: "premium",
-    name: "Plan Premium",
-    duration: "30 Días",
-    days: 30,
-    priceUsd: 18.99,
-    pricePen: 71.5,
-    amountCents: 7150,
+    name: "Plan Quincenal",
+    duration: "15 Días",
+    days: 15,
+    pricePen: 149.0,
+    priceUsd: 39.5,
+    amountCents: 14900,
   },
 };
 
 export const isPlanId = (v: string): v is PlanId =>
-  v === "basico" || v === "pro" || v === "premium";
+  v === "diario" ||
+  v === "semanal" ||
+  v === "quincenal" ||
+  v === "basico" ||
+  v === "pro" ||
+  v === "premium";

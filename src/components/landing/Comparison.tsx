@@ -8,15 +8,15 @@ export const Comparison = () => {
       <div className="container mx-auto relative z-10 max-w-5xl">
         <div className="text-center max-w-3xl mx-auto mb-14">
           <span className="inline-block py-1.5 px-4 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-black uppercase tracking-widest mb-5">
-            Antes vs. Después
+            Comparativa directa
           </span>
           <h2 className="text-4xl md:text-5xl font-black italic tracking-tighter mb-5">
-            EL MISMO LOVABLE.{" "}
-            <span className="text-primary text-glow">UNA FRACCIÓN DEL PRECIO.</span>
+            LOVABLE OFICIAL VS.{" "}
+            <span className="text-primary text-glow">LOVABLE ILIMITADO</span>
           </h2>
           <p className="text-muted-foreground text-lg font-light">
-            Esto es lo que pagas hoy en Lovable oficial vs. lo que pagas aquí por la
-            <span className="text-foreground font-semibold"> misma experiencia sin límites</span>.
+            Descubre por qué cientos de builders y desarrolladores migraron a créditos ilimitados con
+            <span className="text-foreground font-semibold"> ahorro real en moneda local</span>.
           </p>
         </div>
 
@@ -28,26 +28,26 @@ export const Comparison = () => {
                 Lovable Oficial
               </h3>
               <span className="text-[10px] font-bold uppercase tracking-widest text-destructive/80 px-2 py-1 rounded-full border border-destructive/30">
-                Lo que pagas hoy
+                Modelo tradicional
               </span>
             </div>
 
             <div className="mb-6">
               <div className="flex items-baseline gap-2">
-                <span className="text-5xl font-black tracking-tighter text-white/90">$25</span>
+                <span className="text-4xl sm:text-5xl font-black tracking-tighter text-white/90">$25 USD</span>
                 <span className="text-muted-foreground font-medium">/mes</span>
               </div>
               <p className="text-xs text-muted-foreground mt-2 uppercase tracking-widest">
-                Plan Pro — créditos limitados
+                Créditos finitos y recargas caras
               </p>
             </div>
 
-            <ul className="space-y-3 text-sm">
+            <ul className="space-y-3.5 text-sm">
               {[
-                "Créditos que se acaban en días",
-                "Pagos recurrentes en USD",
-                "Miedo a experimentar (cada click cuesta)",
-                "Sin soporte en español",
+                "Créditos que se agotan en días de desarrollo",
+                "Cobros recurrentes con impuestos bancarios en USD",
+                "Ansiedad por créditos: cada prompt cuesta dinero",
+                "Soporte solo por tickets en inglés",
               ].map((item) => (
                 <li key={item} className="flex items-start gap-3 text-muted-foreground">
                   <X className="w-4 h-4 text-destructive shrink-0 mt-0.5" />
@@ -66,33 +66,33 @@ export const Comparison = () => {
             <div className="hidden md:block w-px h-12 bg-gradient-to-t from-transparent to-primary/40" />
           </div>
 
-          {/* Lovable Infinito */}
+          {/* Lovable Ilimitado */}
           <div className="relative rounded-2xl border border-primary/50 bg-primary/[0.04] p-8 backdrop-blur-sm shadow-[0_0_40px_rgba(var(--color-primary),0.12)]">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-sm font-black uppercase tracking-widest text-primary">
-                Lovable Infinito
+                Lovable Ilimitado
               </h3>
               <span className="text-[10px] font-bold uppercase tracking-widest text-primary px-2 py-1 rounded-full bg-primary/10 border border-primary/40">
-                Lo que pagas aquí
+                Libertad total
               </span>
             </div>
 
             <div className="mb-6">
               <div className="flex items-baseline gap-2">
-                <span className="text-5xl font-black tracking-tighter text-white">$5.99</span>
+                <span className="text-4xl sm:text-5xl font-black tracking-tighter text-white">S/ 39.00</span>
                 <span className="text-muted-foreground font-medium">desde</span>
               </div>
               <p className="text-xs text-primary mt-2 uppercase tracking-widest font-bold">
-                Hasta 76% menos · Pago único
+                Precios fijos en Soles · Sin sorpresas
               </p>
             </div>
 
-            <ul className="space-y-3 text-sm">
+            <ul className="space-y-3.5 text-sm">
               {[
-                "Créditos ilimitados durante tu plan",
-                "Pago único, sin suscripciones",
-                "Experimenta sin contar cada prompt",
-                "Soporte 24/7 por WhatsApp en español",
+                "Créditos 100% ilimitados durante todo tu plan",
+                "Pagas en Soles con Yape, Plin y tarjetas locales",
+                "Libertad total para iterar y terminar MVPs completos",
+                "Soporte 24/7 directo por WhatsApp en español",
               ].map((item) => (
                 <li key={item} className="flex items-start gap-3 text-white/90">
                   <Check className="w-4 h-4 text-primary shrink-0 mt-0.5" />
@@ -108,7 +108,7 @@ export const Comparison = () => {
             href="#precios"
             className="inline-flex items-center gap-2 text-sm font-black uppercase tracking-widest text-primary hover:text-primary/80 transition-colors border-b-2 border-primary/40 hover:border-primary pb-1"
           >
-            Ver los 3 planes disponibles <ArrowRight className="w-4 h-4" />
+            Ver planes en Soles (S/) desde S/ 39 <ArrowRight className="w-4 h-4" />
           </a>
         </div>
       </div>

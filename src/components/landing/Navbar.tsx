@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, navigationMenuTriggerStyle } from "@/components/ui/navigation-menu";
-import { cn } from "@/lib/utils";
 import { lazy, Suspense } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Link } from "@tanstack/react-router";
@@ -9,18 +8,20 @@ import logoAsset from "@/assets/logo.png.asset.json";
 const MessageCircleIcon = lazy(() => import("lucide-react").then(m => ({ default: m.MessageCircle })));
 const LayoutDashboardIcon = lazy(() => import("lucide-react").then(m => ({ default: m.LayoutDashboard })));
 
-
 export const Navbar = () => {
   return (
     <header className="fixed top-10 left-0 right-0 z-50 bg-background/40 backdrop-blur-xl border-b border-white/5">
       <div className="container mx-auto px-4 h-20 flex items-center justify-between">
-        <div className="flex items-center gap-3 group cursor-pointer">
+        <Link to="/" className="flex items-center gap-3 group cursor-pointer">
           <img
             src={logoAsset.url}
-            alt="Lovable Infinito Logo"
+            alt="Lovable Ilimitado Logo"
             className="h-10 w-auto rounded-lg transform group-hover:scale-105 transition-transform duration-500"
           />
-        </div>
+          <span className="font-black italic tracking-tighter text-lg hidden sm:inline-block">
+            LOVABLE <span className="text-primary text-glow">ILIMITADO</span>
+          </span>
+        </Link>
 
         <NavigationMenu className="hidden md:flex">
           <NavigationMenuList>
@@ -31,12 +32,17 @@ export const Navbar = () => {
             </NavigationMenuItem>
             <NavigationMenuItem>
               <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-                <a href="#como-funciona">Cómo Funciona</a>
+                <a href="#como-funciona">Funcionamiento</a>
               </NavigationMenuLink>
             </NavigationMenuItem>
             <NavigationMenuItem>
               <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
                 <a href="#precios">Precios</a>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+                <a href="#testimonios">Testimonios</a>
               </NavigationMenuLink>
             </NavigationMenuItem>
             <NavigationMenuItem>
@@ -51,7 +57,7 @@ export const Navbar = () => {
           <AuthButtons />
           <Button className="gap-2" asChild>
             <a
-              href="https://wa.me/51936467898?text=Hola,%20necesito%20soporte%20de%20Lovable%20Infinito"
+              href="https://wa.me/51936467898?text=Hola,%20necesito%20soporte%20de%20Lovable%20Ilimitado"
               target="_blank"
               rel="noopener noreferrer"
             >
