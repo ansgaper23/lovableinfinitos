@@ -1,5 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Check, X, ShieldAlert, Rocket, Heart, TrendingUp, Zap, DollarSign, Users, Flame, Sparkles } from "lucide-react";
+import { PurpleGradientButton } from "@/components/ui/purple-gradient-button";
+import { Star, Check, X, ShieldAlert, Rocket, Heart, TrendingUp, Zap, DollarSign, Users, Flame, Sparkles } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
 export const Pricing = () => {
@@ -136,16 +137,25 @@ export const Pricing = () => {
                   </ul>
                 </div>
                 
-                <Link
-                  to="/auth"
-                  className={`block w-full py-4 rounded-lg font-black uppercase tracking-wider text-center text-sm transition-all duration-300 shadow-md ${
-                    plan.popular
-                      ? "bg-primary text-primary-foreground hover:shadow-[0_0_30px_rgba(var(--color-primary),0.5)] hover:brightness-110"
-                      : "bg-white/10 text-white hover:bg-white/20 hover:border-white/30"
-                  }`}
-                >
-                  Activar {plan.name}
-                </Link>
+                {plan.popular ? (
+                  <PurpleGradientButton
+                    size="lg"
+                    className="w-full py-4 h-auto text-sm uppercase tracking-wider font-black shadow-lg shadow-purple-600/30"
+                    asChild
+                  >
+                    <Link to="/auth" className="flex items-center justify-center gap-2">
+                      <Star className="w-4 h-4 fill-amber-300 text-amber-300 drop-shadow-[0_0_8px_rgba(252,211,77,0.7)]" />
+                      Activar {plan.name}
+                    </Link>
+                  </PurpleGradientButton>
+                ) : (
+                  <Link
+                    to="/auth"
+                    className="block w-full py-4 rounded-lg font-black uppercase tracking-wider text-center text-sm transition-all duration-300 shadow-md bg-white/10 text-white hover:bg-white/20 hover:border-white/30"
+                  >
+                    Activar {plan.name}
+                  </Link>
+                )}
               </CardContent>
             </Card>
           ))}

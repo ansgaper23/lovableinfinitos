@@ -23,6 +23,15 @@ export const PurpleGradientButton = React.forwardRef<HTMLButtonElement, PurpleGr
     },
     ref
   ) => {
+    const starIcon = showStar ? (
+      <Star
+        className={cn(
+          "w-4 h-4 fill-amber-300 text-amber-300 drop-shadow-[0_0_8px_rgba(252,211,77,0.7)] shrink-0 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110",
+          starClassName
+        )}
+      />
+    ) : null;
+
     if (asChild) {
       return (
         <Button
@@ -31,7 +40,7 @@ export const PurpleGradientButton = React.forwardRef<HTMLButtonElement, PurpleGr
           variant="purpleGradient"
           size={size}
           className={cn(
-            "bg-gradient-to-r from-purple-600 via-indigo-600 to-fuchsia-600 hover:from-purple-500 hover:via-indigo-500 hover:to-fuchsia-500 text-white font-semibold shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 border border-purple-400/30 transition-all duration-300 transform hover:-translate-y-0.5",
+            "group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-fuchsia-600 px-6 py-3 font-bold text-white shadow-lg shadow-purple-600/30 border border-purple-400/40 transition-all duration-300 hover:from-purple-500 hover:via-indigo-500 hover:to-fuchsia-500 hover:shadow-purple-500/50 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]",
             className
           )}
           {...props}
@@ -47,18 +56,14 @@ export const PurpleGradientButton = React.forwardRef<HTMLButtonElement, PurpleGr
         variant="purpleGradient"
         size={size}
         className={cn(
-          "bg-gradient-to-r from-purple-600 via-indigo-600 to-fuchsia-600 hover:from-purple-500 hover:via-indigo-500 hover:to-fuchsia-500 text-white font-semibold shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 border border-purple-400/30 transition-all duration-300 transform hover:-translate-y-0.5",
+          "group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-fuchsia-600 px-6 py-3 font-bold text-white shadow-lg shadow-purple-600/30 border border-purple-400/40 transition-all duration-300 hover:from-purple-500 hover:via-indigo-500 hover:to-fuchsia-500 hover:shadow-purple-500/50 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]",
           className
         )}
         {...props}
       >
-        {showStar && starPosition === "left" && (
-          <Star className={cn("w-4 h-4 fill-amber-300 text-amber-300 shrink-0", starClassName)} />
-        )}
-        {children}
-        {showStar && starPosition === "right" && (
-          <Star className={cn("w-4 h-4 fill-amber-300 text-amber-300 shrink-0", starClassName)} />
-        )}
+        {starPosition === "left" && starIcon}
+        <span className="relative z-10 flex items-center gap-2">{children}</span>
+        {starPosition === "right" && starIcon}
       </Button>
     );
   }
