@@ -534,21 +534,38 @@ export const SuperAdminDashboard = () => {
           {activeTab === "stats" && <StatsPanel users={users} licenses={licenses} />}
 
           {activeTab === "system" && (
-            <Card className="bg-zinc-900 border-zinc-800">
-              <CardHeader>
-                <CardTitle className="text-sm font-semibold">Configuración de Plataforma</CardTitle>
-                <CardDescription className="text-xs text-zinc-500">Parámetros del sistema</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between py-2 border-b border-zinc-800">
-                  <div>
-                    <p className="text-sm font-medium">API Flow-Pro Endpoint</p>
-                    <p className="text-xs text-zinc-500 font-mono">https://flow-pro.online/api/admin/licenses/generate</p>
+            <div className="space-y-6">
+              <FlowProGeneratorCard onSuccess={fetchLicenses} />
+              <Card className="bg-zinc-900 border-zinc-800">
+                <CardHeader>
+                  <CardTitle className="text-sm font-semibold">Configuración de Plataforma & Clúster</CardTitle>
+                  <CardDescription className="text-xs text-zinc-500">Parámetros globales y enlace con flow-pro.online</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between py-2 border-b border-zinc-800">
+                    <div>
+                      <p className="text-sm font-medium">API Flow-Pro Endpoint</p>
+                      <p className="text-xs text-zinc-500 font-mono">https://flow-pro.online/api/admin/licenses/generate</p>
+                    </div>
+                    <Badge variant="outline" className="border-green-500/30 text-green-400 text-xs">Activo / HTTPS</Badge>
                   </div>
-                  <Badge variant="outline" className="border-green-500/30 text-green-400 text-xs">Conectado</Badge>
-                </div>
-              </CardContent>
-            </Card>
+                  <div className="flex items-center justify-between py-2 border-b border-zinc-800">
+                    <div>
+                      <p className="text-sm font-medium">Protocolo & Seguridad</p>
+                      <p className="text-xs text-zinc-500 font-mono">TLS 1.3 · Cloudflare Protection · x-admin-api-key</p>
+                    </div>
+                    <Badge variant="outline" className="border-zinc-700 text-zinc-300 text-xs">Producción</Badge>
+                  </div>
+                  <div className="flex items-center justify-between py-2">
+                    <div>
+                      <p className="text-sm font-medium">Modo de Emisión Directa</p>
+                      <p className="text-xs text-zinc-500">Generación instantánea de claves de prueba y permanentes con sincronización en Supabase</p>
+                    </div>
+                    <Badge variant="outline" className="border-emerald-500/30 text-emerald-400 text-xs">Habilitado</Badge>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           )}
         </div>
       </main>
