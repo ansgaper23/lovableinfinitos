@@ -1,7 +1,6 @@
 import { useEffect, useRef, lazy, Suspense, useState } from "react";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { PurpleGradientButton } from "@/components/ui/purple-gradient-button";
-import { Star } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import videoAsset from "@/assets/hero-video.mp4.asset.json";
 import videoPosterAsset from "@/assets/video-poster.jpg.asset.json";
@@ -11,8 +10,12 @@ const ZapIcon = lazy(() => import("lucide-react").then(m => ({ default: m.Zap })
 const ShieldIcon = lazy(() => import("lucide-react").then(m => ({ default: m.Shield })));
 const GlobeIcon = lazy(() => import("lucide-react").then(m => ({ default: m.Globe })));
 const ArrowRightIcon = lazy(() => import("lucide-react").then(m => ({ default: m.ArrowRight })));
+const PlayIcon = lazy(() => import("lucide-react").then(m => ({ default: m.Play })));
+const ImageIcon = lazy(() => import("lucide-react").then(m => ({ default: m.Image })));
+const SparklesIcon = lazy(() => import("lucide-react").then(m => ({ default: m.Sparkles })));
 
 export const Hero = () => {
+  const [activeView, setActiveView] = useState<"banner" | "video">("banner");
   const [hasVideoError, setHasVideoError] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -28,7 +31,7 @@ export const Hero = () => {
 
     const handleIntersection = (entries: IntersectionObserverEntry[]) => {
       entries.forEach((entry) => {
-        if (videoRef.current) {
+        if (videoRef.current && activeView === "video") {
           if (entry.isIntersecting) {
             videoRef.current.play().catch((error) => {
               console.log("Autoplay prevented:", error);
@@ -50,7 +53,7 @@ export const Hero = () => {
         observer.unobserve(videoRef.current);
       }
     };
-  }, []);
+  }, [activeView]);
 
   return (
     <section id="inicio" className="pt-28 pb-12 md:pt-36 md:pb-20 px-4 overflow-hidden relative">
@@ -83,17 +86,11 @@ export const Hero = () => {
         </p>
         
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
-          <PurpleGradientButton
-            size="lg"
-            className="h-14 sm:h-16 px-8 sm:px-12 text-lg sm:text-xl font-black italic tracking-tighter uppercase gap-3 shadow-[0_0_35px_rgba(168,85,247,0.45)] hover:shadow-[0_0_55px_rgba(168,85,247,0.7)] w-full sm:w-auto rounded-xl transition-all duration-300 transform hover:-translate-y-1"
-            asChild
-          >
-            <a href="#precios" className="flex items-center justify-center gap-2.5">
-              <Star className="w-5 h-5 fill-amber-300 text-amber-300 animate-pulse shrink-0" />
-              <span>VER PLANES DESDE S/ 39</span>
-              <Suspense fallback={null}><ArrowRightIcon className="w-6 h-6 shrink-0" /></Suspense>
+          <Button size="lg" className="h-14 sm:h-16 px-8 sm:px-12 text-lg sm:text-xl font-black italic tracking-tighter uppercase gap-3 shadow-[0_0_30px_rgba(var(--color-primary),0.4)] hover:shadow-[0_0_50px_rgba(var(--color-primary),0.6)] w-full sm:w-auto rounded-xl transition-all duration-300 transform hover:-translate-y-1 bg-primary text-primary-foreground" asChild>
+            <a href="#precios">
+              VER PLANES DESDE S/ 39 <Suspense fallback={null}><ArrowRightIcon className="w-6 h-6" /></Suspense>
             </a>
-          </PurpleGradientButton>
+          </Button>
           <Link
             to="/auth"
             className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors py-3 border-b border-transparent hover:border-primary/40"
@@ -103,70 +100,158 @@ export const Hero = () => {
           </Link>
         </div>
 
-        {/* Video Demo Mockup */}
-        <div className="max-w-4xl mx-auto mb-14">
+        {/* Hero Interactive Showcase (Banner & Video) */}
+        <div className="max-w-5xl mx-auto mb-14">
           <div className="relative group">
-            {/* Browser Mockup Header */}
-            <div className="bg-[#1A1A1A] border-x border-t border-white/10 rounded-t-xl p-3 flex items-center gap-2">
-              <div className="flex gap-1.5">
-                <div className="w-3 h-3 rounded-full bg-[#FF5F56]" />
-                <div className="w-3 h-3 rounded-full bg-[#FFBD2E]" />
-                <div className="w-3 h-3 rounded-full bg-[#27C93F]" />
+            {/* Browser Mockup Header with Switcher */}
+            <div className="bg-[#1A1A1A] border-x border-t border-white/10 rounded-t-2xl p-3 sm:px-5 flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="flex gap-1.5">
+                  <div className="w-3 h-3 rounded-full bg-[#FF5F56]" />
+                  <div className="w-3 h-3 rounded-full bg-[#FFBD2E]" />
+                  <div className="w-3 h-3 rounded-full bg-[#27C93F]" />
+                </div>
+                <div className="hidden sm:flex items-center gap-2 bg-white/5 rounded-md px-3 py-1 border border-white/5">
+                  <Suspense fallback={null}><GlobeIcon className="w-3 h-3 text-muted-foreground" /></Suspense>
+                  <span className="text-[11px] text-muted-foreground font-mono tracking-wider">lovable.dev/app/flowpro</span>
+                </div>
               </div>
-              <div className="mx-auto bg-white/5 rounded-md px-4 py-1 flex items-center gap-2 max-w-[200px] md:max-w-md w-full">
-                <Suspense fallback={null}><GlobeIcon className="w-3 h-3 text-muted-foreground" /></Suspense>
-                <span className="text-[10px] text-muted-foreground truncate font-mono uppercase tracking-widest">lovableilimitado.com/demo</span>
+
+              {/* View Selector Tabs */}
+              <div className="flex items-center bg-black/40 border border-white/10 p-1 rounded-xl">
+                <button
+                  type="button"
+                  onClick={() => setActiveView("banner")}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all duration-200 ${
+                    activeView === "banner"
+                      ? "bg-primary text-primary-foreground shadow-md shadow-primary/30"
+                      : "text-muted-foreground hover:text-white"
+                  }`}
+                >
+                  <Suspense fallback={null}><ImageIcon className="w-3.5 h-3.5" /></Suspense>
+                  <span>Interfaz Lovable</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveView("video");
+                    if (videoRef.current) {
+                      videoRef.current.play().catch(() => {});
+                    }
+                  }}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all duration-200 ${
+                    activeView === "video"
+                      ? "bg-primary text-primary-foreground shadow-md shadow-primary/30"
+                      : "text-muted-foreground hover:text-white"
+                  }`}
+                >
+                  <Suspense fallback={null}><PlayIcon className="w-3.5 h-3.5" /></Suspense>
+                  <span>Video Tutorial</span>
+                </button>
               </div>
             </div>
             
-            {/* Video Container */}
-            <div className="relative aspect-video bg-black border-x border-b border-white/10 rounded-b-xl overflow-hidden shadow-2xl flex items-center justify-center">
-              <img
-                src={videoPosterAsset.url}
-                alt="Vista previa de la guía rápida de Lovable Ilimitado"
-                className="absolute inset-0 h-full w-full object-cover"
-                loading="eager"
-                decoding="async"
-              />
+            {/* Visual Container */}
+            <div className="relative aspect-video sm:aspect-[16/9] bg-black border-x border-b border-white/10 rounded-b-2xl overflow-hidden shadow-2xl flex items-center justify-center">
+              {/* VISTA 1: BANNER HERO IMAGE */}
+              {activeView === "banner" && (
+                <div className="relative w-full h-full group/image overflow-hidden flex items-center justify-center bg-zinc-950">
+                  <img
+                    src="/images/banner_hero.png"
+                    alt="Banner Hero - FlowPro Lovable Créditos Ilimitados"
+                    className="w-full h-full object-cover sm:object-contain transition-transform duration-700 group-hover/image:scale-[1.02]"
+                    loading="eager"
+                    decoding="async"
+                  />
 
-              {hasVideoError && (
-                <a
-                  href={videoAsset.url}
-                  className="absolute inset-0 z-20 flex items-center justify-center bg-black/45 text-sm font-black uppercase tracking-[0.2em] text-primary backdrop-blur-[2px]"
-                >
-                  Abrir video
-                </a>
+                  {/* Floating Badges on Banner */}
+                  <div className="absolute top-4 left-4 z-20 flex items-center gap-2">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-black/75 backdrop-blur-md border border-primary/40 text-primary shadow-lg shadow-black/50">
+                      <Suspense fallback={null}><SparklesIcon className="w-3.5 h-3.5 text-primary" /></Suspense>
+                      FlowPro Activo
+                    </span>
+                    <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-black/60 backdrop-blur-md border border-white/10 text-emerald-400">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                      Créditos Infinitos
+                    </span>
+                  </div>
+
+                  {/* Play Video Trigger Overlay */}
+                  <div className="absolute bottom-4 right-4 z-20">
+                    <Button
+                      size="sm"
+                      onClick={() => {
+                        setActiveView("video");
+                        if (videoRef.current) {
+                          videoRef.current.play().catch(() => {});
+                        }
+                      }}
+                      className="bg-primary/90 hover:bg-primary text-primary-foreground font-bold text-xs uppercase tracking-wider gap-2 shadow-lg backdrop-blur-md border border-primary/50"
+                    >
+                      <Suspense fallback={null}><PlayIcon className="w-3.5 h-3.5 fill-current" /></Suspense>
+                      Ver demo en video
+                    </Button>
+                  </div>
+
+                  {/* Subtle Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
+                </div>
               )}
 
-              <video 
-                ref={videoRef}
-                className={`relative z-10 w-full h-full object-cover transition-opacity duration-500 ${hasVideoError ? 'opacity-0' : 'opacity-100'}`}
-                loop 
-                autoPlay
-                playsInline
-                controls
-                onError={() => {
-                  setHasVideoError(true);
-                }}
-                preload="metadata"
-                poster={videoPosterAsset.url}
-              >
-                <source src={videoAsset.url} type="video/mp4" />
-                Tu navegador no soporta el video.
-              </video>
-              
-              {/* Overlay glow */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
-              <div className="absolute -inset-px rounded-xl border border-primary/20 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              {/* VISTA 2: VIDEO TUTORIAL */}
+              {activeView === "video" && (
+                <div className="relative w-full h-full bg-black flex items-center justify-center">
+                  <img
+                    src={videoPosterAsset.url}
+                    alt="Vista previa de la guía rápida de Lovable Ilimitado"
+                    className="absolute inset-0 h-full w-full object-cover"
+                    loading="eager"
+                    decoding="async"
+                  />
+
+                  {hasVideoError && (
+                    <a
+                      href={videoAsset.url}
+                      className="absolute inset-0 z-20 flex items-center justify-center bg-black/45 text-sm font-black uppercase tracking-[0.2em] text-primary backdrop-blur-[2px]"
+                    >
+                      Abrir video en nueva pestaña
+                    </a>
+                  )}
+
+                  <video 
+                    ref={videoRef}
+                    className={`relative z-10 w-full h-full object-cover transition-opacity duration-500 ${hasVideoError ? 'opacity-0' : 'opacity-100'}`}
+                    loop 
+                    autoPlay
+                    playsInline
+                    controls
+                    onError={() => {
+                      setHasVideoError(true);
+                    }}
+                    preload="metadata"
+                    poster={videoPosterAsset.url}
+                  >
+                    <source src={videoAsset.url} type="video/mp4" />
+                    Tu navegador no soporta el video.
+                  </video>
+                  
+                  {/* Overlay glow */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
+                </div>
+              )}
+
+              {/* Border glow on hover */}
+              <div className="absolute -inset-px rounded-b-2xl border border-primary/20 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             </div>
             
             {/* Background Glow */}
-            <div className="absolute -inset-4 bg-primary/20 blur-3xl -z-10 opacity-0 group-hover:opacity-30 transition-opacity duration-700" />
+            <div className="absolute -inset-4 bg-primary/25 blur-3xl -z-10 opacity-60 group-hover:opacity-90 transition-opacity duration-700" />
           </div>
           
-          <div className="text-center mt-6">
-            <p className="text-sm text-muted-foreground italic font-medium uppercase tracking-widest">
-              Aprende a activar tus créditos ilimitados en menos de 60 segundos ⚡
+          <div className="flex flex-wrap items-center justify-center gap-4 text-center mt-6">
+            <p className="text-sm text-muted-foreground italic font-medium uppercase tracking-widest flex items-center gap-2">
+              <span className="inline-block w-2 h-2 rounded-full bg-primary" />
+              Acceso ilimitado con la extensión oficial FlowPro para Lovable
             </p>
           </div>
         </div>
