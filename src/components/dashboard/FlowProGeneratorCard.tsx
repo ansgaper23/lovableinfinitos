@@ -129,17 +129,34 @@ export const FlowProGeneratorCard = ({ onSuccess }: Props) => {
             </CardDescription>
           </div>
           <div className="flex items-center gap-2 self-start sm:self-auto">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => handleAuditConnection(false)}
-              disabled={isAuditing}
-              className="h-8 text-xs border-zinc-700 bg-zinc-800/90 hover:bg-zinc-700 text-zinc-200 gap-1.5 px-3 shadow-sm font-medium"
-              title="Ejecutar prueba en vivo de conectividad, TLS y latencia con Flow-Pro"
-            >
-              <Activity className={`w-3.5 h-3.5 ${isAuditing ? "animate-spin text-amber-400" : "text-emerald-400"}`} />
-              {isAuditing ? "Auditando enlace..." : "Auditar Conexión Ahora"}
-            </Button>
+            <div className="flex items-center gap-1.5">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleAuditConnection(false)}
+                disabled={isAuditing}
+                className="h-8 text-xs border-zinc-700 bg-zinc-800/90 hover:bg-zinc-700 text-zinc-200 gap-1.5 px-3 shadow-sm font-medium"
+                title="Ejecutar prueba en vivo de conectividad, TLS y latencia con Flow-Pro"
+              >
+                <Activity className={`w-3.5 h-3.5 ${isAuditing ? "animate-spin text-amber-400" : "text-emerald-400"}`} />
+                {isAuditing ? "Auditando..." : "Auditar Conexión"}
+              </Button>
+              {auditResult && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={async () => {
+                    const report = `=== AUDITORÍA FLOW-PRO ===\nHost: ${auditResult.apiHost}\nEndpoint: ${auditResult.endpoint}\nEstado: ${auditResult.ok ? "ONLINE" : "OFFLINE"} (HTTP ${auditResult.status})\nLatencia: ${auditResult.latencyMs} ms\nProtocolo: ${auditResult.protocol}\nAuth Key: ${auditResult.configuredKey}\nServidor: ${auditResult.server || "Cloudflare"}\nRay ID: ${auditResult.cfRay || "N/A"}\nLicencias en BD: ${auditResult.stats?.totalEmitted ?? 0} emitidas\nFecha: ${new Date().toLocaleString()}`;
+                    await navigator.clipboard.writeText(report);
+                    toast.success("Informe de auditoría copiado al portapapeles");
+                  }}
+                  className="h-8 text-[11px] text-zinc-400 hover:text-white px-2"
+                  title="Copiar reporte de diagnóstico"
+                >
+                  <Copy className="w-3 h-3 mr-1" /> Copiar Reporte
+                </Button>
+              )}
+            </div>
             <span className="text-[11px] font-mono bg-zinc-950 text-zinc-400 px-2 py-1 rounded border border-zinc-800 flex items-center gap-1.5">
               <Server className="w-3 h-3 text-destructive" /> flow-pro.online
             </span>
