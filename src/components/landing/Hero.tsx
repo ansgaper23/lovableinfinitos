@@ -1,6 +1,7 @@
 import { useEffect, useRef, lazy, Suspense, useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { PurpleGradientButton } from "@/components/ui/purple-gradient-button";
+import { Star } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import videoAsset from "@/assets/hero-video.mp4.asset.json";
 import videoPosterAsset from "@/assets/video-poster.jpg.asset.json";
@@ -82,11 +83,17 @@ export const Hero = () => {
         </p>
         
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
-          <Button size="lg" className="h-14 sm:h-16 px-8 sm:px-12 text-lg sm:text-xl font-black italic tracking-tighter uppercase gap-3 shadow-[0_0_30px_rgba(var(--color-primary),0.4)] hover:shadow-[0_0_50px_rgba(var(--color-primary),0.6)] w-full sm:w-auto rounded-xl transition-all duration-300 transform hover:-translate-y-1 bg-primary text-primary-foreground" asChild>
-            <a href="#precios">
-              VER PLANES DESDE S/ 39 <Suspense fallback={null}><ArrowRightIcon className="w-6 h-6" /></Suspense>
+          <PurpleGradientButton
+            size="lg"
+            className="h-14 sm:h-16 px-8 sm:px-12 text-lg sm:text-xl font-black italic tracking-tighter uppercase gap-3 shadow-[0_0_35px_rgba(168,85,247,0.45)] hover:shadow-[0_0_55px_rgba(168,85,247,0.7)] w-full sm:w-auto rounded-xl transition-all duration-300 transform hover:-translate-y-1"
+            asChild
+          >
+            <a href="#precios" className="flex items-center justify-center gap-2.5">
+              <Star className="w-5 h-5 fill-amber-300 text-amber-300 animate-pulse shrink-0" />
+              <span>VER PLANES DESDE S/ 39</span>
+              <Suspense fallback={null}><ArrowRightIcon className="w-6 h-6 shrink-0" /></Suspense>
             </a>
-          </Button>
+          </PurpleGradientButton>
           <Link
             to="/auth"
             className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors py-3 border-b border-transparent hover:border-primary/40"
