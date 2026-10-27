@@ -51,7 +51,7 @@ export const PurpleGradientButton = React.forwardRef<
     const baseClasses = cn(
       "group relative inline-flex items-center justify-center font-bold text-white transition-all duration-300 select-none cursor-pointer overflow-hidden",
       "bg-gradient-to-r from-purple-600 via-violet-600 to-indigo-600 hover:from-purple-500 hover:via-violet-500 hover:to-indigo-500",
-      "shadow-[0_0_25px_rgba(168,85,247,0.4)] hover:shadow-[0_0_40px_rgba(168,85,247,0.7)]",
+      "shadow-[0_0_25px_rgba(168,85,247,0.45)] hover:shadow-[0_0_40px_rgba(168,85,247,0.7)]",
       "border border-purple-400/40 hover:border-purple-300/80",
       "hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]",
       "disabled:opacity-50 disabled:pointer-events-none disabled:cursor-not-allowed",
@@ -82,6 +82,9 @@ export const PurpleGradientButton = React.forwardRef<
 );
 
 PurpleGradientButton.displayName = "PurpleGradientButton";
+
+// Alias semántico para la especificación de botón con gradiente morado y estrella
+export const PurpleStarButton = PurpleGradientButton;
 
 export default PurpleGradientButton;
 

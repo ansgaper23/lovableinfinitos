@@ -49,3 +49,4 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 Button.displayName = "Button";
 
 export { Button, buttonVariants };
+export { PurpleGradientButton, PurpleStarButton } from "@/components/ui/purple-gradient-button";
