@@ -125,6 +125,7 @@ export const SuperAdminDashboard = () => {
 
   const [assignTarget, setAssignTarget] = useState<ExtendedProfile | null>(null);
   const [assignDays, setAssignDays] = useState<number>(7);
+  const [assignProvider, setAssignProvider] = useState<"flowpro" | "legacy">("flowpro");
   const [isAssigning, setIsAssigning] = useState(false);
   const [assignedResult, setAssignedResult] = useState<{ license_key: string; expires_at: string | null } | null>(null);
 
@@ -132,7 +133,7 @@ export const SuperAdminDashboard = () => {
     if (!assignTarget) return;
     setIsAssigning(true);
     try {
-      const res = await assignFn({ data: { targetUserId: assignTarget.id, days: assignDays } });
+      const res = await assignFn({ data: { targetUserId: assignTarget.id, days: assignDays, provider: assignProvider } });
       setAssignedResult({ license_key: res.license_key, expires_at: res.expires_at });
       toast.success(`Licencia de ${assignDays} día${assignDays > 1 ? "s" : ""} asignada`);
       // refrescar lista de usuarios para reflejar cambios
@@ -817,6 +818,19 @@ export const SuperAdminDashboard = () => {
           </DialogHeader>
           {!assignedResult ? (
             <div className="space-y-4 py-2">
+              <div className="space-y-1.5">
+                <label className="text-xs text-zinc-400">Proveedor de Licencia</label>
+                <Select value={assignProvider} onValueChange={(v: any) => setAssignProvider(v)}>
+                  <SelectTrigger className="h-10 bg-zinc-950 border-zinc-800 text-sm">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-zinc-900 border-zinc-800 text-zinc-100">
+                    <SelectItem value="flowpro">Flow-Pro Key (Oficial)</SelectItem>
+                    <SelectItem value="legacy">Legacy Key (Automática)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
               <label className="text-xs text-zinc-400">Duración predeterminada</label>
               <div className="grid grid-cols-4 gap-2">
                 {[1, 7, 30, 60].map((d) => (
