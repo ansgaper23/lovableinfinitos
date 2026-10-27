@@ -228,7 +228,7 @@ export const SuperAdminDashboard = () => {
 
   const navItems = [
     { id: "summary", label: "Resumen", icon: LayoutDashboard },
-    { id: "flowpro", label: "Generador Flow-Pro", icon: Zap, badge: "Oficial" },
+    { id: "flowpro", label: "Auditoría & Flow-Pro", icon: Zap, badge: "Oficial" },
     { id: "users", label: "Usuarios", icon: Users },
     { id: "keys", label: "Licencias Emitidas", icon: Key },
     { id: "stats", label: "Estadísticas", icon: BarChart3 },
