@@ -22,6 +22,55 @@ export interface GeneratedLicenseResult {
 }
 
 /**
+ * Prueba la conectividad y estado de la API de Flow-Pro (Auditoría de conexión)
+ */
+export async function testFlowProConnection(): Promise<{
+  ok: boolean;
+  status: number;
+  message: string;
+  latencyMs: number;
+  endpoint: string;
+  configuredKey: string;
+}> {
+  const apiKey =
+    (typeof process !== "undefined" && process.env?.FLOW_PRO_ADMIN_API_KEY) ||
+    DEFAULT_API_KEY;
+  const maskedKey = apiKey ? `${apiKey.slice(0, 8)}...${apiKey.slice(-4)}` : "No configurada";
+
+  const startTime = Date.now();
+  try {
+    // Verificamos conectividad enviando una petición de verificación
+    const response = await fetch(FLOW_PRO_API_URL, {
+      method: "OPTIONS",
+      headers: {
+        "x-admin-api-key": apiKey,
+      },
+    });
+    const latencyMs = Date.now() - startTime;
+    return {
+      ok: response.status < 500,
+      status: response.status,
+      message: response.status === 405 || response.status === 200 || response.status === 204
+        ? "Conexión a Flow-Pro establecida correctamente"
+        : `Servidor respondió con código ${response.status}`,
+      latencyMs,
+      endpoint: FLOW_PRO_API_URL,
+      configuredKey: maskedKey,
+    };
+  } catch (err: any) {
+    const latencyMs = Date.now() - startTime;
+    return {
+      ok: false,
+      status: 0,
+      message: err?.message || "Error al conectar con flow-pro.online",
+      latencyMs,
+      endpoint: FLOW_PRO_API_URL,
+      configuredKey: maskedKey,
+    };
+  }
+}
+
+/**
  * Genera una licencia usando la API oficial de Flow-Pro:
  * POST https://flow-pro.online/api/admin/licenses/generate
  * Headers:

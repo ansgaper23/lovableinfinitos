@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { Key, RefreshCw, Copy, Check, Zap, MessageSquare } from "lucide-react";
+import { Key, RefreshCw, Copy, Check, Zap, MessageSquare, ShieldCheck, Activity, AlertCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
-import { adminGenerateLicense, adminGenerateTrial } from "@/lib/reseller-admin.functions";
+import { adminGenerateLicense, adminGenerateTrial, adminCheckFlowProConnection } from "@/lib/reseller-admin.functions";
 
 interface Props {
   onSuccess?: () => void;
@@ -14,6 +14,9 @@ interface Props {
 
 export const FlowProGeneratorCard = ({ onSuccess }: Props) => {
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isAuditing, setIsAuditing] = useState(false);
+  const [auditResult, setAuditResult] = useState<any>(null);
+
   const [planType, setPlanType] = useState<"trial" | "days" | "lifetime">("days");
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
@@ -23,6 +26,24 @@ export const FlowProGeneratorCard = ({ onSuccess }: Props) => {
 
   const generateTrialFn = useServerFn(adminGenerateTrial);
   const generateLicenseFn = useServerFn(adminGenerateLicense);
+  const checkConnectionFn = useServerFn(adminCheckFlowProConnection);
+
+  const handleAuditConnection = async () => {
+    setIsAuditing(true);
+    try {
+      const res = await checkConnectionFn();
+      setAuditResult(res);
+      if (res?.ok) {
+        toast.success(`Conexión Flow-Pro auditada: Activa (${res.latencyMs} ms)`);
+      } else {
+        toast.warning(`Flow-Pro respondió: ${res?.message}`);
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Error al auditar la conexión con Flow-Pro");
+    } finally {
+      setIsAuditing(false);
+    }
+  };
 
   const handleGenerate = async () => {
     if (!customerName.trim()) {
@@ -87,18 +108,63 @@ export const FlowProGeneratorCard = ({ onSuccess }: Props) => {
       <CardHeader className="pb-3 pt-5">
         <div className="flex items-center justify-between">
           <CardTitle className="text-base font-bold flex items-center gap-2 text-white">
-            <Zap className="w-5 h-5 text-destructive animate-pulse" /> Generador de Licencias Flow-Pro
+            <Zap className="w-5 h-5 text-destructive animate-pulse" /> Generador y Auditor de Conexión Flow-Pro
           </CardTitle>
-          <span className="text-[10px] font-mono bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded border border-zinc-700">
-            flow-pro.online
-          </span>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleAuditConnection}
+              disabled={isAuditing}
+              className="h-7 text-xs border-zinc-700 bg-zinc-800/80 hover:bg-zinc-700 text-zinc-300 gap-1.5 px-2"
+              title="Auditar conexión en tiempo real"
+            >
+              <Activity className={`w-3.5 h-3.5 ${isAuditing ? "animate-spin text-amber-400" : "text-green-400"}`} />
+              {isAuditing ? "Auditando..." : "Auditar Conexión"}
+            </Button>
+            <span className="text-[10px] font-mono bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded border border-zinc-700">
+              flow-pro.online
+            </span>
+          </div>
         </div>
         <CardDescription className="text-xs text-zinc-400">
-          Emite licencias oficiales directamente desde la API administrativa de Flow-Pro.
+          Emite licencias oficiales y audita la conectividad directa con la API de Flow-Pro.
         </CardDescription>
       </CardHeader>
 
       <CardContent className="space-y-4 pt-1">
+        {/* Resultado de la Auditoría */}
+        {auditResult && (
+          <div
+            className={`p-3 rounded-lg border text-xs space-y-1.5 transition-all ${
+              auditResult.ok
+                ? "bg-green-950/30 border-green-500/30 text-green-300"
+                : "bg-red-950/30 border-red-500/30 text-red-300"
+            }`}
+          >
+            <div className="flex items-center justify-between font-semibold">
+              <span className="flex items-center gap-1.5">
+                {auditResult.ok ? (
+                  <ShieldCheck className="w-4 h-4 text-green-400" />
+                ) : (
+                  <AlertCircle className="w-4 h-4 text-red-400" />
+                )}
+                {auditResult.message}
+              </span>
+              <span className="font-mono text-[11px] bg-black/40 px-2 py-0.5 rounded">
+                Latencia: {auditResult.latencyMs} ms
+              </span>
+            </div>
+            <div className="flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-zinc-400 pt-1 border-t border-zinc-800/60 font-mono">
+              <span>Endpoint: {auditResult.endpoint}</span>
+              <span>API Key: {auditResult.configuredKey}</span>
+              {auditResult.stats && (
+                <span>Licencias emitidas en BD: {auditResult.stats.totalEmitted} (Pruebas: {auditResult.stats.trialsEmitted}, Pagas: {auditResult.stats.paidEmitted})</span>
+              )}
+            </div>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="space-y-1.5">
             <label className="text-xs font-medium text-zinc-300">Nombre del Cliente *</label>

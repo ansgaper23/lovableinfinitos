@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
-import { generateFlowProLicense } from "@/lib/flowpro-api";
+import { generateFlowProLicense, testFlowProConnection } from "@/lib/flowpro-api";
 
 async function assertSuperadmin(supabase: any, userId: string) {
   const { data: prof, error } = await supabase
@@ -14,6 +14,38 @@ async function assertSuperadmin(supabase: any, userId: string) {
     throw new Error("Acceso denegado: se requiere superadmin");
   }
 }
+
+export const adminCheckFlowProConnection = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertSuperadmin(context.supabase, context.userId);
+    const test = await testFlowProConnection();
+
+    // Consultamos estadísticas de licencias generadas a través de Flow-Pro
+    const { count: totalLicenses } = await context.supabase
+      .from("reseller_licenses")
+      .select("*", { count: "exact", head: true });
+
+    const { count: trialLicenses } = await context.supabase
+      .from("reseller_licenses")
+      .select("*", { count: "exact", head: true })
+      .eq("type", "trial");
+
+    const { count: paidLicenses } = await context.supabase
+      .from("reseller_licenses")
+      .select("*", { count: "exact", head: true })
+      .in("type", ["paid", "assigned"]);
+
+    return {
+      ...test,
+      stats: {
+        totalEmitted: totalLicenses || 0,
+        trialsEmitted: trialLicenses || 0,
+        paidEmitted: paidLicenses || 0,
+      },
+      timestamp: new Date().toISOString(),
+    };
+  });
 
 export const adminGetResellerStatus = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
