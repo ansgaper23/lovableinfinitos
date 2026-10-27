@@ -389,9 +389,13 @@ export const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white pb-16">
+    <div className="min-h-screen bg-gradient-to-b from-[#0f071b] via-[#130726] to-[#0a0414] text-white pb-16 relative overflow-hidden">
+      {/* Luces ambientales moradas de fondo */}
+      <div className="absolute top-0 left-1/4 w-[600px] h-[400px] bg-purple-600/15 rounded-full blur-[140px] pointer-events-none -z-10" />
+      <div className="absolute top-1/3 right-10 w-[500px] h-[500px] bg-fuchsia-600/10 rounded-full blur-[150px] pointer-events-none -z-10" />
+
       {/* Barra superior con tonalidades moradas */}
-      <header className="sticky top-0 z-30 border-b border-purple-500/30 bg-zinc-950/85 backdrop-blur-md px-4 lg:px-8 py-3.5 flex items-center justify-between">
+      <header className="sticky top-0 z-30 border-b border-purple-500/20 bg-[#0f071b]/80 backdrop-blur-xl px-4 lg:px-8 py-3.5 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-purple-600/40">
             <Sparkles className="w-5 h-5 text-white" />
@@ -453,10 +457,10 @@ export const Dashboard = () => {
             {plans.map((p) => (
               <div
                 key={p.name}
-                className={`relative rounded-3xl border p-6 transition duration-200 hover:-translate-y-1 ${
+                className={`relative rounded-3xl border p-6 transition duration-200 hover:-translate-y-1 backdrop-blur-xl ${
                   p.popular
-                    ? "border-purple-500/70 bg-gradient-to-b from-purple-950/60 via-purple-900/20 to-zinc-950 shadow-2xl shadow-purple-900/40"
-                    : "border-purple-500/30 bg-purple-950/20 hover:border-purple-400/50"
+                    ? "border-purple-500/80 bg-gradient-to-b from-purple-900/70 via-purple-950/80 to-[#0e051d] shadow-2xl shadow-purple-600/25 ring-1 ring-purple-500/40"
+                    : "border-purple-500/30 bg-gradient-to-b from-purple-950/50 to-[#0e051d]/70 hover:border-purple-400/60 hover:shadow-xl hover:shadow-purple-950/50"
                 }`}
               >
                 {p.popular && (
