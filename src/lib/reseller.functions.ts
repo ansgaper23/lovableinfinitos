@@ -27,6 +27,7 @@ export const resellerGenerateTrial = createServerFn({ method: "POST" })
   .inputValidator((i) =>
     z.object({
       displayName: displayNameSchema,
+      customerPhone: z.string().max(30).optional(),
       minutes: z.number().int().min(1).max(30).default(15),
     }).parse(i),
   )
@@ -37,12 +38,34 @@ export const resellerGenerateTrial = createServerFn({ method: "POST" })
       duration_days: 1,
       customer_name: data.displayName,
     });
+
+    const durationSeconds = lic.duration_seconds || 86400;
+
+    // Guardar directamente en la BD desde el servidor para garantizar persistencia
+    const { error: insErr } = await context.supabase
+      .from("reseller_licenses")
+      .insert({
+        user_id: context.userId,
+        license_key: lic.license_key,
+        display_name: data.displayName,
+        customer_name: data.displayName,
+        customer_phone: data.customerPhone || null,
+        type: "trial",
+        expires_at: lic.expires_at,
+        duration_seconds: durationSeconds,
+        lifetime: false,
+      });
+
+    if (insErr) {
+      console.error("Error guardando licencia trial en reseller_licenses:", insErr);
+    }
+
     return {
       success: true,
       license_key: lic.license_key,
       type: "trial",
       expires_at: lic.expires_at,
-      duration_seconds: lic.duration_seconds || 86400,
+      duration_seconds: durationSeconds,
     };
   });
 
@@ -51,7 +74,9 @@ export const resellerGenerateLicense = createServerFn({ method: "POST" })
   .inputValidator((i) =>
     z.object({
       displayName: displayNameSchema,
+      customerPhone: z.string().max(30).optional(),
       days: z.number().int().min(1).max(3650).default(30),
+      lifetime: z.boolean().optional(),
     }).parse(i),
   )
   .handler(async ({ data, context }) => {
@@ -60,13 +85,36 @@ export const resellerGenerateLicense = createServerFn({ method: "POST" })
       type: "paid",
       duration_days: data.days,
       customer_name: data.displayName,
+      lifetime: data.lifetime,
     });
+
+    const durationSeconds = lic.duration_seconds || (data.days * 86400);
+
+    // Guardar directamente en la BD desde el servidor
+    const { error: insErr } = await context.supabase
+      .from("reseller_licenses")
+      .insert({
+        user_id: context.userId,
+        license_key: lic.license_key,
+        display_name: data.displayName,
+        customer_name: data.displayName,
+        customer_phone: data.customerPhone || null,
+        type: "paid",
+        expires_at: lic.expires_at,
+        duration_seconds: durationSeconds,
+        lifetime: data.lifetime || false,
+      });
+
+    if (insErr) {
+      console.error("Error guardando licencia pagada en reseller_licenses:", insErr);
+    }
+
     return {
       success: true,
       license_key: lic.license_key,
       type: "paid",
       expires_at: lic.expires_at,
-      duration_seconds: lic.duration_seconds || (data.days * 86400),
+      duration_seconds: durationSeconds,
     };
   });
 
