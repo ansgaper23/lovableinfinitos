@@ -1,6 +1,7 @@
 import { useEffect, useRef, lazy, Suspense, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Link } from "@tanstack/react-router";
 import videoAsset from "@/assets/hero-video.mp4.asset.json";
 import videoPosterAsset from "@/assets/video-poster.jpg.asset.json";
@@ -13,9 +14,11 @@ const ArrowRightIcon = lazy(() => import("lucide-react").then(m => ({ default: m
 const PlayIcon = lazy(() => import("lucide-react").then(m => ({ default: m.Play })));
 const ImageIcon = lazy(() => import("lucide-react").then(m => ({ default: m.Image })));
 const SparklesIcon = lazy(() => import("lucide-react").then(m => ({ default: m.Sparkles })));
+const MaximizeIcon = lazy(() => import("lucide-react").then(m => ({ default: m.Maximize2 })));
 
 export const Hero = () => {
   const [activeView, setActiveView] = useState<"banner" | "video">("banner");
+  const [isZoomOpen, setIsZoomOpen] = useState(false);
   const [hasVideoError, setHasVideoError] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -155,7 +158,10 @@ export const Hero = () => {
             <div className="relative aspect-video sm:aspect-[16/9] bg-black border-x border-b border-white/10 rounded-b-2xl overflow-hidden shadow-2xl flex items-center justify-center">
               {/* VISTA 1: BANNER HERO IMAGE */}
               {activeView === "banner" && (
-                <div className="relative w-full h-full group/image overflow-hidden flex items-center justify-center bg-zinc-950">
+                <div 
+                  className="relative w-full h-full group/image overflow-hidden flex items-center justify-center bg-zinc-950 cursor-pointer"
+                  onClick={() => setIsZoomOpen(true)}
+                >
                   <img
                     src="/images/banner_hero.png"
                     alt="Banner Hero - FlowPro Lovable Créditos Ilimitados"
@@ -176,11 +182,24 @@ export const Hero = () => {
                     </span>
                   </div>
 
-                  {/* Play Video Trigger Overlay */}
-                  <div className="absolute bottom-4 right-4 z-20">
+                  {/* Action Controls Overlay */}
+                  <div className="absolute bottom-4 right-4 z-20 flex items-center gap-2">
                     <Button
                       size="sm"
-                      onClick={() => {
+                      variant="outline"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsZoomOpen(true);
+                      }}
+                      className="bg-black/60 hover:bg-black/80 text-white border-white/20 text-xs font-bold uppercase tracking-wider gap-1.5 backdrop-blur-md"
+                    >
+                      <Suspense fallback={null}><MaximizeIcon className="w-3.5 h-3.5" /></Suspense>
+                      Ampliar
+                    </Button>
+                    <Button
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
                         setActiveView("video");
                         if (videoRef.current) {
                           videoRef.current.play().catch(() => {});
@@ -280,6 +299,22 @@ export const Hero = () => {
           </div>
         </div>
       </div>
+
+      {/* Modal Zoom de la Imagen Banner Hero */}
+      <Dialog open={isZoomOpen} onOpenChange={setIsZoomOpen}>
+        <DialogContent className="max-w-6xl p-2 bg-[#090D18] border-white/20 text-white overflow-hidden">
+          <DialogTitle className="sr-only">
+            Vista ampliada de la interfaz de Lovable con FlowPro
+          </DialogTitle>
+          <div className="relative rounded-xl overflow-hidden bg-black">
+            <img
+              src="/images/banner_hero.png"
+              alt="Interfaz Lovable en alta resolución"
+              className="w-full h-auto max-h-[85vh] object-contain mx-auto"
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 };
