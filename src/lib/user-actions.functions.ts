@@ -118,8 +118,9 @@ export const assignLicenseToUser = createServerFn({ method: "POST" })
     z
       .object({
         targetUserId: z.string().uuid(),
-        days: z.number().int().min(1).max(3650),
-        provider: z.string().optional(),
+        days: z.number().int().min(1).max(3650).default(30),
+        provider: z.enum(["flowpro", "nexxus", "legacy"]).default("flowpro"),
+        planType: z.enum(["trial", "days", "lifetime"]).default("days"),
         displayName: displayNameSchema.optional(),
       })
       .parse(input)
@@ -132,32 +133,67 @@ export const assignLicenseToUser = createServerFn({ method: "POST" })
 
     const { data: targetProf } = await supabaseAdmin
       .from("profiles")
-      .select("email")
+      .select("email, phone")
       .eq("id", data.targetUserId)
       .maybeSingle();
+
     const displayName = (data.displayName || targetProf?.email?.split("@")[0] || "Usuario").slice(0, 60);
 
-    const lic = await generateFlowProLicense({
-      type: "paid",
-      duration_days: data.days,
-      customer_name: displayName,
-    });
+    let licenseKey = "";
+    let expiresAt: string | null = null;
+    let durationSeconds: number | null = null;
+    const isLifetime = data.planType === "lifetime";
+
+    if (data.provider === "legacy") {
+      // Clave Legacy local
+      const randHex = () => Math.random().toString(36).substring(2, 6).toUpperCase();
+      licenseKey = `FLOW-LEGACY-${randHex()}-${randHex()}`;
+      const expDate = new Date();
+      expDate.setDate(expDate.getDate() + (isLifetime ? 3650 : data.days));
+      expiresAt = expDate.toISOString();
+      durationSeconds = (isLifetime ? 3650 : data.days) * 86400;
+
+      // Registrar también en la tabla licenses legacy si existe
+      await supabaseAdmin.from("licenses").insert({
+        code: licenseKey,
+        type: data.planType === "trial" ? "trial" : "paid",
+        status: "active",
+        created_by: userId,
+        used_by: data.targetUserId,
+        expires_at: expiresAt,
+      });
+    } else {
+      // Flow-Pro oficial (o nexxus api bridge)
+      const isTrial = data.planType === "trial";
+      const lic = await generateFlowProLicense({
+        type: isTrial ? "trial" : "paid",
+        duration_days: isTrial ? 1 : isLifetime ? 3650 : data.days,
+        lifetime: isLifetime,
+        customer_name: displayName,
+      });
+
+      licenseKey = lic.license_key;
+      expiresAt = lic.expires_at;
+      durationSeconds = lic.duration_seconds ?? ((isTrial ? 1 : isLifetime ? 3650 : data.days) * 86400);
+    }
 
     const { error: insErr } = await supabaseAdmin.from("reseller_licenses").insert({
       user_id: data.targetUserId,
-      license_key: lic.license_key,
+      license_key: licenseKey,
       display_name: displayName,
       customer_name: displayName,
-      type: "assigned",
-      expires_at: lic.expires_at,
-      duration_seconds: lic.duration_seconds,
-      lifetime: false,
+      customer_phone: targetProf?.phone || null,
+      type: data.planType === "trial" ? "trial" : "assigned",
+      expires_at: expiresAt,
+      duration_seconds: durationSeconds,
+      lifetime: isLifetime,
     });
     if (insErr) throw new Error(insErr.message);
 
     return {
-      license_key: lic.license_key as string,
-      expires_at: lic.expires_at as string | null,
+      license_key: licenseKey,
+      expires_at: expiresAt,
+      provider: data.provider,
       days: data.days,
     };
   });

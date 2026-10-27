@@ -2,22 +2,12 @@ import { useEffect, useMemo, useState } from "react";
 import { 
   LayoutDashboard, Users, BarChart3, ShieldAlert, Settings, 
   LogOut, Search, CheckCircle2, XCircle, 
-  DollarSign, Key, RefreshCw, Trash2, ShieldCheck, 
-  Plus, CreditCard, Zap, Globe, AlertCircle,
-  Menu, X
+  Key, RefreshCw, ShieldCheck, Zap, Menu, X
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Dialog, DialogContent, DialogHeader, DialogTitle, 
-  DialogDescription, DialogFooter 
-} from "@/components/ui/dialog";
-import { 
-  Select, SelectContent, SelectItem, 
-  SelectTrigger, SelectValue 
-} from "@/components/ui/select";
 
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -36,6 +26,7 @@ import {
   ExtendedProfile, roleStyles, roleLabelOf, TrialBadge, 
   LicenseCountBadge, UserActions 
 } from "./SuperAdminUserComponents";
+import { AssignLicenseDialog } from "./AssignLicenseDialog";
 
 export const SuperAdminDashboard = () => {
   const { user, profile, loading } = useAuth(true);
@@ -67,13 +58,7 @@ export const SuperAdminDashboard = () => {
   const deleteFn = useServerFn(deleteUserAccount);
 
   const [deleteTarget, setDeleteTarget] = useState<ExtendedProfile | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
-
   const [assignTarget, setAssignTarget] = useState<ExtendedProfile | null>(null);
-  const [assignDays, setAssignDays] = useState<number>(30);
-  const [assignProvider, setAssignProvider] = useState<"flowpro" | "legacy">("flowpro");
-  const [isAssigning, setIsAssigning] = useState(false);
-  const [assignedResult, setAssignedResult] = useState<{ license_key: string; expires_at: string | null } | null>(null);
 
   const loadUsersWithCredits = async () => {
     try {
@@ -117,7 +102,6 @@ export const SuperAdminDashboard = () => {
 
   const handleDeleteUser = async () => {
     if (!deleteTarget) return;
-    setIsDeleting(true);
     try {
       await deleteFn({ data: { targetUserId: deleteTarget.id } });
       toast.success("Cuenta eliminada");
@@ -125,8 +109,6 @@ export const SuperAdminDashboard = () => {
       setDeleteTarget(null);
     } catch (e: any) {
       toast.error(e.message || "Error al eliminar cuenta");
-    } finally {
-      setIsDeleting(false);
     }
   };
 
@@ -148,20 +130,23 @@ export const SuperAdminDashboard = () => {
     }
   };
 
-  const handleAssignLicense = async () => {
+  const handleAssignLicenseSubmit = async (params: {
+    days: number;
+    provider: "flowpro" | "nexxus" | "legacy";
+    planType: "trial" | "days" | "lifetime";
+  }) => {
     if (!assignTarget) return;
-    setIsAssigning(true);
-    try {
-      const res = await assignFn({ data: { targetUserId: assignTarget.id, days: assignDays, provider: assignProvider } });
-      setAssignedResult({ license_key: res.license_key, expires_at: res.expires_at });
-      toast.success(`Licencia de Flow-Pro asignada correctamente`);
-      loadUsersWithCredits();
-      fetchLicenses();
-    } catch (e: any) {
-      toast.error(e.message || "Error al asignar licencia");
-    } finally {
-      setIsAssigning(false);
-    }
+    const res = await assignFn({
+      data: {
+        targetUserId: assignTarget.id,
+        days: params.days,
+        provider: params.provider,
+        planType: params.planType,
+      },
+    });
+    loadUsersWithCredits();
+    fetchLicenses();
+    return res;
   };
 
   const handleToggleActivation = async (u: ExtendedProfile) => {
@@ -183,31 +168,6 @@ export const SuperAdminDashboard = () => {
       toast.error(e.message || "Error al cambiar estado");
     } finally {
       setTogglingUserId(null);
-    }
-  };
-
-  const handleRecharge = async () => {
-    if (!rechargeTarget) return;
-    const amount = parseInt(rechargeAmount, 10);
-    if (!Number.isFinite(amount) || amount === 0) {
-      toast.error("Cantidad inválida");
-      return;
-    }
-    setIsRecharging(true);
-    try {
-      const { data, error } = await supabase.rpc("add_credits", {
-        _target: rechargeTarget.id,
-        _amount: amount,
-      });
-      if (error) throw error;
-      toast.success(`Créditos actualizados. Total: ${data}`);
-      setRechargeTarget(null);
-      setRechargeAmount("10");
-      await loadUsersWithCredits();
-    } catch (error: any) {
-      toast.error("Error: " + error.message);
-    } finally {
-      setIsRecharging(false);
     }
   };
 
@@ -417,9 +377,7 @@ export const SuperAdminDashboard = () => {
                 </Card>
               </div>
 
-              {/* Generador Flow-Pro en Resumen para acceso inmediato */}
               <FlowProGeneratorCard onSuccess={fetchLicenses} />
-
               <ExtensionUploadCard />
             </>
           )}
@@ -461,7 +419,7 @@ export const SuperAdminDashboard = () => {
                 <div>
                   <CardTitle className="text-sm font-semibold">Gestión de Usuarios</CardTitle>
                   <CardDescription className="text-xs text-zinc-400">
-                    {users.length} registrados
+                    {users.length} usuarios registrados
                   </CardDescription>
                 </div>
                 <div className="relative w-full sm:w-64">
@@ -510,7 +468,7 @@ export const SuperAdminDashboard = () => {
                                 user={u}
                                 onRecharge={() => { setRechargeTarget(u); setRechargeAmount("10"); }}
                                 onToggleActivation={() => handleToggleActivation(u)}
-                                onAssignLicense={() => { setAssignTarget(u); setAssignDays(30); setAssignedResult(null); }}
+                                onAssignLicense={() => setAssignTarget(u)}
                                 onBlockToggle={() => handleBlockToggle(u)}
                                 onDelete={() => setDeleteTarget(u)}
                                 toggling={togglingUserId === u.id}
@@ -595,51 +553,13 @@ export const SuperAdminDashboard = () => {
         </div>
       </main>
 
-      <Dialog open={!!assignTarget} onOpenChange={(o) => { if (!o) { setAssignTarget(null); setAssignedResult(null); } }}>
-        <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-100 max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-sm font-semibold flex items-center gap-2">
-              <Key className="w-4 h-4 text-destructive" /> Asignar Licencia Flow-Pro
-            </DialogTitle>
-            <DialogDescription className="text-xs text-zinc-500">{assignTarget?.email}</DialogDescription>
-          </DialogHeader>
-          {!assignedResult ? (
-            <div className="space-y-4 py-2">
-              <label className="text-xs text-zinc-400">Duración en Días</label>
-              <div className="grid grid-cols-4 gap-2">
-                {[7, 30, 90, 365].map((d) => (
-                  <Button
-                    key={d}
-                    type="button"
-                    variant={assignDays === d ? "default" : "outline"}
-                    onClick={() => setAssignDays(d)}
-                    className="h-10 text-xs"
-                  >
-                    {d} días
-                  </Button>
-                ))}
-              </div>
-            </div>
-          ) : (
-            <div className="space-y-3 py-2">
-              <p className="text-xs text-green-500 font-medium">Licencia asignada con éxito</p>
-              <code className="block w-full font-mono text-xs break-all bg-zinc-950 p-2.5 border border-zinc-800 rounded">
-                {assignedResult.license_key}
-              </code>
-            </div>
-          )}
-          <DialogFooter>
-            {!assignedResult ? (
-              <Button onClick={handleAssignLicense} disabled={isAssigning} className="bg-destructive hover:bg-destructive/90">
-                {isAssigning ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : <Key className="w-4 h-4 mr-2" />}
-                Asignar
-              </Button>
-            ) : (
-              <Button onClick={() => { setAssignTarget(null); setAssignedResult(null); }}>Cerrar</Button>
-            )}
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* Diálogo modular de asignación con selección explícita Flow-Pro, Nexxus y Legacy Key */}
+      <AssignLicenseDialog
+        user={assignTarget}
+        open={!!assignTarget}
+        onOpenChange={(open) => !open && setAssignTarget(null)}
+        onAssign={handleAssignLicenseSubmit}
+      />
     </div>
   );
 };
