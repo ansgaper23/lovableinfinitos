@@ -79,6 +79,7 @@ export const adminGenerateTrial = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i) => z.object({
     displayName: displayNameSchema,
+    customerPhone: z.string().optional().nullable(),
     minutes: z.number().int().min(1).max(60).default(15),
   }).parse(i))
   .handler(async ({ data, context }) => {
@@ -94,6 +95,7 @@ export const adminGenerateTrial = createServerFn({ method: "POST" })
       license_key: lic.license_key,
       display_name: data.displayName,
       customer_name: data.displayName,
+      customer_phone: data.customerPhone || null,
       type: "trial",
       expires_at: lic.expires_at,
       duration_seconds: lic.duration_seconds,
@@ -105,6 +107,7 @@ export const adminGenerateTrial = createServerFn({ method: "POST" })
       license_key: lic.license_key,
       type: "trial",
       expires_at: lic.expires_at,
+      duration_seconds: lic.duration_seconds,
     };
   });
 
@@ -112,6 +115,7 @@ export const adminGenerateLicense = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i) => z.object({
     displayName: displayNameSchema,
+    customerPhone: z.string().optional().nullable(),
     days: z.number().int().min(0).max(3650).optional(),
     lifetime: z.boolean().default(false),
   }).parse(i))
@@ -130,6 +134,7 @@ export const adminGenerateLicense = createServerFn({ method: "POST" })
       license_key: lic.license_key,
       display_name: data.displayName,
       customer_name: data.displayName,
+      customer_phone: data.customerPhone || null,
       type: "paid",
       expires_at: lic.expires_at,
       duration_seconds: lic.duration_seconds,
@@ -141,6 +146,7 @@ export const adminGenerateLicense = createServerFn({ method: "POST" })
       license_key: lic.license_key,
       type: "paid",
       expires_at: lic.expires_at,
+      duration_seconds: lic.duration_seconds,
       lifetime: data.lifetime,
     };
   });
