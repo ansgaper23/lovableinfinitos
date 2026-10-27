@@ -1,36 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createHmac, timingSafeEqual } from "crypto";
-
-const RESELLER_BASE = "https://itsgcyiyemstpfafxrpq.supabase.co/functions/v1/reseller-api";
-
-async function generateLicense(displayName: string, days: number) {
-  const token = process.env.RESELLER_API_KEY;
-  if (!token) throw new Error("RESELLER_API_KEY no configurada");
-
-  // Modo TEST: si la contraseña de Izipay empieza con "testpassword_",
-  // generamos una licencia de PRUEBA (trial, 15 min) en vez de una real.
-  const isTestMode = (process.env.IZIPAY_PASSWORD || "").startsWith("testpassword_");
-
-  if (isTestMode) {
-    const res = await fetch(`${RESELLER_BASE}/generate-trial`, {
-      method: "POST",
-      headers: { "x-api-token": token, "Content-Type": "application/json" },
-      body: JSON.stringify({ display_name: `${displayName} (TEST)`, minutes: 15, seconds: 0 }),
-    });
-    const json: any = await res.json();
-    if (!res.ok) throw new Error(json?.message || "Error generando licencia de prueba");
-    return { ...json, _isTest: true };
-  }
-
-  const res = await fetch(`${RESELLER_BASE}/generate-license`, {
-    method: "POST",
-    headers: { "x-api-token": token, "Content-Type": "application/json" },
-    body: JSON.stringify({ display_name: displayName, days }),
-  });
-  const json: any = await res.json();
-  if (!res.ok) throw new Error(json?.message || "Error generando licencia");
-  return json;
-}
+import { generateFlowProLicense } from "@/lib/flowpro-api";
 
 export const Route = createFileRoute("/api/public/izipay-webhook")({
   server: {
@@ -78,7 +48,6 @@ export const Route = createFileRoute("/api/public/izipay-webhook")({
           answer?.metadata ??
           answer?.orderDetails?.metadata ??
           {};
-        // userId/planId/days se resuelven más abajo combinando metadata + BD
 
         if (!orderId) {
           console.error("Izipay webhook: orderId faltante", {
@@ -102,7 +71,7 @@ export const Route = createFileRoute("/api/public/izipay-webhook")({
 
         const userId = (metadata.user_id as string) || order.user_id;
         const planId = (metadata.plan_id as string) || order.plan_id;
-        const days = Number(metadata.days || order.days || 0);
+        const days = Number(metadata.days || order.days || 30);
 
         if (!userId || !planId || !days) {
           console.error("Izipay webhook: datos incompletos tras fallback", { userId, planId, days });
@@ -122,7 +91,7 @@ export const Route = createFileRoute("/api/public/izipay-webhook")({
           return new Response("ok", { status: 200 });
         }
 
-        // Pago confirmado → generar licencia
+        // Pago confirmado → generar licencia usando Flow-Pro API
         try {
           const { data: prof } = await supabaseAdmin
             .from("profiles")
@@ -140,18 +109,23 @@ export const Route = createFileRoute("/api/public/izipay-webhook")({
             return new Response("Test mode restricted", { status: 200 });
           }
 
-          const displayName = (prof?.email?.split("@")[0] || "Usuario").slice(0, 60);
+          const customerName = (prof?.email?.split("@")[0] || "Cliente").slice(0, 60);
 
-          const lic = await generateLicense(displayName, days);
+          const lic = await generateFlowProLicense({
+            type: isTestMode ? "trial" : "paid",
+            duration_days: isTestMode ? 1 : days,
+            customer_name: isTestMode ? `${customerName} (TEST)` : customerName,
+          });
 
           await supabaseAdmin.from("reseller_licenses").insert({
             user_id: userId,
             license_key: lic.license_key,
-            display_name: displayName,
-            type: lic._isTest ? "trial" : "assigned",
+            display_name: customerName,
+            type: isTestMode ? "trial" : "paid",
             expires_at: lic.expires_at,
             duration_seconds: lic.duration_seconds,
             lifetime: false,
+            customer_name: customerName,
           });
 
           await supabaseAdmin
@@ -166,7 +140,7 @@ export const Route = createFileRoute("/api/public/izipay-webhook")({
 
           return new Response("ok", { status: 200 });
         } catch (err: any) {
-          console.error("Izipay webhook: error generando licencia", err);
+          console.error("Izipay webhook: error generando licencia con Flow-Pro", err);
           await supabaseAdmin
             .from("payment_orders")
             .update({

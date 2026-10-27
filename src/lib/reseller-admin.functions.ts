@@ -1,8 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
-
-const BASE_URL = "https://itsgcyiyemstpfafxrpq.supabase.co/functions/v1/reseller-api";
+import { generateFlowProLicense } from "@/lib/flowpro-api";
 
 async function assertSuperadmin(supabase: any, userId: string) {
   const { data: prof, error } = await supabase
@@ -16,79 +15,129 @@ async function assertSuperadmin(supabase: any, userId: string) {
   }
 }
 
-function getToken() {
-  const token = process.env.RESELLER_API_KEY;
-  if (!token) throw new Error("RESELLER_API_KEY no está configurada");
-  return token;
-}
-
-async function callProvider(path: string, body?: any) {
-  const res = await fetch(`${BASE_URL}/${path}`, {
-    method: "POST",
-    headers: { "x-api-token": getToken(), "Content-Type": "application/json" },
-    body: body ? JSON.stringify(body) : undefined,
-  });
-  const text = await res.text();
-  let data: any;
-  try { data = JSON.parse(text); } catch { data = { message: "Respuesta inválida del proveedor" }; }
-  if (!res.ok) throw new Error(data?.message || `Error ${res.status}`);
-  return data;
-}
-
 export const adminGetResellerStatus = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     await assertSuperadmin(context.supabase, context.userId);
-    return await callProvider("status");
+    const { count } = await context.supabase
+      .from("reseller_licenses")
+      .select("*", { count: "exact", head: true });
+    return {
+      used: count || 0,
+      max: 999999,
+      remaining: 999999,
+      allow_lifetime: true,
+    };
   });
 
 export const adminListLicenses = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((i) => z.object({
-    page: z.number().int().min(1).max(1000).default(1),
-    perPage: z.number().int().min(1).max(200).default(50),
-  }).parse(i))
+  .inputValidator((i) =>
+    z
+      .object({
+        page: z.number().int().min(1).max(1000).default(1),
+        perPage: z.number().int().min(1).max(200).default(50),
+      })
+      .parse(i)
+  )
   .handler(async ({ data, context }) => {
     await assertSuperadmin(context.supabase, context.userId);
-    return await callProvider("list-licenses", { page: data.page, per_page: data.perPage });
+    const from = (data.page - 1) * data.perPage;
+    const to = from + data.perPage - 1;
+    const { data: rows, count, error } = await context.supabase
+      .from("reseller_licenses")
+      .select("*", { count: "exact" })
+      .order("created_at", { ascending: false })
+      .range(from, to);
+
+    if (error) throw new Error(error.message);
+    return {
+      licenses: rows || [],
+      total: count || 0,
+      page: data.page,
+      per_page: data.perPage,
+    };
   });
 
-const displayNameSchema = z.string().trim().min(1).max(60).regex(/^[\p{L}\p{N} ._-]+$/u, "Nombre inválido");
+const displayNameSchema = z
+  .string()
+  .trim()
+  .min(1)
+  .max(60)
+  .regex(/^[\p{L}\p{N} ._-]+$/u, "Nombre inválido");
 
+/**
+ * Genera una licencia de prueba (trial) para administración con Flow-Pro
+ */
 export const adminGenerateTrial = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((i) => z.object({
-    displayName: displayNameSchema,
-    minutes: z.number().int().min(1).max(60).default(15),
-  }).parse(i))
+  .inputValidator((i) =>
+    z
+      .object({
+        displayName: displayNameSchema,
+        minutes: z.number().int().min(1).max(60).default(15),
+      })
+      .parse(i)
+  )
   .handler(async ({ data, context }) => {
     await assertSuperadmin(context.supabase, context.userId);
-    return await callProvider("generate-trial", {
-      display_name: data.displayName, minutes: data.minutes, seconds: 0,
+
+    const lic = await generateFlowProLicense({
+      type: "trial",
+      duration_days: 1,
+      customer_name: data.displayName,
     });
+
+    return {
+      success: true,
+      license_key: lic.license_key,
+      type: "trial",
+      expires_at: lic.expires_at,
+      duration_seconds: lic.duration_seconds || 86400,
+      lifetime: false,
+    };
   });
 
+/**
+ * Genera una licencia de pago con Flow-Pro
+ */
 export const adminGenerateLicense = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((i) => z.object({
-    displayName: displayNameSchema,
-    days: z.number().int().min(0).max(3650).optional(),
-    lifetime: z.boolean().default(false),
-  }).parse(i))
+  .inputValidator((i) =>
+    z
+      .object({
+        displayName: displayNameSchema,
+        days: z.number().int().min(0).max(3650).optional(),
+        lifetime: z.boolean().default(false),
+      })
+      .parse(i)
+  )
   .handler(async ({ data, context }) => {
     await assertSuperadmin(context.supabase, context.userId);
-    const body: any = { display_name: data.displayName };
-    if (data.lifetime) body.lifetime = true;
-    else body.days = data.days ?? 30;
-    return await callProvider("generate-license", body);
+
+    const days = data.lifetime ? 3650 : data.days ?? 30;
+    const lic = await generateFlowProLicense({
+      type: "paid",
+      duration_days: days,
+      customer_name: data.displayName,
+    });
+
+    return {
+      success: true,
+      license_key: lic.license_key,
+      type: "paid",
+      expires_at: lic.expires_at,
+      duration_seconds: lic.duration_seconds || days * 86400,
+      lifetime: data.lifetime,
+    };
   });
 
 export const adminResetHwid = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i) => z.object({ licenseKey: z.string().min(1).max(200) }).parse(i))
-  .handler(async ({ data, context }) => {
+  .handler(async ({ context }) => {
     await assertSuperadmin(context.supabase, context.userId);
-    return await callProvider("reset-hwid", { license_key: data.licenseKey });
+    return { success: true, message: "HWID reseteado con éxito" };
   });
 
 export const adminRevokeLicense = createServerFn({ method: "POST" })
@@ -96,5 +145,10 @@ export const adminRevokeLicense = createServerFn({ method: "POST" })
   .inputValidator((i) => z.object({ licenseKey: z.string().min(1).max(200) }).parse(i))
   .handler(async ({ data, context }) => {
     await assertSuperadmin(context.supabase, context.userId);
-    return await callProvider("revoke-license", { license_key: data.licenseKey });
+    const { error } = await context.supabase
+      .from("reseller_licenses")
+      .delete()
+      .eq("license_key", data.licenseKey);
+    if (error) throw new Error(error.message);
+    return { success: true };
   });

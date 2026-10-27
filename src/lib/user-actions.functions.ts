@@ -1,8 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
-
-const BASE_URL = "https://itsgcyiyemstpfafxrpq.supabase.co/functions/v1/reseller-api";
+import { generateFlowProLicense } from "@/lib/flowpro-api";
 
 async function assertSuperadmin(supabase: any, userId: string) {
   const { data: prof, error } = await supabase
@@ -30,9 +29,6 @@ export const generateTrialForNewUser = createServerFn({ method: "POST" })
     z.object({ displayName: displayNameSchema }).parse(input)
   )
   .handler(async ({ data, context }) => {
-    const token = process.env.RESELLER_API_KEY;
-    if (!token) throw new Error("RESELLER_API_KEY no está configurada");
-
     const { userId, supabase } = context;
 
     const { data: existing } = await supabase
@@ -46,29 +42,28 @@ export const generateTrialForNewUser = createServerFn({ method: "POST" })
       throw new Error("Ya generaste tu licencia de prueba");
     }
 
-    const displayName = (data.displayName || "Trial").slice(0, 60);
+    const displayName = (data.displayName || "Trial User").slice(0, 60);
 
-    const res = await fetch(`${BASE_URL}/generate-trial`, {
-      method: "POST",
-      headers: { "x-api-token": token, "Content-Type": "application/json" },
-      body: JSON.stringify({ display_name: displayName, minutes: 15, seconds: 0 }),
+    const lic = await generateFlowProLicense({
+      type: "trial",
+      duration_days: 1,
+      customer_name: displayName,
     });
-    const json = await res.json();
-    if (!res.ok) throw new Error(json?.message || "Error al generar licencia de prueba");
 
     await supabase.from("reseller_licenses").insert({
       user_id: userId,
-      license_key: json.license_key,
+      license_key: lic.license_key,
       display_name: displayName,
-      type: json.type || "trial",
-      expires_at: json.expires_at,
-      duration_seconds: json.duration_seconds,
+      customer_name: displayName,
+      type: "trial",
+      expires_at: lic.expires_at,
+      duration_seconds: lic.duration_seconds,
       lifetime: false,
     });
 
     return {
-      license_key: json.license_key as string,
-      expires_at: json.expires_at as string | null,
+      license_key: lic.license_key as string,
+      expires_at: lic.expires_at as string | null,
     };
   });
 
@@ -129,9 +124,6 @@ export const assignLicenseToUser = createServerFn({ method: "POST" })
       .parse(input)
   )
   .handler(async ({ data, context }) => {
-    const token = process.env.RESELLER_API_KEY;
-    if (!token) throw new Error("RESELLER_API_KEY no está configurada");
-
     const { supabase, userId } = context;
     await assertSuperadmin(supabase, userId);
 
@@ -144,28 +136,27 @@ export const assignLicenseToUser = createServerFn({ method: "POST" })
       .maybeSingle();
     const displayName = (data.displayName || targetProf?.email?.split("@")[0] || "Usuario").slice(0, 60);
 
-    const res = await fetch("https://itsgcyiyemstpfafxrpq.supabase.co/functions/v1/reseller-api/generate-license", {
-      method: "POST",
-      headers: { "x-api-token": token, "Content-Type": "application/json" },
-      body: JSON.stringify({ display_name: displayName, days: data.days }),
+    const lic = await generateFlowProLicense({
+      type: "paid",
+      duration_days: data.days,
+      customer_name: displayName,
     });
-    const json = await res.json();
-    if (!res.ok) throw new Error(json?.message || "Error al generar licencia");
 
     const { error: insErr } = await supabaseAdmin.from("reseller_licenses").insert({
       user_id: data.targetUserId,
-      license_key: json.license_key,
+      license_key: lic.license_key,
       display_name: displayName,
+      customer_name: displayName,
       type: "assigned",
-      expires_at: json.expires_at,
-      duration_seconds: json.duration_seconds,
+      expires_at: lic.expires_at,
+      duration_seconds: lic.duration_seconds,
       lifetime: false,
     });
     if (insErr) throw new Error(insErr.message);
 
     return {
-      license_key: json.license_key as string,
-      expires_at: json.expires_at as string | null,
+      license_key: lic.license_key as string,
+      expires_at: lic.expires_at as string | null,
       days: data.days,
     };
   });

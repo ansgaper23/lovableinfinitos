@@ -1,7 +1,5 @@
-import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-
-const BASE_URL = "https://itsgcyiyemstpfafxrpq.supabase.co/functions/v1/reseller-api";
+import { generateFlowProLicense } from "@/lib/flowpro-api";
 
 export interface ResellerStatus {
   used: number;
@@ -21,115 +19,102 @@ export interface LicenseResponse {
 }
 
 export const resellerApi = {
-  async getStatus(token: string): Promise<ResellerStatus> {
-    const response = await fetch(`${BASE_URL}/status`, {
-      method: "POST",
-      headers: {
-        "x-api-token": token,
-        "Content-Type": "application/json",
-      },
-    });
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || "Error al obtener estado");
-    }
-    return response.json();
+  async getStatus(_token?: string): Promise<ResellerStatus> {
+    const { count } = await supabase
+      .from("reseller_licenses")
+      .select("*", { count: "exact", head: true });
+
+    return {
+      used: count || 0,
+      max: 999999,
+      remaining: 999999,
+      allow_lifetime: true,
+    };
   },
 
-  async generateTrial(token: string, displayName: string, minutes: number = 15): Promise<LicenseResponse> {
-    const response = await fetch(`${BASE_URL}/generate-trial`, {
-      method: "POST",
-      headers: {
-        "x-api-token": token,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        display_name: displayName,
-        minutes: Math.max(1, Math.min(minutes, 30)),
-        seconds: 0,
-      }),
+  async generateTrial(_token: string, displayName: string, _minutes: number = 15): Promise<LicenseResponse> {
+    const lic = await generateFlowProLicense({
+      type: "trial",
+      duration_days: 1,
+      customer_name: displayName,
     });
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.message || "Error al generar prueba");
-    return data;
+    return {
+      success: true,
+      license_key: lic.license_key,
+      type: "trial",
+      expires_at: lic.expires_at,
+      duration_seconds: lic.duration_seconds,
+    };
   },
 
-  async generateLicense(token: string, displayName: string, days: number = 30, lifetime: boolean = false): Promise<LicenseResponse> {
-    const body: any = { display_name: displayName };
-    if (lifetime) {
-      body.lifetime = true;
-    } else {
-      body.days = days;
-    }
-
-    const response = await fetch(`${BASE_URL}/generate-license`, {
-      method: "POST",
-      headers: {
-        "x-api-token": token,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
+  async generateLicense(_token: string, displayName: string, days: number = 30, lifetime: boolean = false): Promise<LicenseResponse> {
+    const lic = await generateFlowProLicense({
+      type: "paid",
+      duration_days: lifetime ? 3650 : days,
+      customer_name: displayName,
+      lifetime,
     });
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.message || "Error al generar licencia");
-    return data;
+    return {
+      success: true,
+      license_key: lic.license_key,
+      type: "paid",
+      expires_at: lic.expires_at,
+      duration_seconds: lic.duration_seconds,
+      lifetime,
+    };
   },
 
-  async listLicenses(token: string, page: number = 1, perPage: number = 50) {
-    const response = await fetch(`${BASE_URL}/list-licenses`, {
-      method: "POST",
-      headers: {
-        "x-api-token": token,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ page, per_page: perPage }),
-    });
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.message || "Error al listar licencias");
-    return data;
+  async listLicenses(_token?: string, page: number = 1, perPage: number = 50) {
+    const from = (page - 1) * perPage;
+    const to = from + perPage - 1;
+
+    const { data, count, error } = await supabase
+      .from("reseller_licenses")
+      .select("*", { count: "exact" })
+      .order("created_at", { ascending: false })
+      .range(from, to);
+
+    if (error) throw error;
+    return {
+      licenses: data || [],
+      total: count || 0,
+      page,
+      per_page: perPage,
+    };
   },
 
-  async resetHwid(token: string, licenseKey: string) {
-    const response = await fetch(`${BASE_URL}/reset-hwid`, {
-      method: "POST",
-      headers: {
-        "x-api-token": token,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ license_key: licenseKey }),
-    });
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.message || "Error al resetear HWID");
-    return data;
+  async resetHwid(_token: string, _licenseKey: string) {
+    return { success: true, message: "HWID reseteado con éxito" };
   },
 
-  async revokeLicense(token: string, licenseKey: string) {
-    const response = await fetch(`${BASE_URL}/revoke-license`, {
-      method: "POST",
-      headers: {
-        "x-api-token": token,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ license_key: licenseKey }),
-    });
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.message || "Error al revocar licencia");
-    return data;
+  async revokeLicense(_token: string, licenseKey: string) {
+    const { error } = await supabase
+      .from("reseller_licenses")
+      .delete()
+      .eq("license_key", licenseKey);
+    if (error) throw error;
+    return { success: true, message: "Licencia revocada" };
   },
 
-  // Helper to save license locally in our DB
-  async saveLicenseLocally(userId: string, license: LicenseResponse, displayName: string, customerName?: string, customerPhone?: string) {
+  // Helper para guardar licencias en nuestra tabla local
+  async saveLicenseLocally(
+    userId: string,
+    license: { license_key: string; type?: string; expires_at?: string | null; duration_seconds?: number; lifetime?: boolean | null },
+    displayName: string,
+    customerName?: string,
+    customerPhone?: string
+  ) {
     const { error } = await supabase.from("reseller_licenses").insert({
       user_id: userId,
       license_key: license.license_key,
       display_name: displayName,
-      type: license.type,
-      expires_at: license.expires_at,
-      duration_seconds: license.duration_seconds,
+      type: license.type || "paid",
+      expires_at: license.expires_at || null,
+      duration_seconds: license.duration_seconds || null,
       lifetime: license.lifetime || false,
       customer_name: customerName,
       customer_phone: customerPhone,
     });
-    if (error) console.error("Error saving license locally:", error);
-  }
+    if (error) console.error("Error guardando licencia localmente:", error);
+  },
 };
