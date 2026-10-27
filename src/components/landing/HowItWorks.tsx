@@ -64,6 +64,30 @@ export const HowItWorks = () => {
             </div>
           ))}
         </div>
+
+        {/* Showcase Banner de la Interfaz */}
+        <div className="mt-16 rounded-3xl border border-white/10 bg-white/[0.02] p-4 sm:p-6 backdrop-blur-xl">
+          <div className="text-center mb-6">
+            <span className="text-xs uppercase font-extrabold tracking-widest text-primary bg-primary/10 border border-primary/20 px-3 py-1 rounded-full">
+              Vista previa del entorno
+            </span>
+            <h3 className="text-xl sm:text-2xl font-black italic tracking-tight text-white mt-3">
+              Así luce Lovable con <span className="text-primary">FlowPro Activo</span>
+            </h3>
+            <p className="text-sm text-muted-foreground mt-1">
+              Sin contadores que se agoten ni restricciones de prompts.
+            </p>
+          </div>
+          <div className="relative overflow-hidden rounded-2xl border border-white/10 shadow-2xl bg-zinc-950 group">
+            <img
+              src="/images/banner_hero.png"
+              alt="Interfaz Lovable con FlowPro"
+              className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-[1.01]"
+              loading="lazy"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+          </div>
+        </div>
       </div>
     </section>
   );

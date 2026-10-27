@@ -1,7 +1,5 @@
 import { useEffect, useRef, lazy, Suspense, useState } from "react";
-import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { PurpleGradientButton } from "@/components/ui/purple-gradient-button";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "@tanstack/react-router";
 import videoAsset from "@/assets/hero-video.mp4.asset.json";
@@ -88,16 +86,11 @@ export const Hero = () => {
         </p>
         
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
-          <PurpleGradientButton
-            size="lg"
-            className="h-14 sm:h-16 px-8 sm:px-12 text-lg sm:text-xl font-black italic tracking-tighter uppercase gap-3 shadow-[0_0_35px_rgba(168,85,247,0.45)] hover:shadow-[0_0_55px_rgba(168,85,247,0.7)] w-full sm:w-auto"
-            asChild
-          >
-            <a href="#precios" className="inline-flex items-center gap-2">
-              <Star className="w-5 h-5 fill-amber-300 text-amber-300 shrink-0 drop-shadow-[0_0_8px_rgba(252,211,77,0.8)]" />
-              VER PLANES DESDE S/ 39 <Suspense fallback={null}><ArrowRightIcon className="w-6 h-6 ml-1" /></Suspense>
+          <Button size="lg" className="h-14 sm:h-16 px-8 sm:px-12 text-lg sm:text-xl font-black italic tracking-tighter uppercase gap-3 shadow-[0_0_30px_rgba(var(--color-primary),0.4)] hover:shadow-[0_0_50px_rgba(var(--color-primary),0.6)] w-full sm:w-auto rounded-xl transition-all duration-300 transform hover:-translate-y-1 bg-primary text-primary-foreground" asChild>
+            <a href="#precios">
+              VER PLANES DESDE S/ 39 <Suspense fallback={null}><ArrowRightIcon className="w-6 h-6" /></Suspense>
             </a>
-          </PurpleGradientButton>
+          </Button>
           <Link
             to="/auth"
             className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors py-3 border-b border-transparent hover:border-primary/40"
@@ -166,18 +159,18 @@ export const Hero = () => {
                   <img
                     src="/images/banner_hero.png"
                     alt="Banner Hero - FlowPro Lovable Créditos Ilimitados"
-                    className="w-full h-full object-cover sm:object-contain transition-transform duration-700 group-hover/image:scale-[1.02]"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover/image:scale-[1.02]"
                     loading="eager"
                     decoding="async"
                   />
 
                   {/* Floating Badges on Banner */}
                   <div className="absolute top-4 left-4 z-20 flex items-center gap-2">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-black/75 backdrop-blur-md border border-primary/40 text-primary shadow-lg shadow-black/50">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-black/80 backdrop-blur-md border border-primary/40 text-primary shadow-lg shadow-black/50">
                       <Suspense fallback={null}><SparklesIcon className="w-3.5 h-3.5 text-primary" /></Suspense>
                       FlowPro Activo
                     </span>
-                    <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-black/60 backdrop-blur-md border border-white/10 text-emerald-400">
+                    <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-black/70 backdrop-blur-md border border-white/10 text-emerald-400">
                       <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                       Créditos Infinitos
                     </span>
