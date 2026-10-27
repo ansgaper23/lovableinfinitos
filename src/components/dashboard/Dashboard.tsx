@@ -275,13 +275,13 @@ export const CardSummary = ({ orders = [], loading = false, onRefresh }: CardSum
                           <span
                             className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
                               isPaid
-                                ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
-                                : "bg-purple-500/30 text-purple-200 border-purple-400/40"
+                                ? "bg-purple-500/25 text-purple-200 border-purple-400/50 shadow-sm shadow-purple-500/20"
+                                : "bg-purple-900/40 text-purple-300 border-purple-500/30"
                             }`}
                           >
                             <span
                               className={`w-1.5 h-1.5 rounded-full ${
-                                isPaid ? "bg-emerald-400" : "bg-purple-400 animate-pulse"
+                                isPaid ? "bg-purple-400 shadow-sm shadow-purple-400/50" : "bg-purple-500/70 animate-pulse"
                               }`}
                             />
                             {order.status}
@@ -382,7 +382,7 @@ export const Dashboard = () => {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-zinc-950 flex items-center justify-center text-purple-400 font-bold">
+      <div className="min-h-screen bg-[#0d041a] flex items-center justify-center text-purple-300 font-bold">
         Cargando dashboard...
       </div>
     );
@@ -478,12 +478,12 @@ export const Dashboard = () => {
                 <div className="mb-1">
                   <span className="text-4xl font-extrabold tracking-tight">{p.pricePen}</span>
                 </div>
-                <p className="text-xs text-zinc-500 mb-6 font-mono">
+                <p className="text-xs text-purple-300/70 mb-6 font-mono">
                   {p.priceUsd} • Tarifa final en PEN
                 </p>
                 <ul className="space-y-2.5 mb-8">
                   {p.features.map((f) => (
-                    <li key={f} className="flex items-start gap-2 text-sm text-zinc-300">
+                    <li key={f} className="flex items-start gap-2 text-sm text-purple-100/90">
                       <Check className="w-4 h-4 text-purple-400 mt-0.5 shrink-0" />
                       <span>{f}</span>
                     </li>
