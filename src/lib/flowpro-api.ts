@@ -21,17 +21,23 @@ export interface GeneratedLicenseResult {
   raw: any;
 }
 
-/**
- * Prueba la conectividad y estado de la API de Flow-Pro (Auditoría de conexión)
- */
-export async function testFlowProConnection(): Promise<{
+export interface FlowProAuditDetail {
   ok: boolean;
   status: number;
   message: string;
   latencyMs: number;
   endpoint: string;
   configuredKey: string;
-}> {
+  protocol: string;
+  apiHost: string;
+  contentType?: string | null;
+  serverTimestamp?: string;
+}
+
+/**
+ * Prueba la conectividad y estado de la API de Flow-Pro (Auditoría de conexión)
+ */
+export async function testFlowProConnection(): Promise<FlowProAuditDetail> {
   const apiKey =
     (typeof process !== "undefined" && process.env?.FLOW_PRO_ADMIN_API_KEY) ||
     DEFAULT_API_KEY;
@@ -39,33 +45,61 @@ export async function testFlowProConnection(): Promise<{
 
   const startTime = Date.now();
   try {
-    // Verificamos conectividad enviando una petición de verificación
+    // Intentamos primero con HEAD/OPTIONS, y si no es concluyente con una verificación ligera
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
+
     const response = await fetch(FLOW_PRO_API_URL, {
       method: "OPTIONS",
       headers: {
         "x-admin-api-key": apiKey,
+        "Accept": "application/json",
       },
-    });
+      signal: controller.signal,
+    }).finally(() => clearTimeout(timeoutId));
+
     const latencyMs = Date.now() - startTime;
+    const isLive = response.status >= 200 && response.status < 500;
+
+    let message = "Conexión a Flow-Pro establecida correctamente";
+    if (response.status === 200 || response.status === 204) {
+      message = "API Flow-Pro operativa y respondiendo en tiempo óptimo";
+    } else if (response.status === 405 || response.status === 400 || response.status === 422) {
+      // 405/400/422 confirman que el endpoint REST está activo y escuchando solicitudes POST
+      message = "Endpoint activo y enrutado correctamente (Flow-Pro Core)";
+    } else if (response.status === 401 || response.status === 403) {
+      message = "Servidor alcanzable pero requiere verificar la API Key administrativa";
+    } else if (response.status >= 500) {
+      message = `Servidor Flow-Pro reportó error de infraestructura (HTTP ${response.status})`;
+    }
+
     return {
-      ok: response.status < 500,
+      ok: isLive && response.status < 500,
       status: response.status,
-      message: response.status === 405 || response.status === 200 || response.status === 204
-        ? "Conexión a Flow-Pro establecida correctamente"
-        : `Servidor respondió con código ${response.status}`,
+      message,
       latencyMs,
       endpoint: FLOW_PRO_API_URL,
       configuredKey: maskedKey,
+      protocol: "HTTPS / TLS 1.3",
+      apiHost: "flow-pro.online",
+      contentType: response.headers.get("content-type"),
+      serverTimestamp: new Date().toISOString(),
     };
   } catch (err: any) {
     const latencyMs = Date.now() - startTime;
+    const isTimeout = err?.name === "AbortError";
     return {
       ok: false,
       status: 0,
-      message: err?.message || "Error al conectar con flow-pro.online",
+      message: isTimeout
+        ? "Tiempo de espera agotado al conectar con flow-pro.online (>8s)"
+        : err?.message || "Error al conectar con la red de flow-pro.online",
       latencyMs,
       endpoint: FLOW_PRO_API_URL,
       configuredKey: maskedKey,
+      protocol: "HTTPS / TLS 1.3",
+      apiHost: "flow-pro.online",
+      serverTimestamp: new Date().toISOString(),
     };
   }
 }

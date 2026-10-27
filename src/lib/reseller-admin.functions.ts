@@ -36,12 +36,27 @@ export const adminCheckFlowProConnection = createServerFn({ method: "POST" })
       .select("*", { count: "exact", head: true })
       .in("type", ["paid", "assigned"]);
 
+    const { count: lifetimeLicenses } = await context.supabase
+      .from("reseller_licenses")
+      .select("*", { count: "exact", head: true })
+      .eq("lifetime", true);
+
+    const { data: latestLicense } = await context.supabase
+      .from("reseller_licenses")
+      .select("license_key, type, created_at, display_name")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
     return {
       ...test,
       stats: {
         totalEmitted: totalLicenses || 0,
         trialsEmitted: trialLicenses || 0,
         paidEmitted: paidLicenses || 0,
+        lifetimeEmitted: lifetimeLicenses || 0,
+        lastEmittedAt: latestLicense?.created_at || null,
+        lastEmittedName: latestLicense?.display_name || null,
       },
       timestamp: new Date().toISOString(),
     };

@@ -1,9 +1,10 @@
-import { useState } from "react";
-import { Key, RefreshCw, Copy, Check, Zap, MessageSquare, ShieldCheck, Activity, AlertCircle } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Key, RefreshCw, Copy, Check, Zap, MessageSquare, ShieldCheck, Activity, AlertCircle, Server, Clock, Hash } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
 import { adminGenerateLicense, adminGenerateTrial, adminCheckFlowProConnection } from "@/lib/reseller-admin.functions";
@@ -28,22 +29,31 @@ export const FlowProGeneratorCard = ({ onSuccess }: Props) => {
   const generateLicenseFn = useServerFn(adminGenerateLicense);
   const checkConnectionFn = useServerFn(adminCheckFlowProConnection);
 
-  const handleAuditConnection = async () => {
+  const handleAuditConnection = async (silent = false) => {
     setIsAuditing(true);
     try {
       const res = await checkConnectionFn();
       setAuditResult(res);
-      if (res?.ok) {
-        toast.success(`Conexión Flow-Pro auditada: Activa (${res.latencyMs} ms)`);
-      } else {
-        toast.warning(`Flow-Pro respondió: ${res?.message}`);
+      if (!silent) {
+        if (res?.ok) {
+          toast.success(`Conexión Flow-Pro auditada: Activa (${res.latencyMs} ms)`);
+        } else {
+          toast.warning(`Flow-Pro respondió: ${res?.message}`);
+        }
       }
     } catch (err: any) {
-      toast.error(err.message || "Error al auditar la conexión con Flow-Pro");
+      if (!silent) {
+        toast.error(err.message || "Error al auditar la conexión con Flow-Pro");
+      }
     } finally {
       setIsAuditing(false);
     }
   };
+
+  useEffect(() => {
+    // Auditoría inicial silenciosa al cargar el componente
+    handleAuditConnection(true);
+  }, []);
 
   const handleGenerate = async () => {
     if (!customerName.trim()) {
@@ -84,6 +94,8 @@ export const FlowProGeneratorCard = ({ onSuccess }: Props) => {
         setGeneratedKey(result.license_key);
         setCopied(false);
         toast.success("Licencia de Flow-Pro generada exitosamente");
+        // Refrescar auditoría de estadísticas
+        handleAuditConnection(true);
         onSuccess?.();
       }
     } catch (err: any) {
@@ -106,62 +118,102 @@ export const FlowProGeneratorCard = ({ onSuccess }: Props) => {
     <Card className="bg-zinc-900 border-zinc-800 shadow-xl overflow-hidden relative">
       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-destructive via-red-500 to-amber-500" />
       <CardHeader className="pb-3 pt-5">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-base font-bold flex items-center gap-2 text-white">
-            <Zap className="w-5 h-5 text-destructive animate-pulse" /> Generador y Auditor de Conexión Flow-Pro
-          </CardTitle>
-          <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <CardTitle className="text-base font-bold flex items-center gap-2 text-white">
+              <Zap className="w-5 h-5 text-destructive animate-pulse" /> Auditoría & Generador de Conexión Flow-Pro
+            </CardTitle>
+            <CardDescription className="text-xs text-zinc-400 mt-1">
+              Monitoreo en tiempo real del enlace con el clúster oficial de flow-pro.online y emisión de licencias.
+            </CardDescription>
+          </div>
+          <div className="flex items-center gap-2 self-start sm:self-auto">
             <Button
               variant="outline"
               size="sm"
-              onClick={handleAuditConnection}
+              onClick={() => handleAuditConnection(false)}
               disabled={isAuditing}
-              className="h-7 text-xs border-zinc-700 bg-zinc-800/80 hover:bg-zinc-700 text-zinc-300 gap-1.5 px-2"
-              title="Auditar conexión en tiempo real"
+              className="h-8 text-xs border-zinc-700 bg-zinc-800/90 hover:bg-zinc-700 text-zinc-200 gap-1.5 px-2.5 shadow-sm"
+              title="Ejecutar prueba de conectividad y latencia con Flow-Pro"
             >
               <Activity className={`w-3.5 h-3.5 ${isAuditing ? "animate-spin text-amber-400" : "text-green-400"}`} />
               {isAuditing ? "Auditando..." : "Auditar Conexión"}
             </Button>
-            <span className="text-[10px] font-mono bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded border border-zinc-700">
-              flow-pro.online
+            <span className="text-[11px] font-mono bg-zinc-950 text-zinc-400 px-2 py-1 rounded border border-zinc-800 flex items-center gap-1.5">
+              <Server className="w-3 h-3 text-destructive" /> flow-pro.online
             </span>
           </div>
         </div>
-        <CardDescription className="text-xs text-zinc-400">
-          Emite licencias oficiales y audita la conectividad directa con la API de Flow-Pro.
-        </CardDescription>
       </CardHeader>
 
       <CardContent className="space-y-4 pt-1">
-        {/* Resultado de la Auditoría */}
+        {/* Resultado detallado de la Auditoría */}
         {auditResult && (
           <div
-            className={`p-3 rounded-lg border text-xs space-y-1.5 transition-all ${
+            className={`p-3.5 rounded-lg border text-xs space-y-2.5 transition-all ${
               auditResult.ok
-                ? "bg-green-950/30 border-green-500/30 text-green-300"
-                : "bg-red-950/30 border-red-500/30 text-red-300"
+                ? "bg-emerald-950/20 border-emerald-500/30 text-emerald-300"
+                : "bg-red-950/25 border-red-500/30 text-red-300"
             }`}
           >
-            <div className="flex items-center justify-between font-semibold">
-              <span className="flex items-center gap-1.5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 font-semibold">
+              <span className="flex items-center gap-2 text-sm">
                 {auditResult.ok ? (
-                  <ShieldCheck className="w-4 h-4 text-green-400" />
+                  <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
                 ) : (
-                  <AlertCircle className="w-4 h-4 text-red-400" />
+                  <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
                 )}
-                {auditResult.message}
+                <span>{auditResult.message}</span>
               </span>
-              <span className="font-mono text-[11px] bg-black/40 px-2 py-0.5 rounded">
-                Latencia: {auditResult.latencyMs} ms
-              </span>
+              <div className="flex items-center gap-2">
+                <Badge
+                  variant="outline"
+                  className={`font-mono text-[11px] px-2 py-0.5 border ${
+                    auditResult.ok
+                      ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-300"
+                      : "border-red-500/40 bg-red-500/10 text-red-300"
+                  }`}
+                >
+                  <Activity className="w-3 h-3 mr-1 inline" />
+                  {auditResult.latencyMs} ms
+                </Badge>
+                <Badge variant="outline" className="font-mono text-[11px] px-2 py-0.5 border-zinc-700 bg-zinc-900/60 text-zinc-300">
+                  HTTP {auditResult.status || "ERR"}
+                </Badge>
+              </div>
             </div>
-            <div className="flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-zinc-400 pt-1 border-t border-zinc-800/60 font-mono">
-              <span>Endpoint: {auditResult.endpoint}</span>
-              <span>API Key: {auditResult.configuredKey}</span>
-              {auditResult.stats && (
-                <span>Licencias emitidas en BD: {auditResult.stats.totalEmitted} (Pruebas: {auditResult.stats.trialsEmitted}, Pagas: {auditResult.stats.paidEmitted})</span>
-              )}
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 border-t border-zinc-800/60 text-[11px] font-mono text-zinc-400">
+              <div>
+                <span className="block text-zinc-500 text-[10px]">HOST & PROTOCOLO</span>
+                <span className="text-zinc-200 truncate block">{auditResult.apiHost} ({auditResult.protocol || "TLS 1.3"})</span>
+              </div>
+              <div>
+                <span className="block text-zinc-500 text-[10px]">API KEY ADMINISTRATIVA</span>
+                <span className="text-amber-400 truncate block">{auditResult.configuredKey}</span>
+              </div>
+              <div>
+                <span className="block text-zinc-500 text-[10px]">TOTAL GENERADAS</span>
+                <span className="text-zinc-200 block font-semibold">{auditResult.stats?.totalEmitted ?? 0} licencias</span>
+              </div>
+              <div>
+                <span className="block text-zinc-500 text-[10px]">DESGLOSE BD</span>
+                <span className="text-zinc-300 block">
+                  {auditResult.stats?.paidEmitted ?? 0} pagas / {auditResult.stats?.trialsEmitted ?? 0} demos
+                </span>
+              </div>
             </div>
+
+            {auditResult.stats?.lastEmittedAt && (
+              <div className="flex items-center justify-between text-[10px] text-zinc-400 pt-1 border-t border-zinc-800/40">
+                <span className="flex items-center gap-1">
+                  <Clock className="w-3 h-3" /> Última emisión: {new Date(auditResult.stats.lastEmittedAt).toLocaleString()}
+                </span>
+                {auditResult.stats.lastEmittedName && (
+                  <span className="text-zinc-500">Cliente: <strong className="text-zinc-300">{auditResult.stats.lastEmittedName}</strong></span>
+                )}
+              </div>
+            )}
           </div>
         )}
 
